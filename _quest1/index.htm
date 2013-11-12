@@ -72,7 +72,7 @@
 		#findtype { width:180px; } 
 		#findrads { width:70px; } 
 		#dragmain { height:30px; }
-		#infopanel { position:absolute; top:10px; left:0px; width:1900px; height:80px; padding:3px; background-color:#F2F2F4; text-wrap:none; white-space:nowrap; overflow:hidden; }
+		#infopanel { position:absolute; top:10px; left:0px; width:1900px; height:100px; padding:3px; background-color:#F2F2F4; text-wrap:none; white-space:nowrap; overflow:hidden; }
 		#infolab1, #infolab2, #infolab3 { width:100px; color:#c0c0c0; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
 		#mapdiv { position:absolute; top:110px; left:0px; width:1900px; height:690px; overflow:hidden; }
@@ -180,13 +180,15 @@
 			setTimeout("banishhelppopup();" , 8000);
 		});
 		
+		/*
 		$(window).load(function(){
 			 $('.container').find('img').each(function(){
 			  var imgClass = (this.width/this.height > 1) ? 'wide' : 'tall';
 			  $(this).addClass(imgClass);
 			 })
 		})
-
+		*/
+		
 		String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,"");}
 		String.prototype.ltrim = function() { return this.replace(/^\s+/,""); }
 		String.prototype.rtrim = function() { return this.replace(/\s+$/,""); }
@@ -264,6 +266,12 @@
 		<div id="mapdiv"></div>
 		<div id="strviewdiv"></div>
 		<div id="infopanel">
+			<div id="question">
+				<p style="background-color:LightBlue"><b>Question 45: </b><i>Pouvez-vous indiquer le nom et l’adresse de l'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?</i></p>
+			</div>
+			<div id="logo">
+				<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:right" width="200" height="50"/>
+			</div>
 			<table>
 				<tr>
 					<td>
@@ -279,10 +287,7 @@
 							Pour situer le <i>lieu</i> en question, veuillez saisir son adresse en la tapant ou en l'indiquant directement avec une clique sur la carte
 						</div>
 
-					</td>
-					<div>
-						<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:right" width="300" height="80"/>
-					</div>
+					</td>					
 				</tr>
 				
 					
