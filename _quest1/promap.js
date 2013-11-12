@@ -216,10 +216,8 @@ function onwindowsize()
 	document.getElementById('strviewdiv').style.left = (Math.round( vw * .6) + 10) + "px"; 
 	document.getElementById('strviewdiv').style.width = Math.round( vw * .4) + "px"; 
 	document.getElementById('strviewdiv').style.height = document.getElementById('mapdiv').style.height; 
-	/*
-	document.getElementById('btn9').style.left = (vw - 40) + "px";
+	//document.getElementById('btn9').style.left = (vw - 40) + "px";
 	document.getElementById('btn10').style.left = (vw - 20) + "px";
-	*/
 	try { _map.setCenter(_loca); } catch (er) {}	
 }
 
@@ -1470,10 +1468,8 @@ function hidemap(par)			//external interface
 	document.getElementById('favspanel').style.visibility = "hidden";
 	document.getElementById('findspanel').style.visibility = "hidden";
 	document.getElementById('maindiv').style.visibility = "hidden";
-	/*
-	document.getElementById('btn9').style.visibility = "hidden";
+	//document.getElementById('btn9').style.visibility = "hidden";
 	document.getElementById('btn10').style.visibility = "hidden";
-	*/
 	document.getElementById('strviewdiv').style.visibility = "hidden";
 }
 
@@ -1481,7 +1477,7 @@ function showmap(par)			//external interface
 {
 	var pr = par.split("|");
 	document.getElementById('maindiv').style.visibility = "visible";
-	document.getElementById('btn9').style.visibility = "visible";
+	//document.getElementById('btn9').style.visibility = "visible";
 	document.getElementById('btn10').style.visibility = "visible";
 	_currpg = parseInt(pr[1]);			//current page
 	_maxfavs =  parseInt(pr[2]);		//max places
