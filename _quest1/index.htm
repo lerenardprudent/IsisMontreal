@@ -1,0 +1,557 @@
+<!doctype html>
+<html>
+	
+<head>
+	
+	<meta charset="UTF-8">
+	<title>BEANZ STUDY - QUESTIONNAIRE #1</title>
+	
+	<link href = "http://fonts.googleapis.com/css?family=Open+Sans:400,300|Open+Sans+Condensed:300&subset=latin,latin-ext" rel = "stylesheet" type = "text/css" >
+	<!--
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" type="text/css" />
+	<link rel="stylesheet" href="objs/css/jslider.css" type="text/css" />
+	-->
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.js"></script>
+	<!-- CSS file -->
+	<link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.css" />
+	<style>
+		.tooltip {
+			display:none;
+			background:transparent url(media/black_arrow_rotated.png);
+			font-size:16px;
+			height:70px;
+			width:160px;
+			padding:25px;
+			color:#eee;
+		}
+		
+		.myCustomStyle  {
+		   font-size: 12px
+		}
+		
+		.tooltiptext{
+			display: none;
+		}
+		
+		.container {
+			width: 40%;
+			height: 40%;
+			background: #444;
+			margin: 0 auto;
+		}
+		.container img.wide {
+			max-width: 100%;
+			max-height: 100%;
+			height: auto;
+		}
+		.container img.tall {
+			max-height: 100%;
+			max-width: 100%;
+			width: auto;
+		}​
+	</style>
+	<style type="text/css" media="screen">
+		html, body { width:100%; height:100%; }
+		body { margin:0px; padding:0px; overflow:hidden; color:#404040; background-color:#f2f2f4; }
+		a:link, a:visited { color:#dd0000; text-decoration:none; }
+		a:active, a:hover { color:#404040; text-decoration:none; }
+		input { background-color:#ffffff; margin:0px; padding:0px; border:1px solid #999; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
+		*:focus{ outline:none; }
+		div { margin:0px; padding:0px; }
+		button { background:#f0f0f0; margin:0px; padding:2px 4px 2px 4px; filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e0e0e0'); background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e0e0e0)); background: -moz-linear-gradient(top, #ffffff,  #e0e0e0); border:1px solid #a0a0a0; color:#404040; font-family:Arial, Helvetica, sans-serif; font-size:12px; cursor: hand; cursor: pointer; }
+		button:hover { color:ff0000; background: #e0e0e0; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#ffffff'); background: -webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#ffffff)); background: -moz-linear-gradient(top, #e0e0e0,  #ffffff); }
+		select { background-color:#ffffff; margin:0px; padding:0px; border:1px solid #999; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
+		ul, ol {list-style-type:none; padding:0px; margin:0px; }
+		li { background-color:#f4f4f4; padding:2px; text-overflow:ellipsis; white-space:nowrap; }
+		li:nth-child(odd) { background-color:#fdfdfd; padding:2px; text-overflow:ellipsis; white-space:nowrap; }
+		table, th, td { border-style:none; border-width:0px; border-collapse:collapse; padding:0px; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; }
+		th, td { height:24px; max-height:24px; }
+		span { margin:0px; padding:0px; }
+		#mainswf { position:absolute; left:0px; top:0px; width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
+		#findtype { width:180px; } 
+		#findrads { width:70px; } 
+		#dragmain { height:30px; }
+		#infopanel { position:absolute; top:10px; left:0px; width:1900px; height:80px; padding:3px; background-color:#F2F2F4; text-wrap:none; white-space:nowrap; overflow:hidden; }
+		#infolab1, #infolab2, #infolab3 { width:100px; color:#c0c0c0; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
+		.ui-resizable-helper { border:1px dotted gray; }
+		#mapdiv { position:absolute; top:110px; left:0px; width:1900px; height:690px; overflow:hidden; }
+		#strviewdiv { position:absolute; top:110px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; }
+		#findspanel, #favspanel { position:absolute; left:70px; top:115px; width: 200px; height:280px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
+		#places, #objects { position:absolute; left:0px; top:20px; width:195px; height: 234px; border-style:solid; border-width:0px 1px 0px 1px; border-color:#999; padding-left:4px; overflow-x:hidden; overflow-y:scroll;}
+		#panheadfinds, #panheadfavs { top:0px; width:199px; height:20px; margin:0px; padding:2px 0px 0px 0px; border-style:solid; border-width:1px 1px 0px 1px; border-color:#999; font-weight:bold; }
+		#morefinds { position:absolute; top:255px; width:201px; height:25px; margin:0px; border-style:solid; border-width:0px 1px 1px 1px; border-color:#999; color:#dd0000; font-weight:bold; cursor: hand; cursor: pointer; }
+		#favsmode { position:absolute; top:255px; width:194px; height:20px; margin:0px; border-style:solid; border-width:0px 1px 1px 1px; border-color:#999; padding:4px 0px 0px 6px;}
+		#viewpanel { position:absolute; left:105px; top:115px; width:85px; height:220px; padding:15px; opacity:.9; border:1px solid #999; background:#efefef; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
+		#view1, #view2, #view3, #view4, #view5, #view6 { font-size:12px; font-weight:bold; } 
+		#btn11, #btn12, #btn13, #btn14, #btn15, #btn16, #btn17, #btn18 { background-repeat:no-repeat; background-position:1px 1px; }
+		#btn9 { position:absolute; top:8px; left:1860px; width:14px; height:14px;  background-repeat:no-repeat; background-position:-1px -1px; }
+		#btn10 { position:absolute; top:8px; left:1880px; width:14px; height:14px;  background-repeat:no-repeat; background-position:-1px -1px; }
+	</style>
+	<script type="text/javascript">AC_FL_RunContent = 0;</script>
+	<script type="text/javascript" src="AC_RunActiveContent.js"></script>
+	
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4qnbkOe5X7pll7qyIFtkeLzjzkbPnAGo&amp;libraries=places,drawing,geometry,panoramio,weather&region=ca&sensor=false"></script>
+
+	<script type="text/javascript" src="mousewheel.js"></script>
+	<script type="text/javascript" src="promap.js"></script>
+	
+	<!--
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.1.1.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+	
+	<script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
+	<script src="http://code.jquery.com/jquery-2.0.0.js"/>
+	-->
+	
+	<script type="text/javascript" src="objs/tmpl.js"></script>
+	<script type="text/javascript" src="objs/draggable-0.1.js"></script>
+	<script type="text/javascript" src="objs/jshashtable-2.1_src.js"></script>
+	
+	<!--
+	<script type="text/javascript" src="objs/jquery.dependClass-0.1.js"></script>
+	<script type="text/javascript" src="objs/jquery.slider.js"></script>
+	<script type="text/javascript" src="objs/jquery.numberformatter-1.2.3.js"></script>
+	-->
+	
+	<script type="text/javascript" src="objs/wtooltip_latest.js"></script>
+	<script type="text/javascript">
+		
+		var _winbro;
+		var _winw;		//window width
+		var _winh;		//window height
+		//var _sld;		//slider - timeline
+		var _map;
+		var _infowin;		//info window
+		var _layerbike = null;		//layer bike om
+		var _layertrans = null;		//layer transit on
+		var _layertraff = null;		//layer traffic on
+		var _strviewser;			//streetview service
+		var _strviewpano;			//streetview panorama
+		var _strviewon = false;		//street view flag;
+		var _loca;		//location
+		var _addr;		//address
+		var _bnds;		//bounds
+		var _drawman;			//drawing manager
+		var _mapmark;		// mapclickmarker
+		var _mapdrawpg = -1;		//markers loaded to map from current page on showmap.
+		var _mapdata = "";			//all map objects
+		var _editon = false;
+		var _delobjon = false;		//delete flag in edit mode
+		var _favobjects = [];		//my objects
+		var _objcount = 0;		//object counter
+		var _findmarkers = [];		//search results markers
+		var _selobj; 		//selected object / shapes vars
+		var _geocoder;		//geocoder
+		var _serv;		//service
+		var _currpg = 1;
+		var _currcat = "";
+		var _cats = [];
+		var _maxfavs = 1;
+		var _mode;
+		
+		var tripiniconpath = "media/mapmark.png";
+		
+		$(document).ready( function()
+		{
+			$('img').each(function() {
+				$(this).qtip({
+					content: {
+						title: 'Questionnaire ISIS : Question à caractère cartographique',
+						text: $(this).next('.tooltiptext')
+					},
+					style: {
+						classes: 'qtip-rounded myCustomStyle'
+					}
+				});
+			});
+			
+			onwindowsize();
+				
+			$("#address").keyup( function(event)
+			{
+				if (event.keyCode == 13) {
+					$("#btn1").click();
+				}
+			});
+			
+			$("#helpicon").mouseover();
+			setTimeout("banishhelppopup();" , 8000);
+		});
+		
+		$(window).load(function(){
+			 $('.container').find('img').each(function(){
+			  var imgClass = (this.width/this.height > 1) ? 'wide' : 'tall';
+			  $(this).addClass(imgClass);
+			 })
+		})
+
+		String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,"");}
+		String.prototype.ltrim = function() { return this.replace(/^\s+/,""); }
+		String.prototype.rtrim = function() { return this.replace(/\s+$/,""); }
+		
+		function getFlashMovieObject()		//external interface
+		{
+			var movieName = "smapp";
+			if(document.embeds[movieName]){return document.embeds[movieName]; }
+			if(window.document[movieName]){	return window.document[movieName]; }
+			if(window[movieName]){ return window[movieName]; }
+			if(document[movieName]){ return document[movieName]; }
+			return null;
+		}
+		
+		function send2flash(par)		//external interface
+		{
+			console.log("send2flash-promap: " + par)
+
+			var fo = getFlashMovieObject();
+			if(fo != null){fo.callbackjs(par);}			//calls map2quest in flash (inc_quest)
+		}
+	</script>
+	
+</head>
+
+<body onresize="resizebody();">
+	<div id="mainswf">
+		<script type="text/javascript">
+			if (AC_FL_RunContent == 0) {
+				alert("This page requires AC_RunActiveContent.js.");
+			} else {
+				AC_FL_RunContent(
+					'codebase', 'http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0',
+					'width', '100%',
+					'height', '100%',
+					'src', 'smapp',
+					'quality', 'high',
+					'pluginspage', 'http://www.macromedia.com/go/getflashplayer',
+					'align', 'middle',
+					'play', 'true',
+					'loop', 'true',
+					'scale', 'showall',
+					'wmode', 'transparent',
+					'devicefont', 'false',
+					'id', 'smapp',
+					'bgcolor', '#f2f2f4',
+					'name', 'smapp',
+					'menu', 'true',
+					'allowFullScreen', 'false',
+					'allowScriptAccess','sameDomain',
+					'movie', 'smapp',
+					'salign', 'lt'
+					); //end AC code
+			}
+		</script>
+		<noscript>
+			<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="1000" height="550" id="smapp" align="middle">
+			<param name="allowScriptAccess" value="sameDomain" />
+			<param name="allowFullScreen" value="false" />
+			<param name="movie" value="smapp.swf" /><param name="quality" value="high" /><param name="bgcolor" value="#f2f2f4" />
+			<embed src="smapp.swf" wmode="transparent" quality="high" bgcolor="#f2f2f4" width="1000" height="550" name="smapp" align="middle" allowScriptAccess="sameDomain" allowFullScreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+			</object>
+		</noscript>
+	</div>
+	
+	<!-- PAGE LAYOUT STARTS HERE -->
+	<div id="maindiv" class="maindivclass">
+		<!--
+		<div id="dragmain" class="dragmain">
+			<button id="btn9" type="button" title="Save" style="background-image:url(media/x-save.png); "onclick="hidemap(1);"></button>
+			<button id="btn10" type="button" title="Close" style="background-image:url(media/x-close.png); "onclick="hidemap(0);"></button>
+			<br/>
+		</div>
+		-->
+		<div id="mapdiv"></div>
+		<div id="strviewdiv"></div>
+		<div id="infopanel">
+			<table>
+				<tr>
+					<td>
+						<span id="infolab1"><b>Adresse:&nbsp;&nbsp;&nbsp;</b></span>
+					</td>
+					<td>
+						<input id="address" type="text" maxlength="150" style="width:400px; height:18px;" placeholder="-- Aucune --" autofocus="autofocus"/>&nbsp;
+						<button id="btn1" type="button" title="Find and mark this address on the map." onclick="rechercheradresse()">Rechercher</button>
+						<button id="btn3" type="button" value="U" title="Toggle Street View panel." onclick="togglestreetview();">Visualiser</button>
+						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="color:Green" title="Confirmer l'adresse indiquée">Confirmer</button>
+						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
+						<div class="tooltiptext">
+							Pour situer le <i>lieu</i> en question, veuillez saisir son adresse en la tapant ou en l'indiquant directement avec une clique sur la carte
+						</div>
+
+					</td>
+					<div>
+						<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:right" width="300" height="80"/>
+					</div>
+				</tr>
+				
+					
+				
+				<!--
+				<tr>
+					<td>
+						<span id="infolab2"><b>Recherche:</b></span>
+					</td>
+					<td>
+						<select id="findtype"  title="Categories/types of places" style="width:150px; height:20px;" placeholder="Type">
+							<option value=""></option>
+							<option value="accounting">Accounting</option>
+							<option value="airport">Airport</option>
+							<option value="amusement_park">Amusement park</option>
+							<option value="aquarium">Aquarium</option>
+							<option value="art_gallery">Art gallery</option>
+							<option value="atm">ATM</option>
+							<option value="bakery">Bakery</option>
+							<option value="bank">Bank</option>
+							<option value="bar">Bar</option>
+							<option value="beauty_salon">Beauty salon</option>
+							<option value="bicycle_store">Bicycle store</option>
+							<option value="book_store">Book store</option>
+							<option value="bowling_alley">Bowling alley</option>
+							<option value="bus_station">Bus station</option>
+							<option value="cafe">Cafe</option>
+							<option value="campground">Campground</option>
+							<option value="car_dealer">Car dealer</option>
+							<option value="car_rental">Car rental</option>
+							<option value="car_repair">Car repair</option>
+							<option value="car_wash">Car wash</option>
+							<option value="casino">Casino</option>
+							<option value="cemetery">Cemetery</option>
+							<option value="church">Church</option>
+							<option value="city_hall">City hall</option>
+							<option value="clothing_store">Clothing store</option>
+							<option value="convenience_store">Convenience store</option>
+							<option value="courthouse">Courthouse</option>
+							<option value="dentist">Dentist</option>
+							<option value="department_store">Department store</option>
+							<option value="doctor">Doctor</option>
+							<option value="electrician">Electrician</option>
+							<option value="electronics_store">Electronics store</option>
+							<option value="embassy">Embassy</option>
+							<option value="establishment">Establishment</option>
+							<option value="finance">Finance</option>
+							<option value="fire_station">Fire Station</option>
+							<option value="florist">Florist</option>
+							<option value="food">Food</option>
+							<option value="funeral_home">Funeral home</option>
+							<option value="furniture_store">Furniture store</option>
+							<option value="gas_station">Gas station</option>
+							<option value="general_contractor">General contractor</option>
+							<option value="grocery_or_supermarket">Grocery or supermarket</option>
+							<option value="gym">Gym</option>
+							<option value="hair_care">Hair care</option>
+							<option value="hardware_store">Hardware store</option>
+							<option value="health">Health</option>
+							<option value="hindu_temple">Hindu temple</option>
+							<option value="home_goods_store">Home goods store</option>
+							<option value="hospital">Hospital</option>
+							<option value="insurance_agency">Insurance agency</option>
+							<option value="jewelry_store">Jewelry store</option>
+							<option value="laundry">Laundry</option>
+							<option value="lawyer">Lawyer</option>
+							<option value="library">Library</option>
+							<option value="liquor_store">Liquor store</option>
+							<option value="local_government_office">Local government office</option>
+							<option value="locksmith">Locksmith</option>
+							<option value="lodging">Lodging</option>
+							<option value="meal_delivery">Meal delivery</option>
+							<option value="meal_takeaway">Meal takeaway</option>
+							<option value="mosque">Mosque</option>
+							<option value="movie_rental">Movie rental</option>
+							<option value="movie_theater">Movie theater</option>
+							<option value="moving_company">Moving company</option>
+							<option value="museum">Museum</option>
+							<option value="night_club">Night club</option>
+							<option value="painter">Painter</option>
+							<option value="park">Park</option>
+							<option value="parking">Parking</option>
+							<option value="pet_store">Pet store</option>
+							<option value="pharmacy">Pharmacy</option>
+							<option value="physiotherapist">Physiotherapist</option>
+							<option value="place_of_worship">Place of worship</option>
+							<option value="plumber">Plumber</option>
+							<option value="police">Police</option>
+							<option value="post_office">Post office</option>
+							<option value="real_estate_agency">Real estate agency</option>
+							<option value="restaurant">Restaurant</option>
+							<option value="roofing_contractor">Roofing contractor</option>
+							<option value="rv_park">RV park</option>
+							<option value="school">School</option>
+							<option value="shoe_store">Shoe store</option>
+							<option value="shopping_mall">Shopping mall</option>
+							<option value="spa">Spa</option>
+							<option value="stadium">Stadium</option>
+							<option value="storage">Storage</option>
+							<option value="store">Store</option>
+							<option value="subway_station">Subway station</option>
+							<option value="synagogue">Synagogue</option>
+							<option value="taxi_stand">Taxi stand</option>
+							<option value="train_station">Train station</option>
+							<option value="travel_agency">Travel agency</option>
+							<option value="university">University</option>
+							<option value="veterinary_care">Veterinary care</option>
+							<option value="zoo">Zoo</option>
+						</select>
+						<input id="findkwds" type="text" maxlength="150" style="width:200px; height:18px;" placeholder="Keywords" />
+						<select id="findrads" style="width:70px; height:20px;">
+							<option value="1000" selected>1 Km</option>
+							<option value="2000">2 Km</option>
+							<option value="3000">3 Km</option>
+							<option value="4000">4 Km</option>
+							<option value="5000">5 Km</option>
+							<option value="7000">7 Km</option>
+							<option value="10000">10 Km</option>
+							<option value="15000">15 Km</option>
+							<option value="20000">20 Km</option>
+							<option value="25000">25 Km</option>
+							<option value="30000">30 Km</option>
+							<option value="35000">35 Km</option>
+							<option value="40000">40 Km</option>
+							<option value="45000">45 Km</option>
+							<option value="50000">50 Km</option>
+						</select>
+						<button id="btn4" type="button" title="Search places on category or keywords inside the range." onclick='findplace()'>Find</button>
+						<button id="btn5" type="button" title="Remove all search results." onclick='clearfindall();clearfindpanel()'>Clear</button>
+					</td>			
+				</tr>
+				-->
+				<tr id="drawtools">
+					<td style="height:28px; max-height:28px; padding-top:5px;">
+						<span id="infolab3"><b>Outils de dessin:&nbsp;&nbsp;</b></span>
+					</td>
+					<td style="height:28px; max-height:28px; padding-top:5px;">
+						<!-- <button id="btn6" type="button" value="U" title="Toggle the marker/shape editor.">Edit</button> -->
+						<span id="edittools" style="display:none;">
+							<button id="btn11" type="button" style="background-image:url(media/tkico9.png); padding:2px 6px 2px 6px;" title="Move the markers/shapes to a new position." onclick="stopDraw()">&nbsp;&nbsp;</button>
+							<!-- <button id="btn12" type="button" style="background-image:url(media/tkico1.png); padding:2px 6px 2px 6px;" title="Create a new marker." onclick="clickMarker()">&nbsp;&nbsp;</button>
+							<button id="btn13" type="button" style="background-image:url(media/tkico2.png); padding:2px 6px 2px 6px;" title="Create a circle shape." onclick="clickCirc()">&nbsp;&nbsp;</button>
+							<button id="btn14" type="button" style="background-image:url(media/tkico3.png); padding:2px 6px 2px 6px;" title="Create a rectangular shape." onclick="clickRect()">&nbsp;&nbsp;</button> -->
+							<button id="btn15" type="button" style="background-image:url(media/tkico4.png); padding:2px 6px 2px 6px;" title="Create a poligon shape." onclick="clickPoly()">&nbsp;&nbsp;</button>
+							<!-- <button id="btn16" type="button" style="background-image:url(media/tkico5.png); padding:2px 6px 2px 6px;" title="Create a polyline." onclick="clickLine()">&nbsp;&nbsp;</button> -->
+							<button id="btn17" type="button" style="background-image:url(media/tkico6.png); padding:2px 6px 2px 6px;" title="Delete marker/shape." onclick="clickEditDel()">&nbsp;&nbsp;</button>
+						</span>
+						<!--<button id="btn7" type="button" title="Shows diferent map features and contents." onclick="toggleviewpanel();">View...</button> -->
+						<!--<button id="btn8" type="button" title="Get the path betwen two places (markers only).">Directions</button> -->
+					<!--	<span style="display:inline-block; width:240px; margin-left:5px;" id="timeline"><input id="slider" name="slider" value="720" />
+							<script type="text/javascript">
+								$("#slider").slider({ 
+								from:0, 
+								to:1440, 
+								step:15, 
+								dimension:'', 
+								scale:['|','|','|','|','|'], 
+								limits:true, 
+								round:0,
+								calculate:function( value ){ 
+								var hours = Math.floor( value / 60 ); 
+								var mins = ( value - hours*60 ); 
+								return (hours < 10 ? "0"+hours : hours) + ":" + ( mins == 0 ? "00" : mins );
+								}});
+							</script>
+						</span>-->
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="findspanel">
+			<ol id="places"></ol>
+			<div id="panheadfinds">&nbsp;&nbsp;Found...<img id="findsclose" alt="Close finds" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="document.getElementById('findspanel').style.visibility = 'hidden'; document.getElementById('view2').checked = false;" /></div>
+			<button id="morefinds" type="button">More...</button>
+		</div>
+		<div id="favspanel">
+			<ol id="objects"></ol>
+			<div id="panheadfavs">&nbsp;&nbsp;Favorites (my places)<img id="favsclose"  alt="Close favs" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="document.getElementById('favspanel').style.visibility = 'hidden'; document.getElementById('view1').checked = false;" /></div>
+			<div id="favsmode"><input id="rfav1" type="radio" name="rfav" value="page" checked onclick="document.getElementById('view1').checked = true; document.getElementById('view2').checked = false; doview()" /> Current&nbsp;&nbsp;&nbsp;&nbsp;<input id="rfav2" type="radio" name="rfav" value="all" onclick="document.getElementById('view1').checked = true; document.getElementById('view2').checked = false; doview()" /> All</div>
+		</div>
+		<div id="viewpanel">
+			<input type="checkbox" id="view1" name="view1" value="ppg" onclick="if(this.checked){ document.getElementById('view2').checked = false; }" /> Favorites<br/>
+			<input type="checkbox" id="view2" name="view2" value="sea" onclick="if(this.checked){ document.getElementById('view1').checked = false; }" /> Search<br/><br/>
+			<input type="checkbox" id="view3" name="view3" value="roa" checked onclick="if(this.checked){ document.getElementById('view4').checked = false; document.getElementById('view5').checked = false; document.getElementById('view6').checked = false; } else { document.getElementById('view3').checked = true; }" /> Roadmap<br/>
+			<input type="checkbox" id="view4" name="view4" value="hyb" onclick="if(this.checked){ document.getElementById('view3').checked = false;document.getElementById('view5').checked = false; document.getElementById('view6').checked = false; } else { document.getElementById('view3').checked = true; }" /> Hybrid<br/>
+			<input type="checkbox" id="view5" name="view5" value="sat" onclick="if(this.checked){ document.getElementById('view3').checked = false;document.getElementById('view4').checked = false; document.getElementById('view6').checked = false; } else { document.getElementById('view3').checked = true; }" /> Satellite<br/>
+			<input type="checkbox" id="view6" name="view6" value="ter" onclick="if(this.checked){ document.getElementById('view3').checked = false;document.getElementById('view4').checked = false; document.getElementById('view5').checked = false; } else { document.getElementById('view3').checked = true; }" /> Terrain<br/><br/>
+			<input type="checkbox" id="view7" name="view7" value="bic" /> Bicycle paths<br/>
+			<input type="checkbox" id="view8" name="view8" value="tra" /> Transit map<br/>
+			<input type="checkbox" id="view9" name="view9" value="trf" /> Traffic map<br/>
+			<input type="checkbox" id="view10" name="view10" value="pan" /> Panoramio<br/><br/>
+			<button id="btn20" type="button" style="height:18px; font-size:11px;" onclick="document.getElementById('viewpanel').style.visibility = 'hidden'; doview()">OK</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="btn21" type="button" style="height:18px; font-size:11px;" onclick="document.getElementById('viewpanel').style.visibility = 'hidden';">Cancel</button>
+		</div>
+	</div>
+
+	
+	<!-- PAGE LAYOUT ENDS HERE -->
+	
+
+	<script type="text/javascript">	
+		var MODE_DESSIN = {
+		  Point : {value: 0, name: "Point"}, 
+		  Polygone: {value: 1, name: "Polygone"}
+		};
+		
+		var resizeTimer = 0;
+		function resizebody()
+		{
+			if (resizeTimer){clearTimeout(resizeTimer);}
+			resizeTimer = setTimeout(doresize, 500);
+		}	
+	
+		function doresize()
+		{
+			onwindowsize();
+		}
+		
+		function setmode()
+		{
+			var GET = {};
+			var query = window.location.search.substring(1).split("&");
+			for (var i = 0, max = query.length; i < max; i++)
+			{
+				if (query[i] === "") // check for trailing & with no param
+					continue;
+
+				var param = query[i].split("=");
+				GET[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
+			}
+				
+			if (GET.mode === '0')
+			{
+				_mode = MODE_DESSIN.Point;
+			}
+			else
+			{
+				_mode = MODE_DESSIN.Polygone;
+			}
+		}
+		
+		function submitaddresshandler(e)
+		{
+			if (!e) e = window.event;
+			var keyCode = e.keyCode || e.which;
+			if (keyCode == '13'){
+				rechercheradresse();
+			}
+		}
+		
+		function banishhelppopup()
+		{
+			$("#helpicon").mouseleave();
+		}
+		
+		mapinit();
+		setmode();
+		if ( _mode === MODE_DESSIN.Point )
+		{
+			document.getElementById('drawtools').style.display = 'none';
+			setdrawtools(false);
+		}
+		else
+		{
+			setdrawtools(true);
+			document.getElementById('helpicon').title = "Veuillez dessiner une zone en utilisant les outils de dessin.";
+		}
+		
+	</script>
+	
+</body>
+
+</html>

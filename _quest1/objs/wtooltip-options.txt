@@ -1,0 +1,31 @@
+jQuery("#element").wTooltip({ //defaults, can be overidden 
+    content: null, //string content for tooltip. 
+    ajax: null, //path to content for tooltip 
+    follow: true, //does tooltip follow the cursor? 
+    auto: true, //If false, tooltip won't automatically transition, it must be manually shown/hidden 
+    fadeIn: 0, //fade in, in milliseconds ("fast, "slow", etc may also be used) 
+    fadeOut: 0, //fade out, in milliseconds ("fast, "slow", etc may also be used) 
+    appendTip: document.body, //should probably not need to be overridden 
+    degrade: false, //if true, in IE6 tooltip will degrade to a title attribute message 
+    offsetY: 10, //offsetY and offsetX properties designate position from the cursor 
+    offsetX: 1, 
+    style: { //the default style rules of the tooltip 
+        border: "1px solid gray", 
+        background: "#edeef0", 
+        color: "#000", 
+        padding: "10px", 
+        zIndex: "1000", 
+        textAlign: "left" 
+    }, 
+    className: null, //to style the tooltip externally, pass a className or id 
+    id: null, 
+    callBefore: function(tooltip, node, settings){ 
+    }, //called when mouse enters the area 
+    callAfter: function(tooltip, node, settings){ 
+    }, //called when mouse leaves the area (same as "callback" option) 
+    clickAction: function(tooltip, node){ 
+        $(tooltip).hide(); 
+    }, //called when the element is clicked, with access to tooltip 
+    delay: 0, //delay (in milliseconds)before tooltip appears and callBefore executes 
+    timeout: 0, //delay (in milliseconds)before tooltip transitions away, and callAfter executes 
+}); 
