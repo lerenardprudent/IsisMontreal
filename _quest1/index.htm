@@ -49,6 +49,8 @@
 			max-height: 100%;
 			max-width: 100%;
 			width: auto;
+		
+		.inline-radio { display: inline-block; }
 		}​
 	</style>
 	<style type="text/css" media="screen">
@@ -71,8 +73,8 @@
 		#mainswf { position:absolute; left:0px; top:0px; width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
 		#findtype { width:180px; } 
 		#findrads { width:70px; } 
-		#dragmain { height:25px; }
-		#infopanel { position:absolute; top:25px; left:0px; width:1900px; height:100px; padding:3px; background-color:#F2F2F4; text-wrap:none; white-space:nowrap; overflow:hidden; }
+		#dragmain { height:50px; padding:0px }
+		#infopanel { position:absolute; top:50px; left:0px; width:1900px; height:120px; padding:0px; background-color:#F2F2F4; text-wrap:none; white-space:nowrap; overflow:hidden; }
 		#infolab1, #infolab2, #infolab3 { width:100px; color:#c0c0c0; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
 		#mapdiv { position:absolute; top:110px; left:0px; width:1900px; height:690px; overflow:hidden; }
@@ -259,35 +261,40 @@
 		<div id="dragmain" class="dragmain">
 			<!-- <button id="btn9" type="button" title="Save" style="background-image:url(media/x-save.png); "onclick="hidemap(1);"></button> -->
 			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png); "onclick="hidemap(0);"></button>
+			<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:left" width="200" height="50px"/>
+		</div>
+		<div id="titre">
+			
 		</div>
 		<div id="mapdiv"></div>
 		<div id="strviewdiv"></div>
 		<div id="infopanel">
 			<div id="questionpanel">
 				<p style="background-color:LightBlue; padding:5px"><b>Question 45: </b><i>Pouvez-vous indiquer le nom et l’adresse de l'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?</i></p>
-			</div>
-			<div id="logo">
-				<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:right" width="200" height="50"/>
-			</div>
+			</div>			
 			<table>
 				<tr>
 					<td>
-						<span id="infolab1"><b>Adresse:&nbsp;&nbsp;&nbsp;</b></span>
+						<span id="infolab1"><b>Recherche:&nbsp;&nbsp;&nbsp;</b></span>
 					</td>
 					<td>
 						<input id="address" type="text" maxlength="150" style="width:400px; height:18px;" placeholder="-- Aucune --" autofocus="autofocus"/>&nbsp;
 						<button id="btn1" type="button" title="Find and mark this address on the map." onclick="rechercheradresse()">Rechercher</button>
-						<button id="btn3" type="button" value="U" title="Toggle Street View panel." onclick="togglestreetview();">Visualiser</button>
+						<button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button>
 						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="color:Green" title="Confirmer l'adresse indiquée">Confirmer</button>
 						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
 						<div class="tooltiptext">
-							Pour situer le <i>lieu</i> en question, veuillez saisir son adresse en la tapant ou en l'indiquant directement avec une clique sur la carte. Quand vous êtes terminé, veuillez cliquer le bouton <i>X</i> en haut à droite.
+							Pour situer le lieu en question, veuillez saisir son adresse en la tapant ou en l'indiquant directement avec une clique sur la carte ci-dessous. Une fois que le marqueur est correctement situé, veuillez sauvegarder votre sélection en appuyant sur le bouton <i>Confirmer</i>. Ensuite, pour fermer cette page et retourner au questionnaire, veuillez cliquer le bouton <i>X</i> en haut à droite.
 						</div>
-
-					</td>					
+						<br/>
+						<form>
+					<input type="radio" id="radioYes" class="inline-radio" name="radioGroup" value="adresse" checked="checked" />
+					<label for="radioYes" class="inline-radio">Adresse&nbsp;&nbsp;</label>
+					<input type="radio" id="radioNo" class="inline-radio" name="radioGroup" value="nom_de_commerce" />
+					<label for="radioNo" class="inline-radio">Nom (de commerce, d'instution, etc.)</label>
+				</form>
+					</td>
 				</tr>
-				
-					
 				
 				<!--
 				<tr>
