@@ -15,17 +15,7 @@
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.js"></script>
 	<!-- CSS file -->
 	<link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.css" />
-	<style>
-		.tooltip {
-			display:none;
-			background:transparent url(media/black_arrow_rotated.png);
-			font-size:16px;
-			height:70px;
-			width:160px;
-			padding:25px;
-			color:#eee;
-		}
-		
+	<style>		
 		.myCustomStyle  {
 		   font-size: 12px
 		}
@@ -61,8 +51,6 @@
 		input { background-color:#ffffff; margin:0px; padding:0px; border:1px solid #999; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
 		*:focus{ outline:none; }
 		div { margin:0px; padding:0px; }
-		button { background:#f0f0f0; margin:0px; padding:2px 4px 2px 4px; filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e0e0e0'); background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e0e0e0)); background: -moz-linear-gradient(top, #ffffff,  #e0e0e0); border:1px solid #a0a0a0; color:#404040; font-family:Arial, Helvetica, sans-serif; font-size:12px; cursor: hand; cursor: pointer; }
-		button:hover { color:ff0000; background: #e0e0e0; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e0e0e0', endColorstr='#ffffff'); background: -webkit-gradient(linear, left top, left bottom, from(#e0e0e0), to(#ffffff)); background: -moz-linear-gradient(top, #e0e0e0,  #ffffff); }
 		select { background-color:#ffffff; margin:0px; padding:0px; border:1px solid #999; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
 		ul, ol {list-style-type:none; padding:0px; margin:0px; }
 		li { background-color:#f4f4f4; padding:2px; text-overflow:ellipsis; white-space:nowrap; }
@@ -78,7 +66,7 @@
 		#infolab1, #infolab2, #infolab3 { width:100px; color:#c0c0c0; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
 		#mapdiv { position:absolute; top:170px; left:0px; width:1900px; height:690px; overflow:hidden; }
-		#strviewdiv { position:absolute; top:110px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; }
+		#strviewdiv { position:absolute; top:175px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; border-width: 2px; border-style: outset; border-color: orange;  }
 		#findspanel, #favspanel { position:absolute; left:1000px; top:200px; width: 200px; height:280px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
 		#places, #objects { position:absolute; left:0px; top:20px; width:195px; height: 234px; border-style:solid; border-width:0px 1px 0px 1px; border-color:#999; padding-left:4px; overflow-x:hidden; overflow-y:scroll;}
 		#panheadfinds, #panheadfavs { top:0px; width:199px; height:20px; margin:0px; padding:2px 0px 0px 0px; border-style:solid; border-width:1px 1px 0px 1px; border-color:#999; font-weight:bold; }
@@ -279,7 +267,7 @@
 						<span id="infolab1"><b>Recherche:&nbsp;&nbsp;&nbsp;</b></span>
 					</td>
 					<td>
-						<input id="address" type="text" maxlength="150" style="width:400px; height:18px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
+						<input id="address" type="text" maxlength="150" style="width:450px; height:18px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus" onpaste="document.getElementById('btn1').disabled=false;"/>&nbsp;
 						<button id="btn1" type="button" title="Find and mark this address on the map." onclick="rechercheradresse()">Rechercher</button>
 						<button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button>
 						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="color:Green" title="Confirmer l'adresse indiquée">Confirmer</button>
@@ -292,7 +280,7 @@
 					<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" autocomplete="off"/>
 					<label  for="radio_adresse" class="inline-radio">Adresse exacte&nbsp;&nbsp;</label>
 					<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" autocomplete="off" onclick="updateobjaddr(''); document.getElementById('address').focus();"/>
-					<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés associés (recherche à proximité)</label>
+					<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés associés (recherche à proximité du marqueur)</label>
 				</form>
 					</td>
 				</tr>
@@ -551,7 +539,7 @@
 		
 		mapinit();
 		setmode();
-		radiobuttonsinit();
+		inputs_init();
 		if ( _mode === MODE_DESSIN.Point )
 		{
 			document.getElementById('drawtools').style.display = 'none';

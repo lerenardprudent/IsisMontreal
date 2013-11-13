@@ -1050,6 +1050,8 @@ function keepfindmarker(id)
 
 function recherchergeocoderresphandler(results, status)
 {
+	var rechercherbtn = document.getElementById("btn1");
+	var strviewbtn = document.getElementById("btn3");
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
@@ -1057,10 +1059,21 @@ function recherchergeocoderresphandler(results, status)
 		_mapmark.setPosition(results[res_index].geometry.location);
 		_mapmark.setVisible(true);
 		updateobjaddr(results[res_index].formatted_address);
+		enableproximitysearch();
+		rechercherbtn.disabled = false;
+		if (_strviewon) { 
+			_strviewser.getPanoramaByLocation(_mapmark.getPosition(), 30, showstrview);
+		}
+		else {
+			strviewbtn.disabled = false;
+		}
 	} 
 	else 
 	{
-		updateobjaddr("Geocoder failed.", "#dd0000")
+		updateobjaddr("Geocoder failed.", "#dd0000");
+		disableproximitysearch();
+		strviewbtn.disabled = true;
+		rechercherbtn.disabled = true;
 	}
 }
 
@@ -1182,13 +1195,16 @@ function rechercheradresse()
 {
 	_infowin.close();
 	_mapmark.setVisible(false);
-	var region_hint_to_geocoder = ",QC";
-	var addr_hack = document.getElementById("address").value + region_hint_to_geocoder;
-	if (document.getElementById("radio_nom").checked) {
-		trouvercommerce();
-	}
-	else {
-		_geocoder.geocode( { 'address': addr_hack }, recherchergeocoderresphandler );
+	var addr = document.getElementById("address").value;
+	if ( addr.length > 0 ) {
+		var region_hint_to_geocoder = ",QC";		
+		var addr_hack =  addr + region_hint_to_geocoder;
+		if (document.getElementById("radio_nom").checked) {
+			trouvercommerce();
+		}
+		else {
+			_geocoder.geocode( { 'address': addr_hack }, recherchergeocoderresphandler );
+		}
 	}
 }
 	
@@ -1626,17 +1642,29 @@ function updateaddress(newlatlng, markermoved)
 		enableproximitysearch();
 	}
 	
-	_geocoder.geocode( { latLng:_loca }, handlegeocoderresp);
+	_geocoder.geocode( { latLng:_loca }, recherchergeocoderresphandler); /*handlegeocoderresp);
 	if (_strviewon)
 	{
 		_strviewser.getPanoramaByLocation(_loca, 30, showstrview);
-	}
+	}*/
 }
 
-function radiobuttonsinit()
+function inputs_init()
 {
 	disableproximitysearch();
 	var searchradtooltiptext = "Faire une recherche de lieux par mots-clés dans un rayon de " + _searchradius + "m du marqueur";
 	document.getElementById('radio_nom').title = searchradtooltiptext;
 	document.getElementById('search_prox_label').title = searchradtooltiptext;
+	var address_input = document.getElementById('address');
+	address_input.addEventListener("keyup", keyUpTextField, false);
+	document.getElementById('btn1').disabled = true; // Rechercher d'adresse
+	document.getElementById('btn3').disabled = true; // Visualiser
+}
+
+function keyUpTextField(e) {
+	//var charCode = e.charCode;
+	var addr = document.getElementById('address').value;
+	var search_btn = document.getElementById('btn1');
+	search_btn.disabled = ( addr.length == 0 );
+  
 }
