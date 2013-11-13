@@ -746,6 +746,35 @@ function clickEditDel()
 
 //---------------------------------------------------------------------
 
+function trouvercommerce()
+{
+	var request;
+	clearfindall();
+	clearfindpanel();
+	//document.getElementById('places').innerHTML = "";
+	document.getElementById('findspanel').style.visibility = "hidden";
+	document.getElementById('favspanel').style.visibility = "hidden";
+	
+	var gclat = _map.getCenter().lat();
+	var gclng = _map.getCenter().lng();
+	var lc = new google.maps.LatLng(gclat, gclng);
+	
+	var lc = _mapmark.getPosition();
+	//var typ = document.getElementById('findtype').value;
+	//var rads =  parseInt(document.getElementById('findrads').value);
+	var kwds = document.getElementById('address').value.split(' ');
+	var radius_def = '2000'; // 2km radius par défaut
+	if(kwds.length > 0)
+	{
+		request = { location:lc, radius:'2000', keyword:kwds };
+		_serv = new google.maps.places.PlacesService(_map);
+		_serv.nearbySearch(request, callback);
+	}
+	else {
+		alert('Aucun mot-clé n\'a été entré');
+	}
+}
+
 
 function findplace()
 {
@@ -840,9 +869,9 @@ function findmarkersinfowin(ob, pos)
 				ob.prop2 = _currpg;
 				ob.prop6 = "M";
 				ob.prop7 = pos.lat().toFixed(5) + "," +  pos.lng().toFixed(5);
-				opt = document.getElementById('findtype');
-				ob.prop13 = opt.options[opt.selectedIndex].text;
-				ob.prop14 = document.getElementById('findkwds').value;
+				//opt = document.getElementById('findtype');
+				//ob.prop13 = opt.options[opt.selectedIndex].text;
+				//ob.prop14 = document.getElementById('findkwds').value;
 				ob.prop15 = setplacename();			// "Custom";
 				ob.prop16 = add;
 				ob.prop17 = ob.title;
@@ -889,10 +918,10 @@ function clearfindmarker(id)
 
 function clearfindpanel()
 {
-	document.getElementById('findtype').value = "";
-	document.getElementById('findkwds').value = "";
-	document.getElementById('findrads').value = "1000";
-	document.getElementById('places').innerHTML = "";
+	//document.getElementById('findtype').value = "";
+	//document.getElementById('findkwds').value = "";
+	//document.getElementById('findrads').value = "1000";
+	//document.getElementById('places').innerHTML = "";
 	document.getElementById('findspanel').style.visibility = "hidden";
 	document.getElementById('favspanel').style.visibility = "hidden";
 }
@@ -1141,7 +1170,12 @@ function rechercheradresse()
 	_mapmark.setVisible(false);
 	var region_hint_to_geocoder = ",QC";
 	var addr_hack = document.getElementById("address").value + region_hint_to_geocoder;
-	_geocoder.geocode( { 'address': addr_hack }, recherchergeocoderresphandler );
+	if (document.getElementById("radio_nom").checked) {
+		trouvercommerce();
+	}
+	else {
+		_geocoder.geocode( { 'address': addr_hack }, recherchergeocoderresphandler );
+	}
 }
 	
 function makefavbyaddr()
@@ -1331,6 +1365,16 @@ function toggleviewpanel()
 function closeviewpanel()
 {
 	document.getElementById("viewpanel").style.visibility = "hidden";	
+}
+
+function effacerlieux()
+{
+	document.getElementById('findspanel').style.visibility = 'hidden';
+	document.getElementById('view2').checked = false;
+	for(var i = 0; i<_findmarkers.length; i++)
+	{ 
+		clearfindmarker(i);
+	}
 }
 
 function showfavs()
