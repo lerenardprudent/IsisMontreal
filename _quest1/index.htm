@@ -152,6 +152,7 @@
 		var _cats = [];
 		var _maxfavs = 1;
 		var _mode;
+		var _searchradius = 2000;
 		
 		var tripiniconpath = "media/mapmark.png";
 		
@@ -278,7 +279,7 @@
 						<span id="infolab1"><b>Recherche:&nbsp;&nbsp;&nbsp;</b></span>
 					</td>
 					<td>
-						<input id="address" type="text" maxlength="150" style="width:400px; height:18px;" placeholder="-- Aucune --" autofocus="autofocus"/>&nbsp;
+						<input id="address" type="text" maxlength="150" style="width:400px; height:18px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
 						<button id="btn1" type="button" title="Find and mark this address on the map." onclick="rechercheradresse()">Rechercher</button>
 						<button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button>
 						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="color:Green" title="Confirmer l'adresse indiquée">Confirmer</button>
@@ -289,9 +290,9 @@
 						<br/>
 						<form>
 					<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" autocomplete="off"/>
-					<label for="radioYes" class="inline-radio">Adresse&nbsp;&nbsp;</label>
-					<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" autocomplete="off"/>
-					<label for="radioNo" class="inline-radio">Mots-clés associés au lieu (e.g. nom / type de lieu)</label>
+					<label  for="radio_adresse" class="inline-radio">Adresse exacte&nbsp;&nbsp;</label>
+					<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" autocomplete="off" onclick="updateobjaddr(''); document.getElementById('address').focus();"/>
+					<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés associés (recherche à proximité)</label>
 				</form>
 					</td>
 				</tr>
@@ -550,6 +551,7 @@
 		
 		mapinit();
 		setmode();
+		radiobuttonsinit();
 		if ( _mode === MODE_DESSIN.Point )
 		{
 			document.getElementById('drawtools').style.display = 'none';

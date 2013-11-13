@@ -682,7 +682,7 @@ function updateobjaddr(str, clr)
 	}
 	if (str == "")
 	{
-		fld.title = "Veuillez cliquer sur la carte pour indiquer une adresse";
+		fld.title = "Saisissez une adresse dans ce champ de texte";
 	}
 	else
 	{
@@ -690,6 +690,21 @@ function updateobjaddr(str, clr)
 	}
 }
 
+function disableproximitysearch()
+{
+	document.getElementById('radio_nom').disabled = true;
+	document.getElementById('radio_adresse').checked = "checked";
+	document.getElementById('search_prox_label').style.color = "LightGrey";
+	
+}
+
+function enableproximitysearch()
+{
+	document.getElementById('radio_nom').disabled = false;
+	document.getElementById('radio_adresse').checked = "checked";
+	document.getElementById('search_prox_label').style.color = "#404040";
+	
+}
 
 //----------------------------------edit functions from here
 
@@ -763,10 +778,9 @@ function trouvercommerce()
 	//var typ = document.getElementById('findtype').value;
 	//var rads =  parseInt(document.getElementById('findrads').value);
 	var kwds = document.getElementById('address').value.split(' ');
-	var radius_def = '2000'; // 2km radius par défaut
 	if(kwds.length > 0)
 	{
-		request = { location:lc, radius:'2000', keyword:kwds };
+		request = { location:lc, radius:_searchradius, keyword:kwds };
 		_serv = new google.maps.places.PlacesService(_map);
 		_serv.nearbySearch(request, callback);
 	}
@@ -1375,6 +1389,9 @@ function effacerlieux()
 	{ 
 		clearfindmarker(i);
 	}
+	updateobjaddr("");
+	disableproximitysearch();
+	document.getElementById('address').focus();
 }
 
 function showfavs()
@@ -1606,6 +1623,7 @@ function updateaddress(newlatlng, markermoved)
 		_loca = newlatlng;
 		_mapmark.setPosition(_loca);
 		_mapmark.setVisible(true);
+		enableproximitysearch();
 	}
 	
 	_geocoder.geocode( { latLng:_loca }, handlegeocoderresp);
@@ -1613,4 +1631,12 @@ function updateaddress(newlatlng, markermoved)
 	{
 		_strviewser.getPanoramaByLocation(_loca, 30, showstrview);
 	}
+}
+
+function radiobuttonsinit()
+{
+	disableproximitysearch();
+	var searchradtooltiptext = "Faire une recherche de lieux par mots-clés dans un rayon de " + _searchradius + "m du marqueur";
+	document.getElementById('radio_nom').title = searchradtooltiptext;
+	document.getElementById('search_prox_label').title = searchradtooltiptext;
 }
