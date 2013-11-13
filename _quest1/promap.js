@@ -230,35 +230,7 @@ function setdrawtools(vis)
 	var edopt;
 	var a = ["btn1", "btn3"/*, "btn4", "btn5", "btn7", "btn8"*/];
 	_map.setOptions({ draggableCursor: 'default' });
-	if (vis == true)
-	{
-		_editon = true;
-		_infowin.close();
-		_mapmark.setVisible(false);
-		closeviewpanel(); 
-		
-		document.getElementById("findspanel").visible = false;
-		document.getElementById("favspanel").visible = false;
-
-		/*
-				for(i=0; i<a.length; i++){ document.getElementById(a[i]).disabled = true; document.getElementById(a[i]).style.opacity = 0.3;}
-		document.getElementById('btn6').value = "D";
-		document.getElementById('btn6').style.color = "#dd0000";
-		document.getElementById('btn6').style.borderColor = "#dd0000";
-		*/
-		document.getElementById('edittools').style.display = "inline-block";
-		selecteditsubbtn(0);
-		
-		edopt = { editable:true, draggable:true };
-		for (i = 0; i < _favobjects.length; i++)
-		{ 
-			if (_favobjects[i] != null && _favobjects[i] != undefined)
-			{
-				_favobjects[i].setOptions(edopt);
-			}
-		}
-
-		_drawman = new google.maps.drawing.DrawingManager({
+	_drawman = new google.maps.drawing.DrawingManager({
 		drawingMode: google.maps.drawing.OverlayType.NULL,
 		drawingControl: false,
 		drawingControlOptions: {
@@ -308,6 +280,35 @@ function setdrawtools(vis)
 		editable: true
 		}
 		});
+		
+	if (vis == true)
+	{
+		_editon = true;
+		_infowin.close();
+		_mapmark.setVisible(false);
+		closeviewpanel(); 
+		
+		document.getElementById("findspanel").visible = false;
+		document.getElementById("favspanel").visible = false;
+
+		/*
+				for(i=0; i<a.length; i++){ document.getElementById(a[i]).disabled = true; document.getElementById(a[i]).style.opacity = 0.3;}
+		document.getElementById('btn6').value = "D";
+		document.getElementById('btn6').style.color = "#dd0000";
+		document.getElementById('btn6').style.borderColor = "#dd0000";
+		*/
+		document.getElementById('edittools').style.display = "inline-block";
+		selecteditsubbtn(0);
+		
+		edopt = { editable:true, draggable:true };
+		for (i = 0; i < _favobjects.length; i++)
+		{ 
+			if (_favobjects[i] != null && _favobjects[i] != undefined)
+			{
+				_favobjects[i].setOptions(edopt);
+			}
+		}
+		
 		_drawman.setMap(_map);
 		drawevents();
 	}
@@ -588,24 +589,26 @@ function showstrview(data, status)
 
 function togglestreetview()
 {
+	var strviewbtn = document.getElementById('btn3');
+	var strviewdiv = document.getElementById('strviewdiv')
 	if (!_strviewon)
 	{
 		_strviewon = true;
-		document.getElementById('btn3').value = "D";
-		document.getElementById('btn3').style.color = "#dd0000";
-		document.getElementById('btn3').style.borderColor = "#dd0000";
+		strviewbtn.value = "D";
+		//strviewbtn.style.color = "#dd0000";
+		//strviewbtn.style.borderColor = "#dd0000";
 		_strviewpano.setVisible(true);
-		document.getElementById('strviewdiv').style.visibility = "visible";
+		strviewdiv.style.visibility = "visible";
 		geocodestrview(document.getElementById("address").value);
 	}
 	else
 	{
 		_strviewon = false;
-		document.getElementById('btn3').value = "U";
-		document.getElementById('btn3').style.color = "#404040";
-		document.getElementById('btn3').style.borderColor = "#a0a0a0";
+		strviewbtn.value = "U";
+		//strviewbtn.style.color = "#404040";
+		//strviewbtn.style.borderColor = "#a0a0a0";
 		_strviewpano.setVisible(false);
-		document.getElementById('strviewdiv').style.visibility = "hidden";
+		strviewdiv.style.visibility = "hidden";
 	}
 }
 
@@ -1667,4 +1670,11 @@ function keyUpTextField(e) {
 	var search_btn = document.getElementById('btn1');
 	search_btn.disabled = ( addr.length == 0 );
   
+}
+
+
+function lire_questionnaire()
+{
+	var questionnaire = questionnaire_texte;
+    alert( questionnaire.length + " entries in file");
 }
