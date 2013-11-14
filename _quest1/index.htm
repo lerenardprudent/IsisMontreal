@@ -183,14 +183,13 @@
 				if ( la_question.mode_dessin == MODE_DESSIN.Point.name )
 				{
 					_mode = MODE_DESSIN.Point;
-					document.getElementById('drawtools').style.display = 'none';
-					setdrawtools(false);
 				}
 				else
 				{
 					_mode = MODE_DESSIN.Polygone;
-					setdrawtools(true);
+					setdrawtools();
 					document.getElementById('helpicon').title = "Veuillez dessiner une zone en utilisant les outils de dessin.";
+					document.getElementById('drawicon').style.visibility = 'visible';
 				}
 			}
 		});
@@ -300,7 +299,7 @@
 						<button id="btn1" type="button" title="Find and mark this address on the map." onclick="rechercheradresse()">Rechercher</button>
 						<button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button>
 						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="color:Green" title="Confirmer l'adresse indiquée">Confirmer</button>
-						<img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/pencil.png" width="30" height="30"/>
+						<img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/>
 						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
 						<div class="tooltiptext">
 							Pour situer le lieu en question, veuillez saisir son adresse en la tapant ou en l'indiquant directement avec une clique sur la carte ci-dessous. Une fois que le marqueur est correctement situé, veuillez sauvegarder votre sélection en appuyant sur le bouton <i>Confirmer</i>. Ensuite, pour fermer cette page et retourner au questionnaire, veuillez cliquer le bouton <i>X</i> en haut à droite.

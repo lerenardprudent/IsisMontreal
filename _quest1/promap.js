@@ -223,12 +223,12 @@ function onwindowsize()
 
 
 
-function setdrawtools(vis)
+function setdrawtools()
 {
 	var i;
 	var newobj;
 	var edopt;
-	var a = ["btn1", "btn3"/*, "btn4", "btn5", "btn7", "btn8"*/];
+	
 	_map.setOptions({ draggableCursor: 'default' });
 	_drawman = new google.maps.drawing.DrawingManager({
 		drawingMode: google.maps.drawing.OverlayType.NULL,
@@ -281,65 +281,11 @@ function setdrawtools(vis)
 		}
 		});
 		
-	if (vis == true)
-	{
 		_editon = true;
 		_infowin.close();
 		_mapmark.setVisible(false);
-		closeviewpanel(); 
-		
-		document.getElementById("findspanel").visible = false;
-		document.getElementById("favspanel").visible = false;
-
-		/*
-				for(i=0; i<a.length; i++){ document.getElementById(a[i]).disabled = true; document.getElementById(a[i]).style.opacity = 0.3;}
-		document.getElementById('btn6').value = "D";
-		document.getElementById('btn6').style.color = "#dd0000";
-		document.getElementById('btn6').style.borderColor = "#dd0000";
-		*/
-		document.getElementById('edittools').style.display = "inline-block";
-		selecteditsubbtn(0);
-		
-		edopt = { editable:true, draggable:true };
-		for (i = 0; i < _favobjects.length; i++)
-		{ 
-			if (_favobjects[i] != null && _favobjects[i] != undefined)
-			{
-				_favobjects[i].setOptions(edopt);
-			}
-		}
-		
 		_drawman.setMap(_map);
 		drawevents();
-	}
-	else
-	{
-		_editon = false;
-		_delobjon = false;
-		_drawman.setDrawingMode(null);
-		_drawman.setMap(null);
-		//_mapmark.setVisible(true);
- 		
-		edopt = { editable:false, draggable:false };
-		for (i = 0; i < _favobjects.length; i++)
-		{
-			if (_favobjects[i] != null && _favobjects[i] != undefined)
-			{
-				edopt = { editable:false, draggable:false };
-				_favobjects[i].setOptions(edopt);
-			}
-		}
-		
-		/*
-		document.getElementById('btn6').value = "U";
-		document.getElementById('btn6').style.color = "#404040";
-		document.getElementById('btn6').style.borderColor = "#a0a0a0";
-		document.getElementById('edittools').style.display = "none";
-		for(i=0; i<a.length; i++){ document.getElementById(a[i]).disabled = false; document.getElementById(a[i]).style.opacity = 1;}
-		*/
-		document.getElementById('edittools').style.display = "none";
-		document.getElementById('edittools').style.visibility = "hidden";
-	}
 }
 
 function drawevents()
