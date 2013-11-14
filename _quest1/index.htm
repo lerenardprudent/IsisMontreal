@@ -141,6 +141,7 @@
 		var _maxfavs = 1;
 		var _mode;
 		var _searchradius = 2000;
+		var _urlParams = {};
 		
 		var tripiniconpath = "media/mapmark.png";
 		
@@ -167,6 +168,24 @@
 			
 			$("#helpicon").mouseover();
 			setTimeout("banishhelppopup();" , 8000);
+			
+			parseUrl();
+			if ( valider_question() ) {
+				mapinit();
+				inputs_init();
+				setmode();
+				if ( _mode == MODE_DESSIN.Point )
+				{
+					document.getElementById('drawtools').style.display = 'none';
+					setdrawtools(false);
+				}
+				else
+				{
+					setdrawtools(true);
+					document.getElementById('helpicon').title = "Veuillez dessiner une zone en utilisant les outils de dessin.";
+				}
+				lire_questionnaire();
+			}
 		});
 		
 		/*
@@ -257,8 +276,7 @@
 		<div id="strviewdiv"></div>
 		<div id="infopanel">
 			<div id="questionpanel">
-				<p style="background-color:LightBlue; padding:5px"><b>Question 45: </b><i>Pouvez-vous indiquer le nom et l’adresse de l'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?</i></p>
-			</div>			
+			</div>
 			<table>
 				<tr>
 					<td>
@@ -498,9 +516,8 @@
 			onwindowsize();
 		}
 		
-		function setmode()
+		function parseUrl()
 		{
-			var GET = {};
 			var query = window.location.search.substring(1).split("&");
 			for (var i = 0, max = query.length; i < max; i++)
 			{
@@ -508,10 +525,20 @@
 					continue;
 
 				var param = query[i].split("=");
-				GET[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
+				_urlParams[decodeURIComponent(param[0])] = decodeURIComponent(param[1] || "");
 			}
-				
-			if (GET.mode === '0')
+		}
+		
+		function getUrlParam(key)
+		{
+			if ( typeof(_urlParams[key]) === 'undefined' )
+				return null;
+			return _urlParams[key];
+		}
+		
+		function setmode()
+		{	
+			if (getUrlParam('mode') == '0')
 			{
 				_mode = MODE_DESSIN.Point;
 			}
@@ -535,20 +562,36 @@
 			$("#helpicon").mouseleave();
 		}
 		
-		mapinit();
-		setmode();
-		inputs_init();
-		if ( _mode === MODE_DESSIN.Point )
+		function valider_question()
 		{
-			document.getElementById('drawtools').style.display = 'none';
-			setdrawtools(false);
+			var questionpanel = document.getElementById('questionpanel');
+			var style = "style=\"background-color:LightBlue; padding:5px\"";
+			var errMsg1 = "<b><i>Désolé!</i> Le numéro de question n'est pas spécifié.</b>";
+			var errMsg2 = "<b><i>Désolé!</i> Le numéro de question n'est pas valide.</b>";
+			var okMsg = "YAY!";
+			var content = null;
+			var question_valide = false;
+			
+			if ( getUrlParam('quest') == null ) {
+				content = errMsg1;
+			}
+			else {
+				var quest_no = getUrlParam('quest');
+				for ( var i = 0; i < questionnaire_texte.length; i++ ) {
+					var quest = questionnaire_texte[i];
+					if (quest.question_no == quest_no) {
+						content = "<b>Question " + quest_no + ": <i>" + quest.question_html + "</i><b>";
+						question_valide = true;
+						break;
+					}
+				}
+				if ( content == null ) {
+					content = errMsg2;
+				}
+			}
+			questionpanel.innerHTML = "<p " + style + ">" + content + "</p>";
+			return question_valide;
 		}
-		else
-		{
-			setdrawtools(true);
-			document.getElementById('helpicon').title = "Veuillez dessiner une zone en utilisant les outils de dessin.";
-		}
-		lire_questionnaire();
 	</script>
 	
 </body>

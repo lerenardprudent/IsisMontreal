@@ -1,4 +1,12 @@
 var questionnaire_texte = [ 
-	{"question_no" : "45", "question_html" : "<b>HI!</b>" },
-	{"question_no" : "69", "question_html" : "<i>Blah!</i>" } 
+	{ 
+		question_no : "45",
+		question_html : "Pouvez-vous indiquer le nom et l\’adresse de l\'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?",
+		type : "point"
+	},
+	{ 
+		question_no : "69",
+		question_html : "Pouvez-vous indiquer votre crème glacée préférée ?" ,
+		type : "polygone"
+	}
 ];
