@@ -662,7 +662,7 @@ function geocodestrview(adr)
 
 function selecteditsubbtn(ib)
 {
-	if (ib != 6) { _delobjon = false; }	
+	if (ib != 2) { _delobjon = false; }	
 	var a = ["btn11", /*"btn12", "btn13", "btn14",*/ "btn15", /*"btn16",*/ "btn17"];
 	for(var i=0; i<a.length;i++)
 	{
@@ -717,7 +717,7 @@ function stopDraw()
 	selecteditsubbtn(0);
 	_map.setOptions({ draggableCursor: 'default' });
 }
-
+/*
 function clickMarker()
 {
 	_drawman.setDrawingMode(google.maps.drawing.OverlayType.MARKER);
@@ -738,11 +738,12 @@ function clickRect()
 	selecteditsubbtn(3);
 	_map.setOptions({ draggableCursor: 'default' });
 }
+*/
 
 function clickPoly()
 {
 	_drawman.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
-	selecteditsubbtn(4);
+	selecteditsubbtn(1);
 	_map.setOptions({ draggableCursor: 'default' });
 }
 
@@ -757,7 +758,7 @@ function clickEditDel()
 {
 	stopDraw();
 	_delobjon = true;
-	selecteditsubbtn(6);
+	selecteditsubbtn(2);
 	_map.setOptions({ draggableCursor: 'crosshair' });
 }
 

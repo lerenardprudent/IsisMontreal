@@ -276,12 +276,10 @@
 			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png); "></button>
 			<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:left" width="200" height="50px"/>
 			<div id="user-options" class="toolbar-icons" style="display: none;">
-			    <a href="#"><em class="icon-user"></em></a>
-			    <a href="#"><em class="icon-edit"></em></a>
-			    <a href="#"><em class="icon-comment"></em></a>
-			    <a href="#"><em class="icon-picture"></em></a>
-			    <a href="#"><em class="icon-facetime-video"></em></a>
-			    <a href="#"><em class="icon-cog"></em></a>
+			    <a id="outil1" href="www.google.com"><em class="icon-user"></em></a>
+			    <a id="outil2" href="#"><em class="icon-edit"></em></a>
+			    <a id="outil3" href="#"><em class="icon-comment"></em></a>
+
 		    </div>
 		</div>
 		<div id="titre">
@@ -302,6 +300,7 @@
 						<button id="btn1" type="button" title="Find and mark this address on the map." onclick="rechercheradresse()">Rechercher</button>
 						<button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button>
 						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="color:Green" title="Confirmer l'adresse indiquée">Confirmer</button>
+						<img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/pencil.png" width="30" height="30"/>
 						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
 						<div class="tooltiptext">
 							Pour situer le lieu en question, veuillez saisir son adresse en la tapant ou en l'indiquant directement avec une clique sur la carte ci-dessous. Une fois que le marqueur est correctement situé, veuillez sauvegarder votre sélection en appuyant sur le bouton <i>Confirmer</i>. Ensuite, pour fermer cette page et retourner au questionnaire, veuillez cliquer le bouton <i>X</i> en haut à droite.
@@ -513,11 +512,23 @@
 	<!-- PAGE LAYOUT ENDS HERE -->
 	<script type="text/javascript">
 		$(function(){
-		  $('#btn10').toolbar({
+		  $('#drawicon').toolbar({
 			  content: '#user-options',
 			  position: 'bottom',
 			  hideOnClick: true
 		  });
+		  $('#drawicon').on('toolbarItemClick', function(event, item){
+			// when the user clicks an icon we call this function
+			//console.dir(item);
+			$(this).trigger('click');
+				if ( item.id == 'outil1')
+					stopDraw();
+				else if ( item.id == 'outil2' )
+					clickPoly();
+				else if ( item.id == 'outil3')
+					clickEditDel();
+		  });
+		  $('#drawicon').mouseover(function() { $(this).trigger('click'); });
 		});
 	</script>
 
