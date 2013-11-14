@@ -105,8 +105,14 @@
 	<script type="text/javascript" src="objs/jquery.numberformatter-1.2.3.js"></script>
 	-->
 	
+	<link rel="stylesheet" type="text/css" media="all" href="objs/toolbar-js/jquery.toolbars.css">
+	<link rel="stylesheet" type="text/css" media="all" href="objs/toolbar-js/bootstrap.icons.css">
+	<script type="text/javascript" src="objs/toolbar-js/jquery.toolbar.min.js"></script>
+	
 	<script type="text/javascript" src="objs/wtooltip_latest.js"></script>
 	<script type="text/javascript">
+	
+	
 		
 		var _winbro;
 		var _winw;		//window width
@@ -266,9 +272,17 @@
 	<!-- PAGE LAYOUT STARTS HERE -->
 	<div id="maindiv" class="maindivclass">
 		<div id="dragmain" class="dragmain">
-			<button id="btn9" type="button" title="Save" style="background-image:url(media/x-save.png); "onclick="hidemap(1);"></button>
-			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png); "onclick="hidemap(0);"></button>
+			<button id="btn9" type="button" title="Save" style="background-image:url(media/x-save.png);"></button>
+			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png); "></button>
 			<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:left" width="200" height="50px"/>
+			<div id="user-options" class="toolbar-icons" style="display: none;">
+			    <a href="#"><em class="icon-user"></em></a>
+			    <a href="#"><em class="icon-edit"></em></a>
+			    <a href="#"><em class="icon-comment"></em></a>
+			    <a href="#"><em class="icon-picture"></em></a>
+			    <a href="#"><em class="icon-facetime-video"></em></a>
+			    <a href="#"><em class="icon-cog"></em></a>
+		    </div>
 		</div>
 		<div id="titre">
 			
@@ -497,7 +511,15 @@
 
 	
 	<!-- PAGE LAYOUT ENDS HERE -->
-	
+	<script type="text/javascript">
+		$(function(){
+		  $('#btn10').toolbar({
+			  content: '#user-options',
+			  position: 'bottom',
+			  hideOnClick: true
+		  });
+		});
+	</script>
 
 	<script type="text/javascript">	
 		var MODE_DESSIN = {
