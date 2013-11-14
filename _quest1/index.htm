@@ -146,6 +146,9 @@
 		var _cats = [];
 		var _maxfavs = 1;
 		var _mode;
+		var _question;
+		var _langue = 'fr';
+		var _id_participant;
 		var _searchradius = 2000;
 		var _urlParams = {};
 		
@@ -154,15 +157,17 @@
 		$(document).ready( function()
 		{
 			$('img[id="helpicon"]').each(function() {
-				$(this).qtip({
-					content: {
-						title: 'Questionnaire ISIS : Question à caractère cartographique',
-						text: $(this).next('.tooltiptext')
-					},
-					style: {
-						classes: 'qtip-rounded myCustomStyle'
-					}
-				});
+				if ( document.getElementById('dash').style.visibility == "visible" ) {
+					$(this).qtip({
+						content: {
+							title: 'Questionnaire ISIS : Question à caractère cartographique',
+							text: $(this).next('.tooltiptext')
+						},
+						style: {
+							classes: 'qtip-rounded myCustomStyle'
+						}
+					});
+				}
 			});
 			
 			$("#address").keyup( function(event)
@@ -176,17 +181,12 @@
 			setTimeout("banishhelppopup();" , 8000);
 			
 			parseUrl();
-			var la_question = valider_question();
-			if ( la_question != null ) {
+			if ( validerUrlParams() ) {
+				document.getElementById('dash').style.visibility = "visible";
 				mapinit();
 				inputs_init();
-				if ( la_question.mode_dessin == MODE_DESSIN.Point.name )
+				if ( _mode == MODE_DESSIN.Polygone.name )
 				{
-					_mode = MODE_DESSIN.Point;
-				}
-				else
-				{
-					_mode = MODE_DESSIN.Polygone;
 					setdrawtools();
 					document.getElementById('helpicon').title = "Veuillez dessiner une zone en utilisant les outils de dessin.";
 					document.getElementById('drawicon').style.visibility = 'visible';
@@ -289,7 +289,7 @@
 		<div id="infopanel">
 			<div id="questionpanel">
 			</div>
-			<table>
+			<table id="dash" style="visibility:hidden">
 				<tr>
 					<td>
 						<span id="infolab1"><b>Recherche:&nbsp;&nbsp;&nbsp;</b></span>
@@ -595,15 +595,15 @@
 			$("#helpicon").mouseleave();
 		}
 		
-		function valider_question()
+		function validerUrlParams()
 		{
 			var questionpanel = document.getElementById('questionpanel');
 			var style = "style=\"background-color:LightBlue; padding:5px\"";
-			var errMsg1 = "<b><i>Désolé!</i> Le numéro de question n'est pas spécifié.</b>";
-			var errMsg2 = "<b><i>Désolé!</i> Le numéro de question n'est pas valide.</b>";
-			var okMsg = "YAY!";
+			var errMsg1 = "<b>Le numéro de question n'est pas spécifié.</b>";
+			var errMsg2 = "<b>Le numéro de question n'est pas valide.</b>";
 			var content = null;
-			var quest = null;
+			var paramsValide = false;
+			var question = null;
 			
 			if ( getUrlParam('quest') == null ) {
 				content = errMsg1;
@@ -613,17 +613,44 @@
 				for ( var i = 0; i < questionnaire_texte.length; i++ ) {
 					quest = questionnaire_texte[i];
 					if (quest.question_no == quest_no) {
-						content = "<b>Question " + quest_no + ": <i>" + quest.question_html + "</i><b>";
-						question_valide = true;
+						question = quest.question_html;
+						_mode = quest.mode_dessin;
 						break;
 					}
 				}
-				if ( content == null ) {
+				if ( question == null ) {
 					content = errMsg2;
 				}
+				else {
+					var langue = getUrlParam('langue');
+					if ( langue != null ) {
+						if (langue != 'fr' && langue != 'en' ) {
+							content = "<b>La langue '" + langue + "' n'est pas reconnue.</b>";
+						}
+						else {
+							_langue = langue;
+						}
+					}
+					if ( content == null ) {
+						var particip_id = getUrlParam('pid');
+						if ( particip_id == null ) {
+							content = "<b>Aucune identifiant de participant n'a été spécifiée</b>";
+						}
+						else { // Si on y arrive, tout est beau
+							_id_participant = particip_id;
+							paramsValide = true;
+						}
+					}
+				}
+			}
+			if ( paramsValide ) {
+				content = "<b>Question " + quest_no + ": <i>" + question + "</i><b>";
+			}
+			else {
+				content = "<em><b>ERREUR: </b></em> " + content;
 			}
 			questionpanel.innerHTML = "<p " + style + ">" + content + "</p>";
-			return quest;
+			return paramsValide;
 		}
 	</script>
 	
