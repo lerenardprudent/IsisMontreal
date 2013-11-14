@@ -170,21 +170,22 @@
 			setTimeout("banishhelppopup();" , 8000);
 			
 			parseUrl();
-			if ( valider_question() ) {
+			var la_question = valider_question();
+			if ( la_question != null ) {
 				mapinit();
 				inputs_init();
-				setmode();
-				if ( _mode == MODE_DESSIN.Point )
+				if ( la_question.mode_dessin == MODE_DESSIN.Point.name )
 				{
+					_mode = MODE_DESSIN.Point;
 					document.getElementById('drawtools').style.display = 'none';
 					setdrawtools(false);
 				}
 				else
 				{
+					_mode = MODE_DESSIN.Polygone;
 					setdrawtools(true);
 					document.getElementById('helpicon').title = "Veuillez dessiner une zone en utilisant les outils de dessin.";
 				}
-				lire_questionnaire();
 			}
 		});
 		
@@ -570,7 +571,7 @@
 			var errMsg2 = "<b><i>Désolé!</i> Le numéro de question n'est pas valide.</b>";
 			var okMsg = "YAY!";
 			var content = null;
-			var question_valide = false;
+			var quest = null;
 			
 			if ( getUrlParam('quest') == null ) {
 				content = errMsg1;
@@ -578,7 +579,7 @@
 			else {
 				var quest_no = getUrlParam('quest');
 				for ( var i = 0; i < questionnaire_texte.length; i++ ) {
-					var quest = questionnaire_texte[i];
+					quest = questionnaire_texte[i];
 					if (quest.question_no == quest_no) {
 						content = "<b>Question " + quest_no + ": <i>" + quest.question_html + "</i><b>";
 						question_valide = true;
@@ -590,7 +591,7 @@
 				}
 			}
 			questionpanel.innerHTML = "<p " + style + ">" + content + "</p>";
-			return question_valide;
+			return quest;
 		}
 	</script>
 	

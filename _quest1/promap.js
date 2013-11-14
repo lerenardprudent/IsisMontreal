@@ -1671,34 +1671,3 @@ function keyUpTextField(e) {
 	search_btn.disabled = ( addr.length == 0 );
   
 }
-
-
-function lire_questionnaire()
-{
-	var questionnaire = questionnaire_texte;
-}
-
-function valider_question()
-{
-	var questionpanel = document.getElementById('questionpanel');
-	var style = "style=\"background-color:LightBlue; padding:5px\"";
-	var errMsg1 = "<i>Désolé!</i> Le numéro de question n'est pas spécifié.";
-	var errMsg2 = "<i>Désolé!</i> Le numéro de question n'est pas valide.";
-	var okMsg = "YAY!";
-	var content;
-	if ( getUrlParam('quest') == null ) {
-		content = errMsg1;
-	}
-	else {
-		var quest_no = getUrlParam('quest');
-		var questions = questionnaire_texte;
-		if ( questions[quest_no] == null ) {
-			content = errMsg2;
-		}
-		else {
-			content = okMsg;
-		}
-	}
-	questionpanel.innerHTML = "<p " + style + "><b>" + content + "</b></p>";
-	return f;
-}
