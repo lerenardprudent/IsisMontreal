@@ -110,6 +110,26 @@
 	<script type="text/javascript" src="objs/toolbar-js/jquery.toolbar.min.js"></script>
 	
 	<script type="text/javascript" src="objs/wtooltip_latest.js"></script>
+	<script>
+		var xmlhttp;
+				
+		function saveAnswer()
+		{
+			xmlhttp=new XMLHttpRequest();
+			xmlhttp.onreadystatechange=htmlcallback;
+			var php_url = "reponses_bdd.php?id=" + _id_participant + "&q=" + _qno + "&t=" + _mode;
+			xmlhttp.open("post",php_url,true);
+			xmlhttp.send();
+		}
+		
+		function htmlcallback()
+		{
+			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				alert( "Response from MySql: " + xmlhttp.responseText );
+			}
+		}
+
+	</script>
 	<script type="text/javascript">
 	
 	
@@ -150,6 +170,7 @@
 		var _langue = 'fr';
 		var _id_participant;
 		var _searchradius = 2000;
+		var _qno;
 		var _urlParams = {};
 		
 		var tripiniconpath = "media/mapmark.png";
@@ -272,7 +293,7 @@
 	<div id="maindiv" class="maindivclass">
 		<div id="dragmain" class="dragmain">
 			<button id="btn9" type="button" title="Save" style="background-image:url(media/x-save.png);"></button>
-			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png); "></button>
+			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png);" onclick="saveAnswer();"></button>
 			<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:left" width="200" height="50px"/>
 			<div id="user-options" class="toolbar-icons" style="display: none;">
 			    <a id="outil1" href="www.google.com"><em class="icon-user"></em></a>
@@ -533,8 +554,8 @@
 
 	<script type="text/javascript">	
 		var MODE_DESSIN = {
-		  Point : {value: 0, name: "Point"}, 
-		  Polygone: {value: 1, name: "Polygone"}
+		  Point : {value: 0, name: "point"}, 
+		  Polygone: {value: 1, name: "polygone"}
 		};
 		
 		var resizeTimer = 0;
@@ -567,18 +588,6 @@
 			if ( typeof(_urlParams[key]) === 'undefined' )
 				return null;
 			return _urlParams[key];
-		}
-		
-		function setmode()
-		{	
-			if (getUrlParam('mode') == '0')
-			{
-				_mode = MODE_DESSIN.Point;
-			}
-			else
-			{
-				_mode = MODE_DESSIN.Polygone;
-			}
 		}
 		
 		function submitaddresshandler(e)
@@ -614,7 +623,9 @@
 					quest = questionnaire_texte[i];
 					if (quest.question_no == quest_no) {
 						question = quest.question_html;
+						_question = quest;
 						_mode = quest.mode_dessin;
+						_qno = quest_no;
 						break;
 					}
 				}
