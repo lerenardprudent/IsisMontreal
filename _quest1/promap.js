@@ -1052,6 +1052,7 @@ function makefavgeocoderresphandler(results, status)
 	{
 		_map.setCenter(results[0].geometry.location);
 		var mark = new google.maps.Marker({ map:_map, position:results[0].geometry.location, draggable:false });
+		saveLocationToDB(mark);
 	
 		mark.prop0 = true;
 		mark.prop1 = -1;
@@ -1134,7 +1135,7 @@ function makefavgeocoderresphandler(results, status)
 			if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
 			showfavs();
 		});
-			} 
+	} 
 	else 
 	{
 		updateobjaddr("Geocoder failed.", "#dd0000")

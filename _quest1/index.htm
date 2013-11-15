@@ -113,16 +113,16 @@
 	<script>
 		var xmlhttp;
 				
-		function saveAnswer()
+		function saveLocationToDB(marker)
 		{
 			xmlhttp=new XMLHttpRequest();
-			xmlhttp.onreadystatechange=htmlcallback;
-			var php_url = "reponses_bdd.php?id=" + _id_participant + "&q=" + _qno + "&t=" + _mode;
+			xmlhttp.onreadystatechange=locSaveResp;
+			var php_url = "reponses_bdd.php?id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8);
 			xmlhttp.open("post",php_url,true);
 			xmlhttp.send();
 		}
 		
-		function htmlcallback()
+		function locSaveResp()
 		{
 			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
 				alert( "Response from MySql: " + xmlhttp.responseText );
@@ -293,12 +293,12 @@
 	<div id="maindiv" class="maindivclass">
 		<div id="dragmain" class="dragmain">
 			<button id="btn9" type="button" title="Save" style="background-image:url(media/x-save.png);"></button>
-			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png);" onclick="saveAnswer();"></button>
+			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png);"></button>
 			<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:left" width="200" height="50px"/>
 			<div id="user-options" class="toolbar-icons" style="display: none;">
-			    <a id="outil1" href="www.google.com"><em class="icon-user"></em></a>
+			    <a id="outil1" href="#"><em class="icon-hand-up"></em></a>
 			    <a id="outil2" href="#"><em class="icon-edit"></em></a>
-			    <a id="outil3" href="#"><em class="icon-comment"></em></a>
+			    <a id="outil3" href="#"><em class="icon-remove"></em></a>
 
 		    </div>
 		</div>
