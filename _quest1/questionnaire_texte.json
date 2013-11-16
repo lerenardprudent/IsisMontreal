@@ -8,11 +8,13 @@ var questionnaire_texte = [
 	{ 
 		question_no : "45",
 		question_html : "Pouvez-vous indiquer le nom et l\’adresse de l\'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?",
-		mode_dessin : "point"
+		mode_dessin : "point",
+		consigne : "Question AAA!"
 	},
 	{ 
 		question_no : "69",
 		question_html : "Pouvez-vous indiquer votre crème glacée préférée ?" ,
-		mode_dessin : "polygone"
+		mode_dessin : "polygone",
+		consigne : "Question BBB!"
 	}
 ];

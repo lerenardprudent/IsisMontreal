@@ -178,17 +178,21 @@
 		$(document).ready( function()
 		{
 			$('img[id="helpicon"]').each(function() {
-				if ( document.getElementById('dash').style.visibility == "visible" ) {
 					$(this).qtip({
 						content: {
-							title: 'Questionnaire ISIS : Question à caractère cartographique',
-							text: $(this).next('.tooltiptext')
+							title: 'Questionnaire ISIS : Consigne',
+							//text: $(this).next('.tooltiptext'),
+							ajax: {
+								url: 'dummy.htm',
+								data: {},
+								once: false,
+								success : function(data, status) { this.set('content.text', _question.consigne); }
+							}
 						},
 						style: {
 							classes: 'qtip-rounded myCustomStyle'
 						}
 					});
-				}
 			});
 			
 			$("#address").keyup( function(event)
@@ -198,19 +202,16 @@
 				}
 			});
 			
-			$("#helpicon").mouseover();
-			setTimeout("banishhelppopup();" , 8000);
-			
 			_geocoder = new google.maps.Geocoder();
 			parseUrl();
 			if ( validerUrlParams() ) {
 				document.getElementById('dash').style.visibility = "visible";
-				mapinit();
+				popup_info_to_user(8000);
+				mapinit();					
 				inputs_init();
 				if ( _mode == MODE_DESSIN.Polygone.name )
 				{
 					setdrawtools();
-					document.getElementById('helpicon').title = "Veuillez dessiner une zone en utilisant les outils de dessin.";
 					document.getElementById('drawicon').style.visibility = 'visible';
 				}
 			}
@@ -323,9 +324,9 @@
 						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
 						<img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/>
 						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
-						<div class="tooltiptext">
+						<!--<div class="tooltiptext">
 							Pour situer le lieu en question, veuillez saisir son adresse en la tapant ou en l'indiquant directement avec une clique sur la carte ci-dessous. Une fois que le marqueur est correctement situé, veuillez sauvegarder votre sélection en appuyant sur le bouton <i>Confirmer</i>. Ensuite, pour fermer cette page et retourner au questionnaire, veuillez cliquer le bouton <i>X</i> en haut à droite.
-						</div>
+						</div>-->
 						<br/>
 						<form>
 					<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" autocomplete="off"/>
@@ -599,6 +600,12 @@
 			if (keyCode == '13'){
 				rechercheradresse();
 			}
+		}
+		
+		function popup_info_to_user(delay)
+		{
+			$("#helpicon").mouseover();
+			setTimeout("banishhelppopup();" , delay);
 		}
 		
 		function banishhelppopup()

@@ -1201,6 +1201,7 @@ function homeAddressLookupResp()
 				homemark.setMap(_map);
 				homemark.setIcon('media/home2.png');
 				homemark.setVisible(true);
+				_map.setCenter(homepos);
 				ok = true;
 			}
 		}
