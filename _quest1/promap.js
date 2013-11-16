@@ -1200,11 +1200,7 @@ function homeAddressLookupResp()
 				var lat = tokens[0];
 				var lon = tokens[1].substring(0, tokens[1].length-1);
 				var homepos = new google.maps.LatLng(parseFloat(lat),parseFloat(lon));
-				homemark = new google.maps.Marker({ map:_map, position:homepos, draggable:false });
-				homemark.setMap(_map);
-				homemark.setIcon('media/home2.png');
-				homemark.setVisible(true);
-				_map.setCenter(homepos);
+				setMapPin(homepos, 'media/home2.png');
 				ok = true;
 			}
 		}
@@ -1214,11 +1210,21 @@ function homeAddressLookupResp()
 	}
 }
 
+function setMapPin(latlng, iconPath)
+{
+	var pin = new google.maps.Marker({ map:_map, position:latlng, draggable:false });
+	pin.setMap(_map);
+	pin.setIcon(iconPath);
+	pin.setVisible(true);
+	_map.setCenter(latlng);
+}
+
 function confirmeraddress()
 {
 	_mapmark.setVisible(false);
 	if ( _qno == 'A2' ) {
 		saveHomeAddress(_mapmark);
+		setMapPin(_mapmark.getPosition(), 'media/home2.png');
 	}
 	else {
 		var region_hint_to_geocoder = ",QC'";
@@ -1231,7 +1237,7 @@ function saveHomeAddress(marker)
 {
 	xmlhttp=new XMLHttpRequest();
 	xmlhttp.onreadystatechange=saveHomeResp;
-	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8);
+	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + _orig_home_addr_encoded;
 	xmlhttp.open("post",php_url,true);
 	xmlhttp.send();
 }
