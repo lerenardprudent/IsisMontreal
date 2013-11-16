@@ -117,7 +117,7 @@
 		{
 			xmlhttp=new XMLHttpRequest();
 			xmlhttp.onreadystatechange=locSaveResp;
-			var php_url = "reponses_bdd.php?id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8);
+			var php_url = "reponses_bdd.php?up=mo&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8);
 			xmlhttp.open("post",php_url,true);
 			xmlhttp.send();
 		}
@@ -316,10 +316,10 @@
 						<span id="infolab1"><b>Recherche:&nbsp;&nbsp;&nbsp;</b></span>
 					</td>
 					<td>
-						<input id="address" type="text" maxlength="150" style="width:450px; height:18px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus" onpaste="document.getElementById('btn1').disabled=false;"/>&nbsp;
-						<button id="btn1" type="button" title="Find and mark this address on the map." onclick="rechercheradresse()">Rechercher</button>
-						<button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button>
-						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="color:Green" title="Confirmer l'adresse indiquée">Confirmer</button>
+						<input id="address" type="text" maxlength="150" style="width:450px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus" onpaste="document.getElementById('btn1').disabled=false;"/>&nbsp;
+						<button id="btn1" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Find and mark this address on the map." onclick="rechercheradresse()"></button>
+						<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
+						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
 						<img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/>
 						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
 						<div class="tooltiptext">
@@ -555,7 +555,8 @@
 	<script type="text/javascript">	
 		var MODE_DESSIN = {
 		  Point : {value: 0, name: "point"}, 
-		  Polygone: {value: 1, name: "polygone"}
+		  Polygone: {value: 1, name: "polygone"},
+		  DomicileVerification: {value: 2, name: "domver" }
 		};
 		
 		var resizeTimer = 0;
@@ -633,6 +634,10 @@
 					content = errMsg2;
 				}
 				else {
+					if (_qno == 'A2') {
+						var encoded_addr = getUrlParam('addr');
+						alert( "Decoded: " + decodeURI(encoded_addr));
+					}
 					var langue = getUrlParam('langue');
 					if ( langue != null ) {
 						if (langue != 'fr' && langue != 'en' ) {

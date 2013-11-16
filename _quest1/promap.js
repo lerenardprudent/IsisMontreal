@@ -535,7 +535,7 @@ function showstrview(data, status)
 
 function togglestreetview()
 {
-	var strviewbtn = document.getElementById('btn3');
+	//var strviewbtn = document.getElementById('btn3');
 	var strviewdiv = document.getElementById('strviewdiv')
 	if (!_strviewon)
 	{
@@ -1001,7 +1001,7 @@ function keepfindmarker(id)
 function recherchergeocoderresphandler(results, status)
 {
 	var rechercherbtn = document.getElementById("btn1");
-	var strviewbtn = document.getElementById("btn3");
+	//var strviewbtn = document.getElementById("btn3");
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
@@ -1014,15 +1014,15 @@ function recherchergeocoderresphandler(results, status)
 		if (_strviewon) { 
 			_strviewser.getPanoramaByLocation(_mapmark.getPosition(), 30, showstrview);
 		}
-		else {
-			strviewbtn.disabled = false;
-		}
+		//else {
+		//	strviewbtn.disabled = false;
+		//}
 	} 
 	else 
 	{
 		updateobjaddr("Geocoder failed.", "#dd0000");
 		disableproximitysearch();
-		strviewbtn.disabled = true;
+		//strviewbtn.disabled = true;
 		rechercherbtn.disabled = true;
 	}
 }
@@ -1609,7 +1609,7 @@ function inputs_init()
 	var address_input = document.getElementById('address');
 	address_input.addEventListener("keyup", keyUpTextField, false);
 	document.getElementById('btn1').disabled = true; // Rechercher d'adresse
-	document.getElementById('btn3').disabled = true; // Visualiser
+	//document.getElementById('btn3').disabled = true; // Visualiser
 }
 
 function keyUpTextField(e) {

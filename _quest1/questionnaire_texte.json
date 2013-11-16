@@ -1,4 +1,9 @@
-var questionnaire_texte = [ 
+var questionnaire_texte = [
+	{
+		question_no : "A2",
+		question_html : "Le lieu sur la carte correspond-il bien à votre domicile actuel ?",
+		mode_dessin : "domver"
+	},
 	{ 
 		question_no : "45",
 		question_html : "Pouvez-vous indiquer le nom et l\’adresse de l\'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?",
