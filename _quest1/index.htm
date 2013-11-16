@@ -125,7 +125,7 @@
 		function locSaveResp()
 		{
 			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-				alert( "Response from MySql: " + xmlhttp.responseText );
+				//alert( "Response from MySql: " + xmlhttp.responseText );
 			}
 		}
 
@@ -172,6 +172,9 @@
 		var _searchradius = 2000;
 		var _qno;
 		var _urlParams = {};
+		var _qtip_text = "";
+		var _qtip_title = "Questionnaire ISIS";
+		
 		
 		var tripiniconpath = "media/mapmark.png";
 		
@@ -180,13 +183,22 @@
 			$('img[id="helpicon"]').each(function() {
 					$(this).qtip({
 						content: {
-							title: 'Questionnaire ISIS : Consigne',
-							//text: $(this).next('.tooltiptext'),
-							ajax: {
-								url: 'dummy.htm',
-								data: {},
-								once: false,
-								success : function(data, status) { this.set('content.text', _question.consigne); }
+							text: function(event, api) {
+								// This time, we return the deferred object, not a 'Loading...' message.
+								return $.ajax({
+									url: 'dummy.htm'
+								})
+								.then(function(content) {
+									// Return the content instead of using .set(). If you're wanting to select
+									// specific elements, see ther above section and adapt the `api.set` call
+									// into a `return elements` statement!
+									api.set('content.title', _qtip_title);
+									return _qtip_text
+								}, function(xhr, status, error) {
+									// Errors aren't handled by the library automatically, so
+									// you'll need to call .set() upon failure, just as before.
+									api.set('content.text', status + ': ' + error);
+								});
 							}
 						},
 						style: {
@@ -206,7 +218,7 @@
 			parseUrl();
 			if ( validerUrlParams() ) {
 				document.getElementById('dash').style.visibility = "visible";
-				popup_info_to_user(8000);
+				popup_info_to_user(_question.consigne, 8, 'Questionnaire ISIS: Consigne pour répondre à cette question');
 				mapinit();					
 				inputs_init();
 				if ( _mode == MODE_DESSIN.Polygone.name )
@@ -602,10 +614,14 @@
 			}
 		}
 		
-		function popup_info_to_user(delay)
+		function popup_info_to_user(info, delay_sec, title)
 		{
+			_qtip_text = info;
+			if ( title != null ) {
+				_qtip_title = title;
+			}
 			$("#helpicon").mouseover();
-			setTimeout("banishhelppopup();" , delay);
+			setTimeout("banishhelppopup();" , delay_sec*1000);
 		}
 		
 		function banishhelppopup()

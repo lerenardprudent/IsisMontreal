@@ -1125,6 +1125,7 @@ function makefavgeocoderresphandler(results, status)
 		mark.setMap(_map);
 		mark.setIcon(iconfile);
 		setobjcenter(mark);
+		mark.setVisible(true);
 				
 		google.maps.event.addListener(mark, 'dragend', function(e) 
 		{
@@ -1146,6 +1147,8 @@ function makefavgeocoderresphandler(results, status)
 			if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
 			showfavs();
 		});
+		
+		remercier_et_fermer();
 	} 
 	else 
 	{
@@ -1206,14 +1209,14 @@ function homeAddressLookupResp()
 			}
 		}
 		if (!ok) {
-			alert( "Impossible d'afficher votre lieu de domicile" );
+			//alert( "Impossible d'afficher votre lieu de domicile" );
 		}
 	}
 }
 
 function confirmeraddress()
 {
-	//_mapmark.setVisible(false);
+	_mapmark.setVisible(false);
 	if ( _qno == 'A2' ) {
 		saveHomeAddress(_mapmark);
 	}
@@ -1236,8 +1239,19 @@ function saveHomeAddress(marker)
 function saveHomeResp()
 {
 	if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-		alert( "Saved" );
+		remercier_et_fermer();
 	}
+}
+
+function remercier_et_fermer()
+{
+	popup_info_to_user("Retourner dans le questionnaire textuel", 8, "Merci!");
+	setTimeout("retournerdanslimesurvey();" , 3000);
+}
+
+function retournerdanslimesurvey()
+{
+	window.location.href = "https://www.isis-montreal.ca/questionnaire/fakeVeritas.php";
 }
 
 function setplacename()
