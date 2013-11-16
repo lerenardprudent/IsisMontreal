@@ -26,6 +26,10 @@ else if (strcmp($up,"dom") == 0)
 	$db_update_func = 'do_mysql_home_insert';
 	$table = $home_table;
 }
+else if (strcmp($up,"rl") == 0)  // Response lookup
+{
+	$db_update_func = 'do_mysql_resp_lookup';
+}
 else
 {
 	$db_update_func = 'do_mysql_insert';
@@ -58,7 +62,7 @@ function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($db,"veritas");
 	echo "ID: ".$id;
-	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, geom_point) values ('".$id."','".$q."','".$t."',GeomFromText('point(".$lat." ".$lon.")'))";
+	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, geom_point, addr_point) values ('".$id."','".$q."','".$t."',GeomFromText('point(".$lat." ".$lon.")'),'".$s."')";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
@@ -89,6 +93,19 @@ function do_mysql_home_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	  die('Error: ' . mysqli_error($db));
 	  }
 	echo "1 record added";
+}
+
+function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+	mysqli_select_db($db,"veritas");
+	$sql="SELECT astext(geom_point) as geom FROM ".$tbl." WHERE id_part = '".$id."' and num_quest='".$q."'";
+	$result = mysqli_query($db,$sql);
+
+	while($row = mysqli_fetch_array($result))
+	{
+		echo $row['geom'];
+		return;
+    }
+	return "";
 }
 
 function do_mysql_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {

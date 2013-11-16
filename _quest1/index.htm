@@ -110,22 +110,21 @@
 	<script type="text/javascript" src="objs/toolbar-js/jquery.toolbar.min.js"></script>
 	
 	<script type="text/javascript" src="objs/wtooltip_latest.js"></script>
-	<script>
-		var xmlhttp;
-				
+	<script>	
 		function saveLocationToDB(marker)
 		{
-			xmlhttp=new XMLHttpRequest();
-			xmlhttp.onreadystatechange=locSaveResp;
-			var php_url = "reponses_bdd.php?up=mo&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8);
-			xmlhttp.open("post",php_url,true);
-			xmlhttp.send();
+			_httpReqSaveLoc = new XMLHttpRequest();
+			_httpReqSaveLoc.onreadystatechange=locSaveResp;
+			var addr_shown = document.getElementById('address').value;
+			var php_url = "reponses_bdd.php?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + encodeURI(addr_shown);
+			_httpReqSaveLoc.open("post",php_url,true);
+			_httpReqSaveLoc.send();
 		}
 		
 		function locSaveResp()
 		{
-			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-				//alert( "Response from MySql: " + xmlhttp.responseText );
+			if (_httpReqSaveLoc.readyState==4 && _httpReqSaveLoc.status==200) {
+				// Put some handling here?
 			}
 		}
 
@@ -175,7 +174,7 @@
 		var _qtip_text = "";
 		var _qtip_title = "Questionnaire ISIS";
 		var _orig_home_addr_encoded;
-		
+		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc;
 		
 		var tripiniconpath = "media/mapmark.png";
 		
@@ -226,6 +225,16 @@
 				{
 					setdrawtools();
 					document.getElementById('drawicon').style.visibility = 'visible';
+				}
+				if (_qno == 'A2') {
+					_orig_home_addr_encoded = getUrlParam('addr');
+					var home_addr = decodeURI(_orig_home_addr_encoded);
+					showhomeaddress(home_addr);
+				}
+				else
+				{
+					puthomepin();
+					init_map_pin_if_question_already_answered(_qno);
 				}
 			}
 		});
@@ -683,15 +692,6 @@
 			}
 			if ( paramsValide ) {
 				content = "<b>Question " + quest_no + ": <i>" + question + "</i><b>";
-				if (_qno == 'A2') {
-					_orig_home_addr_encoded = getUrlParam('addr');
-					var home_addr = decodeURI(_orig_home_addr_encoded);
-					showhomeaddress(home_addr);
-				}
-				else
-				{
-					puthomepin();
-				}
 			}
 			else {
 				content = "<em><b>ERREUR: </b></em> " + content;
