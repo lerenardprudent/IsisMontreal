@@ -201,6 +201,7 @@
 			$("#helpicon").mouseover();
 			setTimeout("banishhelppopup();" , 8000);
 			
+			_geocoder = new google.maps.Geocoder();
 			parseUrl();
 			if ( validerUrlParams() ) {
 				document.getElementById('dash').style.visibility = "visible";
@@ -319,7 +320,7 @@
 						<input id="address" type="text" maxlength="150" style="width:450px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus" onpaste="document.getElementById('btn1').disabled=false;"/>&nbsp;
 						<button id="btn1" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Find and mark this address on the map." onclick="rechercheradresse()"></button>
 						<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
-						<button id="btn_confirm" type="button" value="U"  onclick="makefavbyaddr()" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
+						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
 						<img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/>
 						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
 						<div class="tooltiptext">
@@ -634,33 +635,39 @@
 					content = errMsg2;
 				}
 				else {
-					if (_qno == 'A2') {
-						var encoded_addr = getUrlParam('addr');
-						alert( "Decoded: " + decodeURI(encoded_addr));
+					var particip_id = getUrlParam('pid');
+					if ( particip_id == null ) {
+						content = "<b>Aucune identifiant de participant n'a été spécifiée</b>";
 					}
-					var langue = getUrlParam('langue');
-					if ( langue != null ) {
-						if (langue != 'fr' && langue != 'en' ) {
-							content = "<b>La langue '" + langue + "' n'est pas reconnue.</b>";
-						}
-						else {
-							_langue = langue;
+					else {
+						_id_participant = particip_id;	
+						var langue = getUrlParam('langue');
+						if ( langue != null ) {
+							if (langue != 'fr' && langue != 'en' ) {
+								content = "<b>La langue '" + langue + "' n'est pas reconnue.</b>";
+							}
+							else {
+								_langue = langue;
+							}
 						}
 					}
-					if ( content == null ) {
-						var particip_id = getUrlParam('pid');
-						if ( particip_id == null ) {
-							content = "<b>Aucune identifiant de participant n'a été spécifiée</b>";
-						}
-						else { // Si on y arrive, tout est beau
-							_id_participant = particip_id;
-							paramsValide = true;
-						}
+					
+					if ( content == null ) {  // Si on y arrive, tout est beau
+						paramsValide = true;
 					}
 				}
 			}
 			if ( paramsValide ) {
 				content = "<b>Question " + quest_no + ": <i>" + question + "</i><b>";
+				if (_qno == 'A2') {
+					var encoded_addr = getUrlParam('addr');
+					var home_addr = decodeURI(encoded_addr);
+					showhomeaddress(home_addr);
+				}
+				else
+				{
+					puthomepin();
+				}
 			}
 			else {
 				content = "<em><b>ERREUR: </b></em> " + content;

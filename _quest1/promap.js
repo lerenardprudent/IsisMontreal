@@ -23,7 +23,6 @@ function mapinit()
 	
 	_infowin = new google.maps.InfoWindow( { content:"Window" } );
 	google.maps.event.addListener(_infowin, 'closeclick', function(){ deselectfavs(); });
-	_geocoder = new google.maps.Geocoder();
 	
 	_strviewser = new google.maps.StreetViewService();
 	_strviewpano = new google.maps.StreetViewPanorama(document.getElementById('strviewdiv'));
@@ -998,6 +997,18 @@ function keepfindmarker(id)
 
 //---------------------------------------------------------------------
 
+function homelookupresphandler(results, status)
+{
+	if (status == google.maps.GeocoderStatus.OK)
+	{
+		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
+		_map.setCenter(results[res_index].geometry.location);
+		_mapmark.setPosition(results[res_index].geometry.location);
+		_mapmark.setVisible(true);
+		updateobjaddr(results[res_index].formatted_address);
+	}
+}
+
 function recherchergeocoderresphandler(results, status)
 {
 	var rechercherbtn = document.getElementById("btn1");
@@ -1158,14 +1169,74 @@ function rechercheradresse()
 		}
 	}
 }
-	
-function makefavbyaddr()
+
+function showhomeaddress(addr)
 {
-	_infowin.close();
-	_mapmark.setVisible(false);
-	var region_hint_to_geocoder = ",QC'";
-	var addr = document.getElementById("address").value + region_hint_to_geocoder;
-	_geocoder.geocode( { 'address': addr }, makefavgeocoderresphandler );
+	_geocoder.geocode( { 'address': addr }, homelookupresphandler );
+}
+
+function puthomepin()
+{
+	xmlhttp=new XMLHttpRequest();
+	xmlhttp.onreadystatechange=homeAddressLookupResp;
+	var php_url = "reponses_bdd.php?up=hl&id=" + _id_participant;
+	xmlhttp.open("get",php_url,true);
+	xmlhttp.send();
+}
+		
+function homeAddressLookupResp()
+{
+	var ok = false;
+	if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+		var point_resp = xmlhttp.responseText;
+		var expected_pfx = "POINT(";
+		var expected_sfx = ")";
+		if ( point_resp.substring(0,expected_pfx.length) == expected_pfx ) {
+			var tokens = point_resp.substring(expected_pfx.length).split(" ");
+			if (tokens.length == 2) {
+				var lat = tokens[0];
+				var lon = tokens[1].substring(0, tokens[1].length-1);
+				var homepos = new google.maps.LatLng(parseFloat(lat),parseFloat(lon));
+				homemark = new google.maps.Marker({ map:_map, position:homepos, draggable:false });
+				homemark.setMap(_map);
+				homemark.setIcon('media/home2.png');
+				homemark.setVisible(true);
+				ok = true;
+			}
+		}
+		if (!ok) {
+			alert( "Impossible d'afficher votre lieu de domicile" );
+		}
+	}
+}
+
+function confirmeraddress()
+{
+	//_mapmark.setVisible(false);
+	if ( _qno == 'A2' ) {
+		saveHomeAddress(_mapmark);
+	}
+	else {
+		var region_hint_to_geocoder = ",QC'";
+		var addr = document.getElementById("address").value + region_hint_to_geocoder;
+		_geocoder.geocode( { 'address': addr }, makefavgeocoderresphandler );
+	}
+}
+
+function saveHomeAddress(marker)
+{
+	xmlhttp=new XMLHttpRequest();
+	xmlhttp.onreadystatechange=saveHomeResp;
+	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8);
+	xmlhttp.open("post",php_url,true);
+	xmlhttp.send();
+}
+		
+function saveHomeResp()
+{
+	if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+		alert( "Saved" );
+	}
 }
 
 function setplacename()

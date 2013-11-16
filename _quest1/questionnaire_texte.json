@@ -2,7 +2,8 @@ var questionnaire_texte = [
 	{
 		question_no : "A2",
 		question_html : "Le lieu sur la carte correspond-il bien à votre domicile actuel ?",
-		mode_dessin : "domver"
+		mode_dessin : "domver",
+		consigne : "Si oui appuyez sur la coche.<br/><br/>Si non, merci de corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte. Lorsque le lieu sur la carte correspond à votre domicile actuel, appuyez sur Confirmer"
 	},
 	{ 
 		question_no : "45",

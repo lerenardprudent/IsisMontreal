@@ -7,11 +7,23 @@ $t = strval($_GET['t']);
 $lat = doubleval($_GET['lat']);
 $lon = doubleval($_GET['lon']);
 
-$table = 'rep_spat';
+$resp_table = 'rep_spat';
+$home_table = 'domiciles';
+$table = $resp_table;
 
-if (strcmp($up,"mo") == 0)  // Insert new
+if (strcmp($up,"hl") == 0)  // Home lookup
+{
+	$db_update_func = 'do_mysql_home_lookup';
+	$table = $home_table;
+}
+else if (strcmp($up,"mo") == 0)  // Insert new
 {
 	$db_update_func = 'do_mysql_modify';
+}
+else if (strcmp($up,"dom") == 0)
+{
+	$db_update_func = 'do_mysql_home_insert';
+	$table = $home_table;
 }
 else
 {
@@ -19,7 +31,7 @@ else
 }
 
 $db_con = connect();
-echo "Looking for ".$db_update_func."\n";
+//echo "Looking for ".$db_update_func."\n";
 if (!function_exists($db_update_func)) {
 	die('Update function not found!' . mysqli_error($db_con));
 }
@@ -46,6 +58,30 @@ function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon) {
 	mysqli_select_db($db,"veritas");
 	echo "ID: ".$id;
 	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, geom_point) values ('".$id."','".$q."','".$t."',GeomFromText('point(".$lat." ".$lon.")'))";
+	echo "Sending ".$sql."\n";
+	if (!mysqli_query($db,$sql))
+	  {
+	  die('Error: ' . mysqli_error($db));
+	  }
+	echo "1 record added";
+}
+
+function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$lat,$lon) {
+	mysqli_select_db($db,"veritas");
+	$sql="SELECT astext(geom) as geom FROM ".$tbl." WHERE id_part = '".$id."'";
+	$result = mysqli_query($db,$sql);
+
+	while($row = mysqli_fetch_array($result))
+	{
+		echo $row['geom'];
+    }
+}
+
+function do_mysql_home_insert($db,$tbl,$id,$q,$t,$lat,$lon) {
+	echo "\nInserting into ".$tbl."...\n";
+	mysqli_select_db($db,"veritas");
+	echo "ID: ".$id;
+	$sql="insert into ".$tbl." (id_part, geom) values ('".$id."',GeomFromText('point(".$lat." ".$lon.")'))";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
