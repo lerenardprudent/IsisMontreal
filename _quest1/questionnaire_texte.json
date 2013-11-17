@@ -1,20 +1,26 @@
 var questionnaire_texte = [
 	{
 		question_no : "A2",
-		question_html : "Le lieu sur la carte correspond-il bien à votre domicile actuel ?",
+		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile actuel ?",
+		question_an : "Is this where you reside ?",
 		mode_dessin : "domver",
-		consigne : "Si oui appuyez sur la coche.<br/><br/>Si non, merci de corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte. Lorsque le lieu sur la carte correspond à votre domicile actuel, appuyez sur Confirmer"
+		consigne_fr : "Si oui appuyez sur la coche.<br/><br/>Si non, merci de corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte. Lorsque le lieu sur la carte correspond à votre domicile actuel, appuyez sur Confirmer",
+		consigne_an : "If it is, then please confirm"
 	},
 	{ 
 		question_no : "45",
-		question_html : "Pouvez-vous indiquer le nom et l\’adresse de l\'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?",
+		question_fr : "Pouvez-vous indiquer le nom et l\’adresse de l\'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?",
+		question_an : "Some question in English",
 		mode_dessin : "point",
-		consigne : "Question AAA!"
+		consigne_fr : "Question AAA!",
+		consigne_an : "You know what you want to do"
 	},
 	{ 
 		question_no : "69",
-		question_html : "Pouvez-vous indiquer votre crème glacée préférée ?" ,
+		question_fr : "Pouvez-vous indiquer votre crème glacée préférée ?" ,
+		question_an : "What are you doing right now?" ,
 		mode_dessin : "polygone",
-		consigne : "Question BBB!"
+		consigne_fr : "Question BBB!",
+		consigne_an : "Translation is working!"
 	}
 ];

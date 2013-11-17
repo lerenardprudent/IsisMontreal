@@ -4,7 +4,7 @@
 <head>
 	
 	<meta charset="UTF-8">
-	<title>BEANZ STUDY - QUESTIONNAIRE #1</title>
+	<title>QUESTIONNAIRE ISIS</title>
 	
 	<link href = "http://fonts.googleapis.com/css?family=Open+Sans:400,300|Open+Sans+Condensed:300&subset=latin,latin-ext" rel = "stylesheet" type = "text/css" >
 	<!--
@@ -128,7 +128,38 @@
 	</script>
 	<script type="text/javascript">
 	
-	
+		var MODE_DESSIN = {
+		  Point : {value: 0, name: "point"}, 
+		  Polygone: {value: 1, name: "polygone"},
+		  DomicileVerification: {value: 2, name: "domver" }
+		};
+		var LANGUE = {
+			Français : { val: "fr" },
+			Anglais : { val: "an" }
+		};
+
+		var CODE_ERREUR = {
+			PasUneErreur : { nom : 'nonerr', val : 0 },
+			LangueErronnée : { nom : 'lang', val : 101 },
+			AucunIdParticipant : { nom : 'idpart', val : 102 },
+			AucunNumQuestion : { nom : 'numquest', val : 103 },
+			NumQuestionInvalide : { nom : 'numquestinv', val : 104 },
+			
+			Inconnu : { nom : 'inconnu', val : 999 }
+		};
+		
+		var _erreurs = { };
+		_erreurs[CODE_ERREUR.LangueErronnée.nom] = 		{ 'fr' : "Langue n'est pas reconnue", 
+														  'an': "Invalid language option" };
+		_erreurs[CODE_ERREUR.AucunIdParticipant.nom] = 	{ 'fr' : "Aucun identifiant de participant n'est fourni",
+														  'an': "No participant ID" };
+		_erreurs[CODE_ERREUR.AucunNumQuestion.nom] = 	{ 'fr' : "Le numéro de question n'est pas spécifié.",
+														  'an' : "The question number is missing." };
+		_erreurs[CODE_ERREUR.NumQuestionInvalide.nom] = { 'fr' : "Le numéro de question n'est pas valide.",
+														  'an' : "The question number is not valid." };
+		_erreurs[CODE_ERREUR.Inconnu.nom] = 			{ 'fr' : "Erreur inconnue",
+														  'an': "Unknown error" };
+			
 		
 		var _winbro;
 		var _winw;		//window width
@@ -163,7 +194,7 @@
 		var _maxfavs = 1;
 		var _mode;
 		var _question;
-		var _langue = 'fr';
+		var _langue = LANGUE.Français;
 		var _id_participant;
 		var _searchradius = 2000;
 		var _qno;
@@ -217,7 +248,16 @@
 			parseUrl();
 			if ( validerUrlParams() ) {
 				document.getElementById('dash').style.visibility = "visible";
-				popup_info_to_user(_question.consigne, 8, 'Questionnaire ISIS: Consigne pour répondre à cette question');
+				var consigne, titre;
+				if ( _langue == LANGUE.Français ) {
+					consigne = _question.consigne_fr;
+					titre = 'Questionnaire ISIS: Consigne pour répondre à cette question';
+				}
+				else {
+					consigne = _question.consigne_an;
+					titre = 'ISIS Survey: How to answer this question';
+				}
+				popup_info_to_user(consigne, 8, titre);
 				mapinit();					
 				inputs_init();
 				if ( _mode == MODE_DESSIN.Polygone.name )
@@ -528,12 +568,6 @@
 	</script>
 
 	<script type="text/javascript">	
-		var MODE_DESSIN = {
-		  Point : {value: 0, name: "point"}, 
-		  Polygone: {value: 1, name: "polygone"},
-		  DomicileVerification: {value: 2, name: "domver" }
-		};
-		
 		var resizeTimer = 0;
 		function resizebody()
 		{
@@ -601,62 +635,78 @@
 		{
 			var questionpanel = document.getElementById('questionpanel');
 			var style = "style=\"background-color:LightBlue; padding:5px\"";
-			var errMsg1 = "<b>Le numéro de question n'est pas spécifié.</b>";
-			var errMsg2 = "<b>Le numéro de question n'est pas valide.</b>";
 			var content = null;
 			var paramsValide = false;
 			var question = null;
+			var errCode = CODE_ERREUR.PasUneErreur;
 			
-			if ( getUrlParam('quest') == null ) {
-				content = errMsg1;
-			}
-			else {
-				var quest_no = getUrlParam('quest');
-				for ( var i = 0; i < questionnaire_texte.length; i++ ) {
-					quest = questionnaire_texte[i];
-					if (quest.question_no == quest_no) {
-						question = quest.question_html;
-						_question = quest;
-						_mode = quest.mode_dessin;
-						_qno = quest_no;
-						break;
-					}
+			var langue = getUrlParam('langue');
+			if ( langue != null ) {
+				if (langue == LANGUE.Français.val ) {
+					_langue = LANGUE.Français;
 				}
-				if ( question == null ) {
-					content = errMsg2;
+				else if (langue == LANGUE.Anglais.val ) {
+					_langue = LANGUE.Anglais;
 				}
 				else {
-					var particip_id = getUrlParam('pid');
-					if ( particip_id == null || particip_id == "") {
-						content = "<b>Aucune identifiant de participant n'a été spécifiée</b>";
-					}
-					else {
-						_id_participant = particip_id;	
-						var langue = getUrlParam('langue');
-						if ( langue != null ) {
-							if (langue != 'fr' && langue != 'en' ) {
-								content = "<b>La langue '" + langue + "' n'est pas reconnue.</b>";
+					errCode = CODE_ERREUR.LangueErronnée;
+				}
+			}
+			if ( errCode == CODE_ERREUR.PasUneErreur ) {
+				if ( getUrlParam('quest') == null ) {
+					errCode = CODE_ERREUR.AucuneNumQuestion;
+				}
+				else {
+					var quest_no = getUrlParam('quest');
+					for ( var i = 0; i < questionnaire_texte.length; i++ ) {
+						quest = questionnaire_texte[i];
+						if (quest.question_no == quest_no) {
+							if ( _langue == LANGUE.Anglais ) {
+								question = quest.question_an;
 							}
 							else {
-								_langue = langue;
+								question = quest.question_fr;
 							}
+							_question = quest;
+							_mode = quest.mode_dessin;
+							_qno = quest_no;
+							break;
 						}
 					}
-					
-					if ( content == null ) {  // Si on y arrive, tout est beau
-						paramsValide = true;
+					if ( question == null ) {
+						errCode = CODE_ERREUR.NumQuestionInvalide;
+					}
+					else {
+						var particip_id = getUrlParam('pid');
+						if ( particip_id == null || particip_id == "") {
+							errCode = CODE_ERREUR.AucunIdParticipant;
+						}
+						else {
+							_id_participant = particip_id;	
+						}
 					}
 				}
 			}
-			if ( paramsValide ) {
+			if ( errCode == CODE_ERREUR.PasUneErreur ) {
 				content = "<b>Question " + quest_no + ": <i>" + question + "</i><b>";
+				paramsValide = true;
 			}
 			else {
-				content = "<em><b>ERREUR: </b></em> " + content;
+				content = "<b><em>ERREUR:</em> " + returnErrorMsg(errCode) + "</b>";
 			}
 			questionpanel.innerHTML = "<p " + style + ">" + content + "</p>";
 			return paramsValide;
 		}
+		
+		function returnErrorMsg( errCode )
+		{
+			var err = errCode;
+			if ( !(err.nom in _erreurs) ) {
+				err = CODE_ERREUR.Inconnu;
+			}
+			return _erreurs[err.nom][_langue.val];
+		}
+		
 	</script>
 	
 </body>
