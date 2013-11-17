@@ -301,7 +301,7 @@
 						</div>-->
 						<br/>
 						<form>
-					<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" autocomplete="off"/>
+					<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
 					<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
 					<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
 					<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
@@ -480,7 +480,7 @@
 			<div id="panheadfinds">&nbsp;&nbsp;Résultats de la recherche...
 				<img id="findsclose" title="Effacer les résultats de la recherche" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="effacerlieux();" />
 			</div>
-			<button id="morefinds" type="button">Résultats supplémentaires...</button>
+			<button id="morefinds" type="button">Plus de résultats...</button>
 		</div>
 		<div id="favspanel">
 			<ol id="objects"></ol>

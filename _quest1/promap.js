@@ -1150,6 +1150,11 @@ function updateAddressText( newText )
 	_lastAddressText = newText;
 }
 
+function restoreAddressText()
+{
+	updateAddressText(_lastAddressText);
+}
+
 function geocodeAddress()
 {
 	var addr = getAddressText();
@@ -1181,6 +1186,7 @@ function geocoderResponse(results, status)
 		setMapPin(geocodedCoords, null, true);
 		_lastGeocodedAddrComps = results[res_index];
 		updateAddressText( results[res_index].formatted_address );
+		document.getElementById('radio_adresse').checked = "checked";
 		return geocodedCoords;
 	} 
 	else 
