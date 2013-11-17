@@ -117,7 +117,6 @@
 			_httpReqSaveLoc.onreadystatechange=locSaveResp;
 			var addr_shown = document.getElementById('address').value;
 			var php_url = "reponses_bdd.php?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + encodeURI(addr_shown);
-			alert(php_url);
 			_httpReqSaveLoc.open("post",php_url,true);
 			_httpReqSaveLoc.send();
 		}
@@ -174,7 +173,6 @@
 		var _urlParams = {};
 		var _qtip_text = "";
 		var _qtip_title = "Questionnaire ISIS";
-		var _orig_home_addr_encoded;
 		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc;
 		
 		var tripiniconpath = "media/mapmark.png";
@@ -228,9 +226,14 @@
 					document.getElementById('drawicon').style.visibility = 'visible';
 				}
 				if (_qno == 'A2') {
-					_orig_home_addr_encoded = getUrlParam('addr');
-					var home_addr = decodeURI(_orig_home_addr_encoded);
-					showhomeaddress(home_addr);
+					var home_addr_encoded = getUrlParam('addr');
+					if (home_addr_encoded != null) {
+						var home_addr = decodeURI(home_addr_encoded);
+						showhomeaddress(home_addr);
+					}
+					else {
+						puthomepin();
+					}
 				}
 				else
 				{

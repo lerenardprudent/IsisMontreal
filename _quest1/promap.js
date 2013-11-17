@@ -628,14 +628,6 @@ function updateobjaddr(str, clr)
 	{
 		fld.style.color = clr;
 	}
-	if (str == "")
-	{
-		fld.title = "Saisissez une adresse dans ce champ de texte";
-	}
-	else
-	{
-		fld.title = "Adresse actuellement indiquée par l'icône sur la carte";
-	}
 }
 
 function disableproximitysearch()
@@ -1191,11 +1183,22 @@ function homeAddressLookupResp()
 {
 	var ok = false;
 	if (_httpReqHomeLookup.readyState==4 && _httpReqHomeLookup.status==200) {
-		var point_resp = _httpReqHomeLookup.responseText;
-		var homepos = getLatLngFromText(point_resp);
-		if (homepos != null) {
-			setMapPin(homepos, 'media/home2.png', false);
-			ok = true;
+		var resp = _httpReqHomeLookup.responseText;
+		var tokens = resp.split("||");
+		if (tokens.length == 2) {
+			var point_resp = tokens[0];
+			var home_addr_text = tokens[1];
+			var homepos = getLatLngFromText(point_resp);
+			if (homepos != null) {
+				if (_qno == 'A2') {
+					setMapPin(homepos, null, true);
+				}
+				else {
+					setMapPin(homepos, 'media/home2.png', false);
+				}
+				updateobjaddr(home_addr_text);
+				ok = true;
+			}
 		}
 		if (!ok) {
 			//alert( "Impossible d'afficher votre lieu de domicile" );
@@ -1254,7 +1257,9 @@ function saveHomeAddress(marker)
 {
 	_httpReqSaveHome = new XMLHttpRequest();
 	_httpReqSaveHome.onreadystatechange=saveHomeResp;
-	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + _orig_home_addr_encoded;
+	var addr_shown = document.getElementById('address').value;
+	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + encodeURI(addr_shown);
+	alert(php_url);
 	_httpReqSaveHome.open("post",php_url,true);
 	_httpReqSaveHome.send();
 }

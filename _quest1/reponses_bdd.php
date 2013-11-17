@@ -23,7 +23,7 @@ else if (strcmp($up,"mo") == 0)  // Insert new
 }
 else if (strcmp($up,"dom") == 0)
 {
-	$db_update_func = 'do_mysql_home_insert';
+	$db_update_func = 'do_mysql_home_insert_or_modify';
 	$table = $home_table;
 }
 else if (strcmp($up,"rl") == 0)  // Response lookup
@@ -83,26 +83,42 @@ function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 
 function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	mysqli_select_db($db,"veritas");
-	$sql="SELECT astext(geom) as geom FROM ".$tbl." WHERE id_part = '".$id."'";
+	$sql="SELECT astext(geom) as geom, addr_texte FROM ".$tbl." WHERE id_part = '".$id."'";
 	$result = mysqli_query($db,$sql);
 
 	while($row = mysqli_fetch_array($result))
 	{
-		echo $row['geom'];
+		echo $row['geom']."||".$row['addr_texte'];
     }
 }
 
+function do_mysql_home_insert_or_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+	if (!do_mysql_home_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s))
+		do_mysql_home_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s);
+}
+
 function do_mysql_home_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
-	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($db,"veritas");
-	echo "ID: ".$id;
 	$sql="insert into ".$tbl." (id_part, geom, addr_texte) values ('".$id."',GeomFromText('point(".$lat." ".$lon.")'),'".$s."')";
+	echo "Sending ".$sql."\n";
+	if (!mysqli_query($db,$sql))
+	  {
+	  echo('Error: ' . mysqli_error($db));
+	  return false;
+	  }
+	echo "1 home record added";
+	return true;
+}
+
+function do_mysql_home_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+	mysqli_select_db($db,"veritas");
+	$sql="update ".$tbl." set geom=GeomFromText('point(".$lat." ".$lon.")'),addr_texte='".$s."' where id_part='".$id."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
 	  die('Error: ' . mysqli_error($db));
 	  }
-	echo "1 record added";
+	echo "1 home record modified";
 }
 
 function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
@@ -112,7 +128,7 @@ function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 
 	while($row = mysqli_fetch_array($result))
 	{
-		echo $row['geom'];
+		echo "GEOM:[".$row['geom']."] ADDR:[".$row['addr_texte']."]";
 		return;
     }
 	return "";
