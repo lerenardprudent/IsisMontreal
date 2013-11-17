@@ -994,6 +994,7 @@ function showhomegeocoderesphandler(results, status)
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
+		_lastGeocodedAddr = results[res_index];
 		setMapPin(results[res_index].geometry.location, null, false);
 		//_map.setCenter(results[res_index].geometry.location);
 		//_mapmark.setPosition(results[res_index].geometry.location);
@@ -1009,9 +1010,11 @@ function recherchergeocoderresphandler(results, status)
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
-		_map.setCenter(results[res_index].geometry.location);
-		_mapmark.setPosition(results[res_index].geometry.location);
-		_mapmark.setVisible(true);
+		//_map.setCenter(results[res_index].geometry.location);
+		//_mapmark.setPosition(results[res_index].geometry.location);
+		//_mapmark.setVisible(true);
+		setMapPin(results[res_index].geometry.location, null, true);
+		_lastGeocodedAddr = results[res_index];
 		updateobjaddr(results[res_index].formatted_address);
 		enableproximitysearch();
 		rechercherbtn.disabled = false;
@@ -1191,7 +1194,8 @@ function homeAddressLookupResp()
 			var homepos = getLatLngFromText(point_resp);
 			if (homepos != null) {
 				if (_qno == 'A2') {
-					setMapPin(homepos, null, true);
+					//setMapPin(homepos, null, true);
+					updateaddress(homepos);
 				}
 				else {
 					setMapPin(homepos, 'media/home2.png', false);
@@ -1220,6 +1224,147 @@ function getLatLngFromText(text)
 	return null;
 }
 
+function check_if_marker_in_rmm()
+{
+	var addr_comp = _lastGeocodedAddr.address_components;
+	var municipalities = [
+    "Baie-D'Urfé",
+    "Beaconsfield",
+    "Beauharnois",
+    "Beloeil",
+    "Blainville",
+    "Bois-des-Filion",
+    "Boisbriand",
+    "Boucherville",
+    "Brossard",
+    "Candiac",
+    "Carignan",
+    "Chambly",
+    "Charlemagne",
+    "Châteauguay",
+    "Coteau-du-Lac",
+    "Côte-Saint-Luc",
+    "Delson",
+    "Deux-Montagnes",
+    "Dollard-Des Ormeaux",
+    "Dorval",
+    "Gore",
+    "Hampstead",
+    "Hudson",
+    "Kahnawake",
+    "Kanesatake",
+    "Kirkland",
+    "L'Assomption",
+    "L'Epiphanie",
+    "L'Île-Cadieux",
+    "L'Île-Dorval",
+    "L'Île-Perrot",
+    "La Prairie",
+    "Laval",
+    "Lavaltrie",
+    "Les Coteaux",
+    "Les Cèdres",
+    "Longueuil",
+    "Lorraine",
+    "Léry",
+    "Mascouche",
+    "McMasterville",
+    "Mercier",
+    "Mirabel",
+    "Mont-Royal",
+    "Mont-Saint-Hilaire",
+    "Montréal",
+    "Montréal-Est",
+    "Montréal-Ouest",
+    "Notre-Dame-de-l'Île-Perrot",
+    "Oka",
+    "Otterburn Park",
+    "Pincourt",
+    "Pointe-Calumet",
+    "Pointe-Claire",
+    "Pointe-des-Cascades",
+    "Repentigny",
+    "Richelieu",
+    "Rosemère",
+    "Saint-Amable",
+    "Saint-Basile-le-Grand",
+    "Saint-Bruno-de-Montarville",
+    "Saint-Colomban",
+    "Saint-Constant",
+    "Saint-Eustache",
+    "Saint-Isidore",
+    "Saint-Joseph-du-Lac",
+    "Saint-Jérôme",
+    "Saint-Lambert",
+    "Saint-Lazare",
+    "Saint-Mathias-sur-Richelieu",
+    "Saint-Mathieu",
+    "Saint-Mathieu-de-Beloeil",
+    "Saint-Philippe",
+    "Saint-Placide",
+    "Saint-Sulpice",
+    "Saint-Zotique",
+    "Sainte-Anne-de-Bellevue",
+    "Sainte-Anne-des-Plaines",
+    "Sainte-Catherine",
+    "Sainte-Julie",
+    "Sainte-Marthe-sur-le-Lac",
+    "Sainte-Thérèse",
+    "Senneville",
+    "Terrasse-Vaudreuil",
+    "Terrebonne",
+    "Varennes",
+    "Vaudreuil-Dorion",
+    "Vaudreuil-sur-le-Lac",
+    "Verchères",
+    "Westmount"];
+
+	var types="";
+	var short_names = [];
+    for (var j=0; j<addr_comp.length; j++) {
+        for (var k=0;k<addr_comp[j].types.length; k++) {
+			if ( addr_comp[j].types[k] == "locality" || addr_comp[j].types[k] == "political") {
+				short_names.push(addr_comp[j].short_name);
+			}
+        }
+    }
+	
+	tidy_accents = function(s){
+                        var r=s.toLowerCase();
+                        r = r.replace(new RegExp("\\s", 'g'),"");
+                        r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
+                        r = r.replace(new RegExp("æ", 'g'),"ae");
+                        r = r.replace(new RegExp("ç", 'g'),"c");
+                        r = r.replace(new RegExp("[èéêë]", 'g'),"e");
+                        r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
+                        r = r.replace(new RegExp("ñ", 'g'),"n");                            
+                        r = r.replace(new RegExp("[òóôõö]", 'g'),"o");
+                        r = r.replace(new RegExp("œ", 'g'),"oe");
+                        r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
+                        r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
+                        r = r.replace(new RegExp("\\W", 'g'),"");
+                        return r;
+    };
+	
+	var found_match = false;
+	var x, y;
+	for (x=0; x < short_names.length && !found_match; x++)
+		for (y=0; y < municipalities.length; y++) {
+			if (tidy_accents(short_names[x]) == tidy_accents(municipalities[y]) ){
+				found_match = true;
+				break;
+			}
+		}
+
+/*		
+	if (found_match)
+		alert("YES! " + short_names[x] + " " + municipalities[y] + " " + x);
+	else
+		alert('NO');
+		*/
+	return found_match;
+}
+
 function setMapPin(latlng, iconPath, canDrag)
 {
 	var pin;
@@ -1241,12 +1386,16 @@ function confirmeraddress()
 	_mapmark.setVisible(false);
 	if ( _qno == 'A2' ) {
 		saveHomeAddress(_mapmark);
+		var inRMM = check_if_marker_in_rmm();
+		if (!inRMM) {
+			remercier_et_fermer("Vous n'êtes pas éligible!", "Merci quand même");
+		}
 		setMapPin(_mapmark.getPosition(), 'media/home2.png', false);
 	}
 	else {
 		saveLocationToDB(_mapmark);
 		setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false);
-		remercier_et_fermer();
+		remercier_et_fermer("Retourner dans le questionnaire textuel", "Merci!");
 		//var region_hint_to_geocoder = ",QC'";
 		//var addr = document.getElementById("address").value + region_hint_to_geocoder;
 		//_geocoder.geocode( { 'address': addr }, makefavgeocoderresphandler );
@@ -1259,7 +1408,6 @@ function saveHomeAddress(marker)
 	_httpReqSaveHome.onreadystatechange=saveHomeResp;
 	var addr_shown = document.getElementById('address').value;
 	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + encodeURI(addr_shown);
-	alert(php_url);
 	_httpReqSaveHome.open("post",php_url,true);
 	_httpReqSaveHome.send();
 }
@@ -1267,13 +1415,13 @@ function saveHomeAddress(marker)
 function saveHomeResp()
 {
 	if (_httpReqSaveHome.readyState==4 && _httpReqSaveHome.status==200) {
-		remercier_et_fermer();
+		remercier_et_fermer("Retourner dans le questionnaire textuel", "L'emplacement de votre domicile est enregistré");
 	}
 }
 
-function remercier_et_fermer()
+function remercier_et_fermer(titre, texte)
 {
-	popup_info_to_user("Retourner dans le questionnaire textuel", 8, "Merci!");
+	popup_info_to_user(texte, 10, titre);
 	setTimeout("retournerdanslimesurvey();" , 3000);
 }
 

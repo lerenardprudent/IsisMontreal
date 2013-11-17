@@ -77,9 +77,6 @@
 		#btn9 { position:absolute; top:8px; left:1860px; width:14px; height:14px;  background-repeat:no-repeat; background-position:-1px -1px; }
 		#btn10 { position:absolute; top:8px; left:1880px; width:14px; height:14px;  background-repeat:no-repeat; background-position:-1px -1px; }
 	</style>
-	<script type="text/javascript">AC_FL_RunContent = 0;</script>
-	<script type="text/javascript" src="AC_RunActiveContent.js"></script>
-	
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4qnbkOe5X7pll7qyIFtkeLzjzkbPnAGo&amp;libraries=places,drawing,geometry,panoramio,weather&region=ca&sensor=false"></script>
 
 	<script type="text/javascript" src="questionnaire_texte.json"></script>
@@ -174,6 +171,7 @@
 		var _qtip_text = "";
 		var _qtip_title = "Questionnaire ISIS";
 		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc;
+		var _lastGeocodedAddr = null;
 		
 		var tripiniconpath = "media/mapmark.png";
 		
@@ -279,42 +277,6 @@
 
 <body onresize="resizebody();">
 	<div id="mainswf">
-		<script type="text/javascript">
-			if (AC_FL_RunContent == 0) {
-				alert("This page requires AC_RunActiveContent.js.");
-			} else {
-				AC_FL_RunContent(
-					'codebase', 'http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0',
-					'width', '100%',
-					'height', '100%',
-					'src', 'smapp',
-					'quality', 'high',
-					'pluginspage', 'http://www.macromedia.com/go/getflashplayer',
-					'align', 'middle',
-					'play', 'true',
-					'loop', 'true',
-					'scale', 'showall',
-					'wmode', 'transparent',
-					'devicefont', 'false',
-					'id', 'smapp',
-					'bgcolor', '#f2f2f4',
-					'name', 'smapp',
-					'menu', 'true',
-					'allowFullScreen', 'false',
-					'allowScriptAccess','sameDomain',
-					'movie', 'smapp',
-					'salign', 'lt'
-					); //end AC code
-			}
-		</script>
-		<noscript>
-			<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="1000" height="550" id="smapp" align="middle">
-			<param name="allowScriptAccess" value="sameDomain" />
-			<param name="allowFullScreen" value="false" />
-			<param name="movie" value="smapp.swf" /><param name="quality" value="high" /><param name="bgcolor" value="#f2f2f4" />
-			<embed src="smapp.swf" wmode="transparent" quality="high" bgcolor="#f2f2f4" width="1000" height="550" name="smapp" align="middle" allowScriptAccess="sameDomain" allowFullScreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
-			</object>
-		</noscript>
 	</div>
 	
 	<!-- PAGE LAYOUT STARTS HERE -->
