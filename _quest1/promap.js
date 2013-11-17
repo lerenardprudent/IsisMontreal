@@ -12,6 +12,7 @@ function mapinit()
           scaleControl: true,
           streetViewControl: false,
 		  mapTypeControl: false,
+		  draggableCursor: 'default',
           mapTypeId: google.maps.MapTypeId.ROADMAP		//HYBRID, SATELLITE, TERRAIN
     }	  
 	_map = new google.maps.Map(document.getElementById('mapdiv'), mapOptions);	  
@@ -1895,13 +1896,18 @@ function existingRespHandler()
 {
 	var ok = false;
 	if (_httpReqRespLookup.readyState==4 && _httpReqRespLookup.status==200) {
-		resp = _httpReqRespLookup.responseText;
-		if ( resp != "" ) {
-			var locInDb = getLatLngFromText(resp);
-			if ( locInDb != null ) {
-				_mapmark.setPosition(locInDb);
-				_mapmark.setVisible(true);
-				_map.setCenter(locInDb);
+		var resp = _httpReqRespLookup.responseText;
+		var tokens = resp.split("||");
+		if (tokens.length == 2) {
+			var point_resp = tokens[0];
+			var loc_addr_text = tokens[1];
+			var locpos = getLatLngFromText(point_resp);
+			if (locpos != null) {
+				updateaddress(locpos); //To initialise geocoder
+				setMapPin(locpos, null, true);
+				updateobjaddr(loc_addr_text);
+				ok = true;
+				_map.setOptions({ draggableCursor: 'default' });
 			}
 		}
 	}

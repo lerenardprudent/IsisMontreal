@@ -123,12 +123,12 @@ function do_mysql_home_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 
 function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	mysqli_select_db($db,"veritas");
-	$sql="SELECT astext(geom_point) as geom FROM ".$tbl." WHERE id_part = '".$id."' and num_quest='".$q."'";
+	$sql="SELECT astext(geom_point) as geom, addr_point FROM ".$tbl." WHERE id_part = '".$id."' and num_quest='".$q."'";
 	$result = mysqli_query($db,$sql);
 
 	while($row = mysqli_fetch_array($result))
 	{
-		echo "GEOM:[".$row['geom']."] ADDR:[".$row['addr_texte']."]";
+		echo $row['geom']."||".$row['addr_point'];
 		return;
     }
 	return "";
