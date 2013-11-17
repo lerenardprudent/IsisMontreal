@@ -117,6 +117,7 @@
 			_httpReqSaveLoc.onreadystatechange=locSaveResp;
 			var addr_shown = document.getElementById('address').value;
 			var php_url = "reponses_bdd.php?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + encodeURI(addr_shown);
+			alert(php_url);
 			_httpReqSaveLoc.open("post",php_url,true);
 			_httpReqSaveLoc.send();
 		}

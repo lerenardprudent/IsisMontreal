@@ -30,9 +30,12 @@ else if (strcmp($up,"rl") == 0)  // Response lookup
 {
 	$db_update_func = 'do_mysql_resp_lookup';
 }
-else
+else if (strcmp($up,"in") == 0)  // Response lookup
 {
-	$db_update_func = 'do_mysql_insert';
+	$db_update_func = 'do_mysql_insert_or_modify';
+}
+else {
+	die("Could not recognise update type");
 }
 
 $db_con = connect();
@@ -58,6 +61,11 @@ function createNewTable($table_name)
 	//CREATE TABLE `rep_spat` (`id_part` varchar(8) collate utf8_unicode_ci NOT NULL,`num_quest` varchar(3) collate utf8_unicode_ci NOT NULL,`type_rep` varchar(8) collate utf8_unicode_ci NOT NULL,`nom` varchar(80) collate utf8_unicode_ci NOT NULL, `geom_point` point default NULL,`geom_poly` polygon default NULL,PRIMARY KEY  (`id_part`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tableau pour les réponses spatiales au questionnaire ISIS'
 }
 
+function do_mysql_insert_or_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+	if (!do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s))
+		do_mysql_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s);
+}
+
 function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($db,"veritas");
@@ -66,9 +74,11 @@ function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
-	  die('Error: ' . mysqli_error($db));
+	  echo('Error: ' . mysqli_error($db));
+	  return false;
 	  }
 	echo "1 record added";
+	return true;
 }
 
 function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
@@ -110,7 +120,7 @@ function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 
 function do_mysql_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	mysqli_select_db($db,"veritas");
-	$sql="update ".$tbl." set num_quest='".$q."',type_rep='".$t."',geom_point=GeomFromText('point(".$lat." ".$lon.")') where id_part='".$id."'";
+	$sql="update ".$tbl." set num_quest='".$q."',type_rep='".$t."',addr_point='".$s."',geom_point=GeomFromText('point(".$lat." ".$lon.")') where id_part='".$id."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {

@@ -997,14 +997,15 @@ function keepfindmarker(id)
 
 //---------------------------------------------------------------------
 
-function homelookupresphandler(results, status)
+function showhomegeocoderesphandler(results, status)
 {
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
-		_map.setCenter(results[res_index].geometry.location);
-		_mapmark.setPosition(results[res_index].geometry.location);
-		_mapmark.setVisible(true);
+		setMapPin(results[res_index].geometry.location, null, false);
+		//_map.setCenter(results[res_index].geometry.location);
+		//_mapmark.setPosition(results[res_index].geometry.location);
+		//_mapmark.setVisible(true);
 		updateobjaddr(results[res_index].formatted_address);
 	}
 }
@@ -1174,7 +1175,7 @@ function rechercheradresse()
 
 function showhomeaddress(addr)
 {
-	_geocoder.geocode( { 'address': addr }, homelookupresphandler );
+	_geocoder.geocode( { 'address': addr }, showhomegeocoderesphandler );
 }
 
 function puthomepin()
@@ -1193,7 +1194,7 @@ function homeAddressLookupResp()
 		var point_resp = _httpReqHomeLookup.responseText;
 		var homepos = getLatLngFromText(point_resp);
 		if (homepos != null) {
-			setMapPin(homepos, 'media/home2.png');
+			setMapPin(homepos, 'media/home2.png', false);
 			ok = true;
 		}
 		if (!ok) {
@@ -1216,11 +1217,18 @@ function getLatLngFromText(text)
 	return null;
 }
 
-function setMapPin(latlng, iconPath)
+function setMapPin(latlng, iconPath, canDrag)
 {
-	var pin = new google.maps.Marker({ map:_map, position:latlng, draggable:false });
-	pin.setMap(_map);
-	pin.setIcon(iconPath);
+	var pin;
+	if ( iconPath != null ) {
+		pin = new google.maps.Marker({ map:_map, position:latlng, draggable:canDrag });
+		pin.setMap(_map);
+		pin.setIcon(iconPath);
+	}
+	else {
+		pin = _mapmark;
+		pin.setPosition(latlng);
+	}
 	pin.setVisible(true);
 	_map.setCenter(latlng);
 }
@@ -1230,11 +1238,11 @@ function confirmeraddress()
 	_mapmark.setVisible(false);
 	if ( _qno == 'A2' ) {
 		saveHomeAddress(_mapmark);
-		setMapPin(_mapmark.getPosition(), 'media/home2.png');
+		setMapPin(_mapmark.getPosition(), 'media/home2.png', false);
 	}
 	else {
 		saveLocationToDB(_mapmark);
-		setMapPin(_mapmark.getPosition());
+		setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false);
 		remercier_et_fermer();
 		//var region_hint_to_geocoder = ",QC'";
 		//var addr = document.getElementById("address").value + region_hint_to_geocoder;
