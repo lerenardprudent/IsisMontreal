@@ -1152,13 +1152,88 @@ function makefavgeocoderresphandler(results, status)
 	}
 }
 
+function getAddressText()
+{
+	return document.getElementById("address").value;
+}
+
+function updateAddressText( newText )
+{
+	document.getElementById("address").value = newText;
+}
+
+function geocodeAddress()
+{
+	var addr = getAddressText();
+	if ( addr.length > 0 ) {
+		var addrWithRegion =  addr + ",QC";
+		_geocoder.geocode( { 'address': addrWithRegion }, geocoderResponseCenter );
+	}
+}
+
+function geocodeMarker(lat_lng, centerOnMarker)
+{
+	var respHandler;
+	if (typeof(centerOnMarker)==='undefined') {
+		respHandler = geocoderResponse;
+	}
+	else {
+		respHandler = geocoderResponseCenter;
+	}
+	_geocoder.geocode( { latLng:lat_lng}, respHandler );
+	
+}
+
+function geocoderResponse(results, status)
+{
+	if (status == google.maps.GeocoderStatus.OK)
+	{
+		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
+		geocodedCoords = results[res_index].geometry.location;
+		setMapPin(geocodedCoords, null, true);
+		_lastGeocodedAddr = results[res_index];
+		updateAddressText( results[res_index].formatted_address );
+		return geocodedCoords;
+	} 
+	else 
+	{
+		updateobjaddr("Geocoder failed.", "#dd0000");
+		return null;
+	}
+}
+
+function geocoderResponseCenter(results, status)
+{
+	coords = geocoderResponse(results, status);
+	if ( coords != null ) {
+		_map.setCenter(coords);
+	}
+}
+
+function findCurrentAddressMunicipality()
+{
+	var addr = getAddressText();
+	if ( addr.length > 0 ) {
+		_geocoder.geocode( { 'address': addr }, geocoderMunicipalityResponse );
+	}
+}
+
+function geocoderMunicipalityResponse(results, status)
+{
+	if (status == google.maps.GeocoderStatus.OK)
+	{
+		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
+		_lastGeocodedAddr = results[res_index];
+	}
+}
+
 function rechercheradresse()
 {
 	_infowin.close();
 	_mapmark.setVisible(false);
 	var addr = document.getElementById("address").value;
 	if ( addr.length > 0 ) {
-		var region_hint_to_geocoder = ",QC";		
+		var region_hint_to_geocoder = ",QC";
 		var addr_hack =  addr + region_hint_to_geocoder;
 		if (document.getElementById("radio_nom").checked) {
 			trouvercommerce();
@@ -1169,9 +1244,9 @@ function rechercheradresse()
 	}
 }
 
-function showhomeaddress(addr)
+function geocodeHomeAddress(homeAddr)
 {
-	_geocoder.geocode( { 'address': addr }, showhomegeocoderesphandler );
+	_geocoder.geocode( { 'address': homeAddr }, geocoderResponseCenter );
 }
 
 function puthomepin()
@@ -1195,13 +1270,13 @@ function homeAddressLookupResp()
 			var homepos = getLatLngFromText(point_resp);
 			if (homepos != null) {
 				if (_qno == 'A2') {
-					//setMapPin(homepos, null, true);
-					updateaddress(homepos);
+					setMapPin(homepos, null, true, true);
+					updateAddressText(home_addr_text);
+					findCurrentAddressMunicipality();
 				}
 				else {
-					setMapPin(homepos, 'media/home2.png', false);
+					setMapPin(homepos, 'media/home2.png', false, true);
 				}
-				updateobjaddr(home_addr_text);
 				ok = true;
 			}
 		}
@@ -1366,7 +1441,7 @@ function check_if_marker_in_rmm()
 	return found_match;
 }
 
-function setMapPin(latlng, iconPath, canDrag)
+function setMapPin(latlng, iconPath, canDrag, centerOnPin)
 {
 	var pin;
 	if ( iconPath != null ) {
@@ -1379,7 +1454,9 @@ function setMapPin(latlng, iconPath, canDrag)
 		pin.setPosition(latlng);
 	}
 	pin.setVisible(true);
-	_map.setCenter(latlng);
+	if (!(typeof(centerOnPin)==='undefined')) {
+		_map.setCenter(latlng);
+	}
 }
 
 function confirmeraddress()
@@ -1391,7 +1468,10 @@ function confirmeraddress()
 		if (!inRMM) {
 			remercier_et_fermer("Vous n'êtes pas éligible!", "Merci quand même");
 		}
-		setMapPin(_mapmark.getPosition(), 'media/home2.png', false);
+		else {
+			setMapPin(_mapmark.getPosition(), 'media/home2.png', false);
+			remercier_et_fermer("Retourner dans le questionnaire textuel", "L'emplacement de votre domicile est enregistré");
+		}
 	}
 	else {
 		saveLocationToDB(_mapmark);
@@ -1416,7 +1496,7 @@ function saveHomeAddress(marker)
 function saveHomeResp()
 {
 	if (_httpReqSaveHome.readyState==4 && _httpReqSaveHome.status==200) {
-		remercier_et_fermer("Retourner dans le questionnaire textuel", "L'emplacement de votre domicile est enregistré");
+		// Handling ?
 	}
 }
 
@@ -1817,15 +1897,17 @@ event position_changed onpanorama
 
 function mapclickhandler(e) 
 { 
-	deselectfavs();
-	_infowin.close();
-	updateaddress(e.latLng);
+	//deselectfavs();
+	//_infowin.close();
+	//updateaddress(e.latLng);
+	geocodeMarker(e.latLng);
 }
 
-function dragmarkerhandler()
+function dragmarkerhandler(e)
 {
-	setobjcenter(this);
-	updateaddress(_mapmark.getPosition());
+	//setobjcenter(this);
+	//updateaddress(_mapmark.getPosition());
+	geocodeMarker(e.latLng, true);
 }
 
 function strvwposchangehandler() {
@@ -1903,11 +1985,10 @@ function existingRespHandler()
 			var loc_addr_text = tokens[1];
 			var locpos = getLatLngFromText(point_resp);
 			if (locpos != null) {
-				updateaddress(locpos); //To initialise geocoder
-				setMapPin(locpos, null, true);
-				updateobjaddr(loc_addr_text);
+				setMapPin(locpos, null, true, true);
+				updateAddressText(loc_addr_text);
+				findCurrentAddressMunicipality();
 				ok = true;
-				_map.setOptions({ draggableCursor: 'default' });
 			}
 		}
 	}

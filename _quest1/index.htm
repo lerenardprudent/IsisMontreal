@@ -227,7 +227,7 @@
 					var home_addr_encoded = getUrlParam('addr');
 					if (home_addr_encoded != null) {
 						var home_addr = decodeURI(home_addr_encoded);
-						showhomeaddress(home_addr);
+						geocodeHomeAddress(home_addr);
 					}
 					else {
 						puthomepin();
@@ -307,7 +307,7 @@
 					</td>
 					<td>
 						<input id="address" type="text" maxlength="150" style="width:450px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus" onpaste="document.getElementById('btn1').disabled=false;"/>&nbsp;
-						<button id="btn1" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Find and mark this address on the map." onclick="rechercheradresse()"></button>
+						<button id="btn1" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Find and mark this address on the map." onclick="geocodeAddress()"></button>
 						<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
 						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
 						<img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/>
@@ -586,7 +586,7 @@
 			if (!e) e = window.event;
 			var keyCode = e.keyCode || e.which;
 			if (keyCode == '13'){
-				rechercheradresse();
+				geocodeAddress();
 			}
 		}
 		
