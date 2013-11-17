@@ -171,7 +171,8 @@
 		var _qtip_text = "";
 		var _qtip_title = "Questionnaire ISIS";
 		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc;
-		var _lastGeocodedAddr = null;
+		var _lastGeocodedAddrComps = null;
+		var _lastAddressText = null;
 		
 		var tripiniconpath = "media/mapmark.png";
 		
@@ -207,7 +208,7 @@
 			$("#address").keyup( function(event)
 			{
 				if (event.keyCode == 13) {
-					$("#btn1").click();
+					$("#search_btn").click();
 				}
 			});
 			
@@ -254,23 +255,6 @@
 		String.prototype.ltrim = function() { return this.replace(/^\s+/,""); }
 		String.prototype.rtrim = function() { return this.replace(/\s+$/,""); }
 		
-		function getFlashMovieObject()		//external interface
-		{
-			var movieName = "smapp";
-			if(document.embeds[movieName]){return document.embeds[movieName]; }
-			if(window.document[movieName]){	return window.document[movieName]; }
-			if(window[movieName]){ return window[movieName]; }
-			if(document[movieName]){ return document[movieName]; }
-			return null;
-		}
-		
-		function send2flash(par)		//external interface
-		{
-			console.log("send2flash-promap: " + par)
-
-			var fo = getFlashMovieObject();
-			if(fo != null){fo.callbackjs(par);}			//calls map2quest in flash (inc_quest)
-		}
 	</script>
 	
 </head>
@@ -306,8 +290,8 @@
 						<span id="infolab1"><b>Recherche:&nbsp;&nbsp;&nbsp;</b></span>
 					</td>
 					<td>
-						<input id="address" type="text" maxlength="150" style="width:450px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus" onpaste="document.getElementById('btn1').disabled=false;"/>&nbsp;
-						<button id="btn1" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Find and mark this address on the map." onclick="geocodeAddress()"></button>
+						<input id="address" type="text" maxlength="150" style="width:450px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
+						<button id="search_btn" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
 						<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
 						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
 						<img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/>
@@ -318,9 +302,9 @@
 						<br/>
 						<form>
 					<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" autocomplete="off"/>
-					<label  for="radio_adresse" class="inline-radio">Adresse exacte&nbsp;&nbsp;</label>
-					<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" autocomplete="off" onclick="updateobjaddr(''); document.getElementById('address').focus();"/>
-					<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés associés (recherche à proximité du marqueur)</label>
+					<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
+					<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
+					<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
 				</form>
 					</td>
 				</tr>
@@ -586,7 +570,7 @@
 			if (!e) e = window.event;
 			var keyCode = e.keyCode || e.which;
 			if (keyCode == '13'){
-				geocodeAddress();
+				rechercher();
 			}
 		}
 		
@@ -603,6 +587,13 @@
 		function banishhelppopup()
 		{
 			$("#helpicon").mouseleave();
+		}
+		
+		function clearAddressField()
+		{
+			var addrField = document.getElementById("address");
+			addrField.value = "";
+			addrField.focus();
 		}
 		
 		function validerUrlParams()
@@ -635,7 +626,7 @@
 				}
 				else {
 					var particip_id = getUrlParam('pid');
-					if ( particip_id == null ) {
+					if ( particip_id == null || particip_id == "") {
 						content = "<b>Aucune identifiant de participant n'a été spécifiée</b>";
 					}
 					else {

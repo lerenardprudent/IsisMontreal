@@ -33,6 +33,7 @@ function mapinit()
 	google.maps.event.addListener(_strviewpano, 'position_changed', strvwposchangehandler);
 	
 	fillmapdata(_mapdata);
+	_serv = new google.maps.places.PlacesService(_map);
 //	updateobjaddr("");
 	
 	try { onwindowsize(); } catch (er) { }	
@@ -703,31 +704,17 @@ function clickEditDel()
 
 //---------------------------------------------------------------------
 
-function trouvercommerce()
+function radialPlaceSearch()
 {
-	var request;
-	clearfindall();
-	clearfindpanel();
-	//document.getElementById('places').innerHTML = "";
-	document.getElementById('findspanel').style.visibility = "hidden";
-	document.getElementById('favspanel').style.visibility = "hidden";
-	
-	var gclat = _map.getCenter().lat();
-	var gclng = _map.getCenter().lng();
-	var lc = new google.maps.LatLng(gclat, gclng);
-	
-	var lc = _mapmark.getPosition();
-	//var typ = document.getElementById('findtype').value;
-	//var rads =  parseInt(document.getElementById('findrads').value);
-	var kwds = document.getElementById('address').value.split(' ');
+	var kwds = getAddressText().split(' ');
 	if(kwds.length > 0)
 	{
-		request = { location:lc, radius:_searchradius, keyword:kwds };
-		_serv = new google.maps.places.PlacesService(_map);
-		_serv.nearbySearch(request, callback);
-	}
-	else {
-		alert('Aucun mot-clé n\'a été entré');
+		clearfindall();
+		clearfindpanel();
+		document.getElementById('findspanel').style.visibility = "hidden";
+		document.getElementById('favspanel').style.visibility = "hidden";
+		
+		_serv.nearbySearch({ location:_mapmark.getPosition(), radius:_searchradius, keyword:kwds }, radialSearchResponse);
 	}
 }
 
@@ -770,7 +757,7 @@ function findplace()
 	_serv.nearbySearch(request, callback);
 }
 
-function callback(results, status, pagination) 
+function radialSearchResponse(results, status, pagination) 
 {
 	if (status != google.maps.places.PlacesServiceStatus.OK) { return; }
 	document.getElementById('findspanel').style.visibility = "visible";
@@ -995,7 +982,7 @@ function showhomegeocoderesphandler(results, status)
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
-		_lastGeocodedAddr = results[res_index];
+		_lastGeocodedAddrComps = results[res_index];
 		setMapPin(results[res_index].geometry.location, null, false);
 		//_map.setCenter(results[res_index].geometry.location);
 		//_mapmark.setPosition(results[res_index].geometry.location);
@@ -1006,7 +993,7 @@ function showhomegeocoderesphandler(results, status)
 
 function recherchergeocoderresphandler(results, status)
 {
-	var rechercherbtn = document.getElementById("btn1");
+	var rechercherbtn = document.getElementById("search_btn");
 	//var strviewbtn = document.getElementById("btn3");
 	if (status == google.maps.GeocoderStatus.OK)
 	{
@@ -1015,7 +1002,7 @@ function recherchergeocoderresphandler(results, status)
 		//_mapmark.setPosition(results[res_index].geometry.location);
 		//_mapmark.setVisible(true);
 		setMapPin(results[res_index].geometry.location, null, true);
-		_lastGeocodedAddr = results[res_index];
+		_lastGeocodedAddrComps = results[res_index];
 		updateobjaddr(results[res_index].formatted_address);
 		enableproximitysearch();
 		rechercherbtn.disabled = false;
@@ -1160,6 +1147,7 @@ function getAddressText()
 function updateAddressText( newText )
 {
 	document.getElementById("address").value = newText;
+	_lastAddressText = newText;
 }
 
 function geocodeAddress()
@@ -1191,7 +1179,7 @@ function geocoderResponse(results, status)
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
 		geocodedCoords = results[res_index].geometry.location;
 		setMapPin(geocodedCoords, null, true);
-		_lastGeocodedAddr = results[res_index];
+		_lastGeocodedAddrComps = results[res_index];
 		updateAddressText( results[res_index].formatted_address );
 		return geocodedCoords;
 	} 
@@ -1223,23 +1211,18 @@ function geocoderMunicipalityResponse(results, status)
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
-		_lastGeocodedAddr = results[res_index];
+		_lastGeocodedAddrComps = results[res_index];
 	}
 }
 
-function rechercheradresse()
+function rechercher()
 {
-	_infowin.close();
-	_mapmark.setVisible(false);
-	var addr = document.getElementById("address").value;
-	if ( addr.length > 0 ) {
-		var region_hint_to_geocoder = ",QC";
-		var addr_hack =  addr + region_hint_to_geocoder;
+	if ( getAddressText().length > 0 ) {
 		if (document.getElementById("radio_nom").checked) {
-			trouvercommerce();
+			radialPlaceSearch();
 		}
 		else {
-			_geocoder.geocode( { 'address': addr_hack }, recherchergeocoderresphandler );
+			geocodeAddress();
 		}
 	}
 }
@@ -1302,7 +1285,7 @@ function getLatLngFromText(text)
 
 function check_if_marker_in_rmm()
 {
-	var addr_comp = _lastGeocodedAddr.address_components;
+	var addr_comp = _lastGeocodedAddrComps.address_components;
 	var municipalities = [
     "Baie-D'Urfé",
     "Beaconsfield",
@@ -1700,7 +1683,7 @@ function effacerlieux()
 		clearfindmarker(i);
 	}
 	updateobjaddr("");
-	disableproximitysearch();
+	//disableproximitysearch();
 	document.getElementById('address').focus();
 }
 
@@ -1947,20 +1930,19 @@ function updateaddress(newlatlng, markermoved)
 
 function inputs_init()
 {
-	disableproximitysearch();
+	//disableproximitysearch();
 	var searchradtooltiptext = "Faire une recherche de lieux par mots-clés dans un rayon de " + _searchradius + "m du marqueur";
 	document.getElementById('radio_nom').title = searchradtooltiptext;
 	document.getElementById('search_prox_label').title = searchradtooltiptext;
-	var address_input = document.getElementById('address');
-	address_input.addEventListener("keyup", keyUpTextField, false);
-	document.getElementById('btn1').disabled = true; // Rechercher d'adresse
+	clearAddressField();
+	//address_input.addEventListener("keyup", keyUpTextField, false);
 	//document.getElementById('btn3').disabled = true; // Visualiser
 }
 
 function keyUpTextField(e) {
 	//var charCode = e.charCode;
 	var addr = document.getElementById('address').value;
-	var search_btn = document.getElementById('btn1');
+	var search_btn = document.getElementById('search_btn');
 	search_btn.disabled = ( addr.length == 0 );
   
 }
