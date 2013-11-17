@@ -758,11 +758,16 @@ function findplace()
 
 function radialSearchResponse(results, status, pagination) 
 {
-	if (status != google.maps.places.PlacesServiceStatus.OK) { return; }
+	if (status == google.maps.places.PlacesServiceStatus.OK) {
 	document.getElementById('findspanel').style.visibility = "visible";
 	document.getElementById('favspanel').style.visibility = "hidden";
 	makefindmarkers(results);
 	var morebtn = document.getElementById('morefinds');
+	}
+	else {
+		alert("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer." );
+		clearAddressField();
+	}
 	/*
 	if (pagination.hasNextPage) 
 	{
@@ -782,26 +787,31 @@ function makefindmarkers(places) 			//search results
 	var placesList = document.getElementById('places');
 	for (var i = 0, place; place = places[i]; i++)
 	{
-		//place = places[i];
-		//place.formatted_address, place.name, place.formatted_phone_number, place.website, place.website;
 		var image = {url:place.icon, size:new google.maps.Size(40, 40), origin:new google.maps.Point(0, 0), anchor:new google.maps.Point(10,20), scaledSize:new google.maps.Size(20, 20)};
-		var mark = new google.maps.Marker({ map:_map, icon:image, title:place.name, position:place.geometry.location, raiseOnDrag:false });
+		var mark = new google.maps.Marker({ map:_map, icon:image, position:place.geometry.location, raiseOnDrag:false });
 		_findmarkers.push(mark);
 		mark.ID = _findmarkers.length - 1;
-		mark.placeName = place.name;
-		google.maps.event.addListener(mark, 'click', placeClickListener);
+		mark.name = place.name;
+		google.maps.event.addListener(mark, 'mouseover', placeHoverListener);
+		google.maps.event.addListener(mark, 'mouseout', function() { _infowin.close(); });
+		google.maps.event.addListener(mark, 'click', placeClickListener );
 		placesList.innerHTML += "<li id='lsm" + mark.ID + "'>" + "<a style='color:#404040; width:186px;' href='javascript:selectfindmarker(" + mark.ID + ")'>" + (mark.ID+1) + ". " + place.name + "</a></li>";
 		_bnds.extend(place.geometry.location);
 	}
 	_map.fitBounds(_bnds);
 }
 
-function placeClickListener() {
-	_mapmark.setVisible(false);
-	geocodeMarker(this.getPosition());
+function placeHoverListener() {
 	_lastPlaceIconClicked = this;
+	_infowin.setContent(makeinfowindowcontent(this));
+	_infowin.open(_map, this);
 };
 
+function placeClickListener()
+{
+	_infowin.close();
+	geocodeMarker(this.getPosition());
+}
 function findmarkersinfowin(ob, pos)
 {
 	var add = "";
@@ -842,15 +852,15 @@ function findmarkersinfowin(ob, pos)
 			add = "";
 			updateobjaddr("Geocoder failed.", "#dd0000")
 		}
-	});
+	})
 }
 
 function selectfindmarker(id)
 {
-	_map.panTo(_findmarkers[id].getPosition())
-	google.maps.event.trigger(_findmarkers[id], 'click');
-	_loca = _findmarkers[id].getPosition();
-	_map.setCenter(_loca);
+	var markerPos = _findmarkers[id].getPosition();
+	_map.panTo(markerPos);
+	console.log(_findmarkers[id]);
+	google.maps.event.trigger(_findmarkers[id], 'mouseover');
 }
 
 function clearfindmarker(id) 
@@ -1167,7 +1177,7 @@ function geocodeAddress()
 	var addr = getAddressText();
 	if ( addr.length > 0 ) {
 		var addrWithRegion =  addr + ",QC";
-		_geocoder.geocode( { 'address': addrWithRegion }, geocoderResponseUpdateDisplayCenter );
+		_geocoder.geocode( { 'address': addrWithRegion }, geocoderResponseUpdateDisplayAndCenterMap );
 	}
 }
 
@@ -1178,7 +1188,7 @@ function geocodeMarker(lat_lng, centerOnMarker)
 		respHandler = geocoderResponseUpdateDisplay;
 	}
 	else {
-		respHandler = geocoderResponseUpdateDisplayCenter;
+		respHandler = geocoderResponseUpdateDisplayAndCenterMap;
 	}
 	_geocoder.geocode( { latLng:lat_lng}, respHandler );
 	
@@ -1209,7 +1219,8 @@ function geocoderResponse(results, status)
 	} 
 	else 
 	{
-		alert('Geoder failed.');
+		alert("L'adresse n'est pas reconnue. Veuillez réessayer." );
+		clearAddressField();
 		return null;
 	}
 }
@@ -1634,37 +1645,11 @@ function clearfavsall()
 	_favobjects = [];
 }
 
-function makeinfowindowcontent(obj, src, typ)		//typ 0=favs , 1=finds 
+function makeinfowindowcontent(marker)
 {
 	var cn;
-	var ro = "";
-	if (src == "siw") { so = 1; } else { so = 2; };
-	if (_currpg > 0)
-	{
-		if (typ == 1) { ro = "readonly='readonly'"; } else { ro = ""; }
-		cn = "<div id='iwdiv' style='height:160px; width:300px; opacity:.9;'><b><span id='" + src + "1'>" + (obj.prop1 + 1) + "</span>. </b>" + 
-		"<input id='" + src + "2' type='textbox' size='40' maxlength='120' style='border-width:0px 0px 1px 0px; height 16px; font-weight:bold;' value='" + obj.prop15 + "' " + ro + " />" + 
-		"<br>Address:  &nbsp;<input id='" + src + "3' type='textbox' size='34' maxlength='120' style='border-width:0px 0px 1px 0px; height 16px; font-weight:bold;' value='" + obj.prop16 + "' readonly='readonly' />" +
-		"<br>Address extra: &nbsp;<input id='" + src + "4' type='textbox' size='30' maxlength='120' style='border-width:0px 0px 1px 0px; height 16px; font-weight:bold;' value='" + obj.prop17 + "' " + ro + " />" +
-		"<br>Phone: &nbsp;<input id='" + src + "6' type='textbox' size='22' maxlength='20' style='border-width:0px 0px 1px 0px; height 16px; font-weight:bold;' value='" + obj.prop31 + "' " + ro + " />" +
-		"<br>Email: &nbsp;<input id='" + src + "7' type='textbox' size='34' maxlength='80' style='border-width:0px 0px 1px 0px; height 16px; font-weight:bold;' value='" + obj.prop32 + "' " + ro + " />" +
-		"<br>Category: &nbsp;<input id='" + src + "8' type='textbox' size='33' maxlength='120' style='border-width:0px 0px 1px 0px; height 16px; font-weight:bold;' value='" + obj.prop13 + "' " + ro + " />" +
-		"<br>Keywords: &nbsp;<input id='" + src + "9' type='textbox' size='33' maxlength='120' style='border-width:0px 0px 1px 0px; height 16px; font-weight:bold;' value='" + obj.prop14 + "' " + ro + " />";
-		if (obj.prop6 == "L")
-		{
-			cn += "<br><span>Distance: &nbsp;<b>" + obj.inKm().toFixed(2) + " Km.</b></span>"; 		//poly length
-		}
-		if (typ == 1)
-		{
-			cn += "<br><span style='visibility:hidden;'>Coordinates: &nbsp;<b><span id='" + src + "5'>" + obj.prop18 + "</span></b></span>";
-			cn += "<br><br><b><a href='javascript:keepfindmarker(" + obj.prop1 + ");' style='text-decoration:underline;'>Keep</a></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-		}
-		else
-		{
-			cn += "<br><br><b><a href='javascript:saveinfowindowcontent(" + obj.prop1 + "," + so + ")' style='text-decoration:underline;'>Save</a></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-		}
-		cn += "<b><a href='javascript:clearfavsmarker(" + obj.prop1 + ")' style='text-decoration:underline;'>Remove</a></b><div>";
-	}
+	cn = "<div id=\"iwdiv\" style=\"height:70px; width:200px; opacity:.9\">" +
+		"<br><b>" + marker.name + "</b></div>";
 	return cn;
 }
 
