@@ -709,8 +709,7 @@ function radialPlaceSearch()
 	var kwds = getAddressText().split(' ');
 	if(kwds.length > 0)
 	{
-		clearfindall();
-		clearfindpanel();
+		clearAllSearchResults();
 		document.getElementById('findspanel').style.visibility = "hidden";
 		document.getElementById('favspanel').style.visibility = "hidden";
 		
@@ -764,6 +763,7 @@ function radialSearchResponse(results, status, pagination)
 	document.getElementById('favspanel').style.visibility = "hidden";
 	makefindmarkers(results);
 	var morebtn = document.getElementById('morefinds');
+	/*
 	if (pagination.hasNextPage) 
 	{
 		morebtn.disabled = false;
@@ -773,6 +773,7 @@ function radialSearchResponse(results, status, pagination)
 	{
 		morebtn.disabled = true;
 	}
+	*/
 }
 
 function makefindmarkers(places) 			//search results
@@ -787,15 +788,19 @@ function makefindmarkers(places) 			//search results
 		var mark = new google.maps.Marker({ map:_map, icon:image, title:place.name, position:place.geometry.location, raiseOnDrag:false });
 		_findmarkers.push(mark);
 		mark.ID = _findmarkers.length - 1;
-		google.maps.event.addListener(mark, 'click', function(e) {
-			_mapmark.setVisible(false);
-			findmarkersinfowin(this, this.getPosition());
-		});
+		mark.placeName = place.name;
+		google.maps.event.addListener(mark, 'click', placeClickListener);
 		placesList.innerHTML += "<li id='lsm" + mark.ID + "'>" + "<a style='color:#404040; width:186px;' href='javascript:selectfindmarker(" + mark.ID + ")'>" + (mark.ID+1) + ". " + place.name + "</a></li>";
 		_bnds.extend(place.geometry.location);
 	}
 	_map.fitBounds(_bnds);
 }
+
+function placeClickListener() {
+	_mapmark.setVisible(false);
+	geocodeMarker(this.getPosition());
+	_lastPlaceIconClicked = this;
+};
 
 function findmarkersinfowin(ob, pos)
 {
@@ -864,7 +869,7 @@ function clearfindpanel()
 	//document.getElementById('findtype').value = "";
 	//document.getElementById('findkwds').value = "";
 	//document.getElementById('findrads').value = "1000";
-	//document.getElementById('places').innerHTML = "";
+	document.getElementById('places').innerHTML = "";
 	document.getElementById('findspanel').style.visibility = "hidden";
 	document.getElementById('favspanel').style.visibility = "hidden";
 }
@@ -1144,10 +1149,12 @@ function getAddressText()
 	return document.getElementById("address").value;
 }
 
-function updateAddressText( newText )
+function updateAddressText( newText, onlyTemporary )
 {
 	document.getElementById("address").value = newText;
-	_lastAddressText = newText;
+	if ( typeof(onlyTemporary) === 'undefined' ) {
+		_lastAddressText = newText;
+	}
 }
 
 function restoreAddressText()
@@ -1160,7 +1167,7 @@ function geocodeAddress()
 	var addr = getAddressText();
 	if ( addr.length > 0 ) {
 		var addrWithRegion =  addr + ",QC";
-		_geocoder.geocode( { 'address': addrWithRegion }, geocoderResponseCenter );
+		_geocoder.geocode( { 'address': addrWithRegion }, geocoderResponseUpdateDisplayCenter );
 	}
 }
 
@@ -1168,39 +1175,70 @@ function geocodeMarker(lat_lng, centerOnMarker)
 {
 	var respHandler;
 	if (typeof(centerOnMarker)==='undefined') {
-		respHandler = geocoderResponse;
+		respHandler = geocoderResponseUpdateDisplay;
 	}
 	else {
-		respHandler = geocoderResponseCenter;
+		respHandler = geocoderResponseUpdateDisplayCenter;
 	}
 	_geocoder.geocode( { latLng:lat_lng}, respHandler );
 	
 }
 
+function geocodePlaceMarker(lat_lng)
+{
+	_geocoder.geocode( { latLng:lat_lng}, geocoderPlaceMarkerResponse );
+}
+
+function geocoderPlaceMarkerResponse(results, status)
+{
+	geoResp = geocoderResponse(results, status);
+	if ( geoResp != null ) {
+		updateAddressText(geoResp.addr, true); // Only temporary!
+	}
+}
+		
 function geocoderResponse(results, status)
 {
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
 		geocodedCoords = results[res_index].geometry.location;
-		setMapPin(geocodedCoords, null, true);
 		_lastGeocodedAddrComps = results[res_index];
-		updateAddressText( results[res_index].formatted_address );
-		document.getElementById('radio_adresse').checked = "checked";
-		return geocodedCoords;
+		var formatted_addr = results[res_index].formatted_address;
+		return { 'coords': geocodedCoords, 'addr' : formatted_addr };
 	} 
 	else 
 	{
-		updateobjaddr("Geocoder failed.", "#dd0000");
+		alert('Geoder failed.');
 		return null;
+	}
+}
+
+function geocoderResponseUpdateDisplay(results, status)
+{
+	var geoResp = geocoderResponse(results, status);
+	if ( geoResp != null ) {
+		setMapPin(geoResp.coords, null, true);
+		updateAddressText( geoResp.addr );
+		document.getElementById('radio_adresse').checked = "checked";
+		return geoResp;
+	}
+	return null;
+}
+
+function geocoderResponseUpdateDisplayAndCenterMap(results, status)
+{
+	var geoResp = geocoderResponseUpdateDisplay(results, status);
+	if ( geoResp != null ) {
+		_map.setCenter(geoResp.coords);
 	}
 }
 
 function geocoderResponseCenter(results, status)
 {
-	coords = geocoderResponse(results, status);
-	if ( coords != null ) {
-		_map.setCenter(coords);
+	geoResp = geocoderResponse(results, status);
+	if ( geoResp != null ) {
+		_map.setCenter(reoResp.coords);
 	}
 }
 
@@ -1265,6 +1303,7 @@ function homeAddressLookupResp()
 				}
 				else {
 					setMapPin(homepos, 'media/home2.png', false, true);
+					_mapmark.setPosition(homepos);
 				}
 				ok = true;
 			}
@@ -1458,13 +1497,13 @@ function confirmeraddress()
 			remercier_et_fermer("Vous n'êtes pas éligible!", "Merci quand même");
 		}
 		else {
-			setMapPin(_mapmark.getPosition(), 'media/home2.png', false);
+			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
 			remercier_et_fermer("Retourner dans le questionnaire textuel", "L'emplacement de votre domicile est enregistré");
 		}
 	}
 	else {
 		saveLocationToDB(_mapmark);
-		setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false);
+		setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
 		remercier_et_fermer("Retourner dans le questionnaire textuel", "Merci!");
 		//var region_hint_to_geocoder = ",QC'";
 		//var addr = document.getElementById("address").value + region_hint_to_geocoder;
@@ -1680,17 +1719,14 @@ function closeviewpanel()
 	document.getElementById("viewpanel").style.visibility = "hidden";	
 }
 
-function effacerlieux()
+function clearAllSearchResults()
 {
-	document.getElementById('findspanel').style.visibility = 'hidden';
-	document.getElementById('view2').checked = false;
-	for(var i = 0; i<_findmarkers.length; i++)
+	for(var i = 0; i < _findmarkers.length; i++)
 	{ 
 		clearfindmarker(i);
 	}
-	updateobjaddr("");
-	//disableproximitysearch();
-	document.getElementById('address').focus();
+	_findmarkers = [];
+	clearfindpanel();
 }
 
 function showfavs()

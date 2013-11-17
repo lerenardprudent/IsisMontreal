@@ -173,6 +173,7 @@
 		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc;
 		var _lastGeocodedAddrComps = null;
 		var _lastAddressText = null;
+		var _lastPlaceIconClicked = null;
 		
 		var tripiniconpath = "media/mapmark.png";
 		
@@ -478,9 +479,9 @@
 		<div id="findspanel">
 			<ol id="places"></ol>
 			<div id="panheadfinds">&nbsp;&nbsp;Résultats de la recherche...
-				<img id="findsclose" title="Effacer les résultats de la recherche" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="effacerlieux();" />
+				<img id="findsclose" title="Effacer les résultats de la recherche" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="clearAllSearchResults();" />
 			</div>
-			<button id="morefinds" type="button">Plus de résultats...</button>
+			<button id="morefinds" style="visibility:hidden" type="button">Plus de résultats...</button>
 		</div>
 		<div id="favspanel">
 			<ol id="objects"></ol>
