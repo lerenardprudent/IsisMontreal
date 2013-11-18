@@ -320,7 +320,7 @@
 	<div id="maindiv" class="maindivclass">
 		<div id="dragmain" class="dragmain">
 			<button id="btn9" type="button" title="Save" style="background-image:url(media/x-save.png);"></button>
-			<button id="btn10" type="button" onclick="fermersansenregistrer();" title="Fermer et retourner dans le questionnaire sans enregistrer votre réponse" style="background-image:url(media/x-close.png);"></button>
+			<button id="btn10" type="button" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png);"></button>
 			<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:left" width="200" height="50px"/>
 			<div id="user-options" class="toolbar-icons" style="display: none;">
 			    <a id="outil1" href="#"><em class="icon-hand-up"></em></a>
@@ -733,14 +733,6 @@
 			_id_participant = particip_id;	
 			
 			return CODE_ERREUR.PasUneErreur;
-		}
-		
-		function fermersansenregistrer()
-		{
-			var fermer = confirm("Voulez-vous retourner dans le questionnaire ISIS sans avoir enregistré votre réponse à cette question ?");
-			if ( fermer ) {
-				remercier_et_fermer("", "", 0);
-			}
 		}
 		
 	</script>
