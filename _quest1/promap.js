@@ -1299,8 +1299,12 @@ function homeAddressLookupResp()
 					findCurrentAddressMunicipality();
 				}
 				else {
-					setMapPin(homepos, 'media/home2.png', false, true);
 					_mapmark.setPosition(homepos);
+					homepin = setMapPin(homepos, 'media/home2.png', false, true);
+					_domicileInfoWindow.setContent("<div id=\"iwdiv\" style=\"text-align:center; height:80px; width:300px; opacity:.9\"><b>Lieu de domicile</b><br><br><em>" + home_addr_text + "</em></div>");
+					_domicileInfoWindow.setPosition(homepos);
+					google.maps.event.addListener(homepin, 'mouseover', function() { _domicileInfoWindow.open(_map); });
+					google.maps.event.addListener(homepin, 'mouseout', function() { _domicileInfoWindow.close(); });
 				}
 				ok = true;
 			}
@@ -1483,6 +1487,7 @@ function setMapPin(latlng, iconPath, canDrag, centerOnPin)
 	if (!(typeof(centerOnPin)==='undefined')) {
 		_map.setCenter(latlng);
 	}
+	return pin;
 }
 
 function confirmeraddress()
@@ -1511,6 +1516,10 @@ function confirmeraddress()
 					pointList.push( { 'lat' : path[i].lat(), 'lon' : path[i].lng() } );
 				}
 				savePolyToDB(pointList);
+				//_drawnPolygon.setVisible(false);
+				_drawnPolygon.setOptions({fillColor: "#009933"});
+				//_drawnPolygon.setVisible(true);
+				remercier_et_fermer("Retourner dans le questionnaire textuel", "Votre dessin est enregistré");
 			}
 		}
 		else {
@@ -1644,6 +1653,7 @@ function removePolygonFromMap(id)
 {
 	google.maps.event.clearListeners(_drawnPolygon, 'click');
 	_drawnPolygon.setMap(null);
+	_drawnPolygon = null;
 	_infowin.close();
 }
 
