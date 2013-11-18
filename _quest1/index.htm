@@ -113,7 +113,7 @@
 			_httpReqSaveLoc = new XMLHttpRequest();
 			_httpReqSaveLoc.onreadystatechange=locSaveResp;
 			var addr_shown = document.getElementById('address').value;
-			var point_wkt = "point(" + marker.getPosition().lat().toFixed(8) + " " + marker.getPosition().lng().toFixed(8) + ")";
+			var point_wkt = "point(" + marker.getPosition().lat().toFixed(_decimal_prec) + " " + marker.getPosition().lng().toFixed(_decimal_prec) + ")";
 			var php_url = "reponses_bdd.php?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
 			_httpReqSaveLoc.open("post",php_url,true);
 			_httpReqSaveLoc.send();
@@ -200,6 +200,7 @@
 		var _langue = LANGUE.Français;
 		var _id_participant;
 		var _searchradius = 2000;
+		var _decimal_prec = 8;
 		var _qno;
 		var _urlParams = {};
 		var _qtip_text = "";
@@ -343,11 +344,11 @@
 						<button id="search_btn" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
 						<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
 						<span id="drawbuttonsspan">
-							<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor.png); " title="Confirmer l'adresse indiquée"></button>
-							<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/polygon.png); " title="Confirmer l'adresse indiquée"></button>
-							<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase.png); " title="Confirmer l'adresse indiquée"></button>
+							<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor.png); " title="Déplacer ou modifier la forme du polygone"></button>
+							<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/polygon.png); " title="Desssiner un polygone"></button>
+							<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase.png); " title="Effacer un polygone"></button>
 						</span>
-						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
+						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer ce qui est indiqué sur la carte"></button>
 						<!-- <img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/> -->
 						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
 						<!--<div class="tooltiptext">
@@ -653,7 +654,7 @@
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<b>Question " + _qno + ": <i>" + _question + "</i><b>";
+				content = "<b>Question " + _qno.toUpperCase() + ": <i>" + _question + "</i><b>";
 				paramsValide = true;
 			}
 			else {
@@ -694,7 +695,7 @@
 			var quest_no = getUrlParam('quest');
 			for ( var i = 0; i < questionnaire_texte.length; i++ ) {
 				var quest = questionnaire_texte[i];
-				if (quest.question_no == quest_no) {
+				if (quest.question_no.toLowerCase() == quest_no.toLowerCase()) {
 					if ( _langue == LANGUE.Anglais ) {
 						_question = quest.question_an;
 						_consigne = quest.consigne_an;

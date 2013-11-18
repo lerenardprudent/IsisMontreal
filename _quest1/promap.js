@@ -1494,15 +1494,21 @@ function confirmeraddress()
 {
 	_mapmark.setVisible(false);
 	if ( _mode == MODE_DESSIN.DomicileVerification ) {
-		saveHomeAddress(_mapmark);
 		var inRMM = check_if_marker_in_rmm();
+		var title, text;
+		var delay = null;
 		if (!inRMM) {
-			remercier_et_fermer("Vous n'êtes pas éligible!", "Merci quand même");
+			title = "Fin du questionnaire";
+			text =  "Nous sommes désolés, mais le deuxième questionnaire porte uniquement sur les habitants de la région métropolitaine de Montréal. Vous n’êtes donc pas admissible. Merci beaucoup pour votre participation!";
+			delay = 10;
 		}
 		else {
 			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
-			remercier_et_fermer("Retourner dans le questionnaire textuel", "L'emplacement de votre domicile est enregistré");
+			title = "Retourner dans le questionnaire textuel";
+			text = "L'emplacement de votre domicile est enregistré";
 		}
+		saveHomeAddress(_mapmark, inRMM);
+		remercier_et_fermer(title, text, delay);
 	}
 	else {
 		if ( _mode == MODE_DESSIN.Polygone ) {
@@ -1551,18 +1557,17 @@ function savePolyResp()
 	}
 }
 
-function saveHomeAddress(marker)
+function saveHomeAddress(marker, isEligible)
 {
 	_httpReqSaveHome = new XMLHttpRequest();
 	_httpReqSaveHome.onreadystatechange=saveHomeResp;
 	var addr_shown = document.getElementById('address').value;
-	var point_wkt = "point(" + marker.getPosition().lat().toFixed(8) + " " + marker.getPosition().lng().toFixed(8) + ")";
-	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
-	alert("Sending " + php_url);
+	var point_wkt = "point(" + marker.getPosition().lat().toFixed(_decimal_prec) + " " + marker.getPosition().lng().toFixed(_decimal_prec) + ")";
+	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&t=" + isEligible + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);;
 	_httpReqSaveHome.open("post",php_url,true);
 	_httpReqSaveHome.send();
 }
-		
+
 function saveHomeResp()
 {
 	if (_httpReqSaveHome.readyState==4 && _httpReqSaveHome.status==200) {
@@ -1570,10 +1575,13 @@ function saveHomeResp()
 	}
 }
 
-function remercier_et_fermer(titre, texte)
+function remercier_et_fermer(titre, texte, delay)
 {
-	popup_info_to_user(texte, 10, titre);
-	setTimeout("retournerdanslimesurvey();" , 3000);
+	if (typeof(delay) === 'undefined' || delay == null) {
+		delay = 5; //sec
+	}
+	popup_info_to_user(texte, delay, titre);
+	setTimeout("retournerdanslimesurvey();" , delay*1000);
 }
 
 function retournerdanslimesurvey()

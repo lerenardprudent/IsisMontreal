@@ -131,7 +131,8 @@ function do_mysql_home_insert_or_modify($db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_home_insert($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="insert into ".$tbl." (id_part, geom, addr_texte) values ('".$id."',GeomFromText('".$g."'),'".$s."')";
+	$isElig = strtoupper($t);
+	$sql="insert into ".$tbl." (id_part, geom, addr_texte, eligible) values ('".$id."',GeomFromText('".$g."'),'".$s."',".$t.")";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
@@ -144,7 +145,7 @@ function do_mysql_home_insert($db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_home_modify($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="update ".$tbl." set geom=GeomFromText('".$g."'),addr_texte='".$s."' where id_part='".$id."'";
+	$sql="update ".$tbl." set geom=GeomFromText('".$g."'),addr_texte='".$s."',eligible=".$t." where id_part='".$id."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
