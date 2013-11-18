@@ -240,14 +240,14 @@ function setDrawTools()
 		drawingControlOptions: {
 		position: google.maps.ControlPosition.TOP_CENTER,
 		drawingModes: [
-		  google.maps.drawing.OverlayType.MARKER,
-		  google.maps.drawing.OverlayType.CIRCLE,
+		  //google.maps.drawing.OverlayType.MARKER,
+		  //google.maps.drawing.OverlayType.CIRCLE,
 		  google.maps.drawing.OverlayType.POLYGON,
-		  google.maps.drawing.OverlayType.POLYLINE,
-		  google.maps.drawing.OverlayType.RECTANGLE
+		  //google.maps.drawing.OverlayType.POLYLINE,
+		  //google.maps.drawing.OverlayType.RECTANGLE
 		]
 		},
-		markerOptions: {
+		/*markerOptions: {
 		clickable: true,
 		draggable: true,
 		raiseOnDrag:true,
@@ -268,14 +268,14 @@ function setDrawTools()
 		clickable: true,
 		draggable: true,
 		editable: true
-		},
+		},*/
 		polygonOptions: {
-		fillColor: '#ff0000',
-		fillOpacity: .5,
-		strokeWeight: 1,
-		clickable: true,
-		draggable: true,
-		editable: true
+			fillColor: '#ff0000',
+			fillOpacity: .5,
+			strokeWeight: 1,
+			clickable: true,
+			draggable: true,
+			editable: true
 		},
 		polylineOptions: {
 		strokeWeight: 4,
@@ -364,15 +364,7 @@ function polygonDrawnHandler(e)
 		if ( _drawnPolygon != null ) {
 			removePolygonFromMap();
 		}
-		_drawnPolygon = newobj;
-		var polyCenter = calcPolyCenter(newobj);
-		geocodeLatLng(polyCenter);
-		_map.setCenter(polyCenter);
-		obp = { strokeWeight:newobj.prop11 };
-		newobj.setOptions(obp);
-				
-		google.maps.event.addListener(newobj, 'dragend', polygonDragged);
-		google.maps.event.addListener(newobj, 'click', polygonClicked);
+		processNewPolygonOnMap(newobj);
 	}
 
 function polygonDragged(e) 
@@ -406,6 +398,19 @@ function polygonClicked(e)
 		if (!_editon) {	_infowin.open(_map, this); }
 	}
 	if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }			
+}
+
+function processNewPolygonOnMap(poly)
+{
+	_drawnPolygon = poly;
+	var polyCenter = calcPolyCenter(poly);
+	geocodeLatLng(polyCenter);
+	_map.setCenter(polyCenter);
+	obp = { strokeWeight:1 };
+	poly.setOptions(obp);
+				
+	google.maps.event.addListener(poly, 'dragend', polygonDragged);
+	google.maps.event.addListener(poly, 'click', polygonClicked);
 }
 
 function setobjcenter(ob)
@@ -1468,6 +1473,7 @@ function setMapPin(latlng, iconPath, canDrag, centerOnPin)
 		pin = new google.maps.Marker({ map:_map, position:latlng, draggable:canDrag });
 		pin.setMap(_map);
 		pin.setIcon(iconPath);
+		pin.title = " Holy mar";
 	}
 	else {
 		pin = _mapmark;
@@ -1519,14 +1525,12 @@ function savePolyToDB(pointlist)
 {
 	_httpReqSavePoly = new XMLHttpRequest();
 	_httpReqSavePoly.onreadystatechange=savePolyResp;
-	// insert into rep_spat (id_part,geom_poly) values ('xxx',GeomFromText("POLYGON((121.44842136764532 31.22119260287111,121.45076025390631 31.221990825071376,121.45402182006842 31.218366658611853,121.45091045761114 31.217054584347302,121.44842136764532 31.22119260287111))"))
 	var polyStrForInsert = "POLYGON((";
 	for (var i = 0; i < pointlist.length; i++) {
 		polyStrForInsert += pointlist[i].lat + " " + pointlist[i].lon + ", ";
 	}
 	polyStrForInsert += pointlist[0].lat + " " + pointlist[0].lon + "))"; // Repeat the first point to make a closed polygon
 	var php_url = "reponses_bdd.php?up=ip&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&s=" + encodeURI(_geocodedSpecial.addr) + "&geo=" + encodeURI(polyStrForInsert);
-	alert(php_url);
 	_httpReqSavePoly.open("post",php_url,true);
 	_httpReqSavePoly.send();
 }
@@ -2014,16 +2018,47 @@ function existingRespHandler()
 	var ok = false;
 	if (_httpReqRespLookup.readyState==4 && _httpReqRespLookup.status==200) {
 		var resp = _httpReqRespLookup.responseText;
-		var tokens = resp.split("||");
-		if (tokens.length == 2) {
+		var tokens = resp.split("$");
+		if (tokens.length == 3) {
 			var point_resp = tokens[0];
-			var loc_addr_text = tokens[1];
-			var locpos = getLatLngFromText(point_resp);
-			if (locpos != null) {
-				setMapPin(locpos, null, true, true);
-				updateAddressText(loc_addr_text);
-				findCurrentAddressMunicipality();
-				ok = true;
+			if (point_resp.length > 0) {
+				var loc_addr_text = tokens[2];
+				var locpos = getLatLngFromText(point_resp);
+				if (locpos != null) {
+					setMapPin(locpos, null, true, true);
+					updateAddressText(loc_addr_text);
+					findCurrentAddressMunicipality();
+					ok = true;
+				}
+			}
+			else {
+				polygon_resp = tokens[1];
+				if ( polygon_resp.length > 0 ) {
+					var expected_pfx = "POLYGON((";
+					var expected_sfx = "))";
+					if ( polygon_resp.substring(0, expected_pfx.length) == expected_pfx &&
+						 polygon_resp.substring(polygon_resp.length-expected_sfx.length) == expected_sfx ) {
+						var pointliststr = polygon_resp.substring(expected_pfx.length,
+																 polygon_resp.length-expected_sfx.length);
+						var pointList = pointliststr.split(",");
+						var latLngList = [];
+						for (var i=0; i < pointList.length; i++) {
+							var latAndLng = pointList[i].split(" ");
+							latLngList.push(new google.maps.LatLng(latAndLng[0], latAndLng[1]));
+						}
+						savedZone = new google.maps.Polygon({
+							paths:latLngList,
+							fillColor: '#ff0000',
+							fillOpacity: .5,
+							strokeWeight: 1,
+							clickable: true,
+							draggable: true,
+							editable: true });
+						savedZone.setMap(_map);
+						processNewPolygonOnMap(savedZone);
+						stopDraw();
+					}
+				}
 			}
 		}
 	}

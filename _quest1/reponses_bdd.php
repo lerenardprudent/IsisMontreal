@@ -104,7 +104,7 @@ function do_mysql_insert_poly($db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_modify_poly($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="update ".$tbl." set addr_text='".$s."',geom_poly=GeomFromText('".$g."' where id_part='".$id."'";
+	$sql="update ".$tbl." set addr_text='".$s."',geom_poly=GeomFromText('".$g."') where id_part='".$id."' and num_quest='".$q."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
@@ -155,12 +155,12 @@ function do_mysql_home_modify($db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="SELECT astext(geom_point) as geom, addr_text FROM ".$tbl." WHERE id_part = '".$id."' and num_quest='".$q."'";
+	$sql="SELECT astext(geom_point) as geom_point, astext(geom_poly) as geom_poly, addr_text FROM ".$tbl." WHERE id_part = '".$id."' and num_quest='".$q."'";
 	$result = mysqli_query($db,$sql);
 
 	while($row = mysqli_fetch_array($result))
 	{
-		echo $row['geom']."||".$row['addr_text'];
+		echo $row['geom_point']."$".$row['geom_poly']."$".$row['addr_text'];
 		return;
     }
 	return "";
