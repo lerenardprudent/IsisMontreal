@@ -366,6 +366,7 @@ function polygonDrawnHandler(e)
 		}
 		_drawnPolygon = newobj;
 		var polyCenter = calcPolyCenter(newobj);
+		geocodeLatLng(polyCenter);
 		_map.setCenter(polyCenter);
 		obp = { strokeWeight:newobj.prop11 };
 		newobj.setOptions(obp);
@@ -1141,12 +1142,10 @@ function getAddressText()
 	return document.getElementById("address").value;
 }
 
-function updateAddressText( newText, onlyTemporary )
+function updateAddressText( newText )
 {
 	document.getElementById("address").value = newText;
-	if ( typeof(onlyTemporary) === 'undefined' ) {
-		_lastAddressText = newText;
-	}
+	_lastAddressText = newText;
 }
 
 function restoreAddressText()
@@ -1176,16 +1175,16 @@ function geocodeMarker(lat_lng, centerOnMarker)
 	
 }
 
-function geocodePlaceMarker(lat_lng)
+function geocodeLatLng(lat_lng)
 {
-	_geocoder.geocode( { latLng:lat_lng}, geocoderPlaceMarkerResponse );
+	_geocoder.geocode( { latLng:lat_lng}, geocoderLatLngResponse );
 }
 
-function geocoderPlaceMarkerResponse(results, status)
+function geocoderLatLngResponse(results, status)
 {
 	geoResp = geocoderResponse(results, status);
 	if ( geoResp != null ) {
-		updateAddressText(geoResp.addr, true); // Only temporary!
+		_geocodedSpecial = geoResp;
 	}
 }
 		
@@ -1526,7 +1525,8 @@ function savePolyToDB(pointlist)
 		polyStrForInsert += pointlist[i].lat + " " + pointlist[i].lon + ", ";
 	}
 	polyStrForInsert += pointlist[0].lat + " " + pointlist[0].lon + "))"; // Repeat the first point to make a closed polygon
-	var php_url = "reponses_bdd.php?up=ip&id=" + _id_participant + "&q=" + _qno + "&s=" + encodeURI(polyStrForInsert);
+	var php_url = "reponses_bdd.php?up=ip&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&s=" + encodeURI(_geocodedSpecial.addr) + "&geo=" + encodeURI(polyStrForInsert);
+	alert(php_url);
 	_httpReqSavePoly.open("post",php_url,true);
 	_httpReqSavePoly.send();
 }
@@ -1543,7 +1543,9 @@ function saveHomeAddress(marker)
 	_httpReqSaveHome = new XMLHttpRequest();
 	_httpReqSaveHome.onreadystatechange=saveHomeResp;
 	var addr_shown = document.getElementById('address').value;
-	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + encodeURI(addr_shown);
+	var point_wkt = "point(" + marker.getPosition().lat().toFixed(8) + " " + marker.getPosition().lng().toFixed(8) + ")";
+	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
+	alert("Sending " + php_url);
 	_httpReqSaveHome.open("post",php_url,true);
 	_httpReqSaveHome.send();
 }

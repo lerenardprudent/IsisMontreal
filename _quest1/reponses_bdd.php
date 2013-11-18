@@ -5,8 +5,7 @@ $id = strval($_GET['id']);
 $q = strval($_GET['q']);
 $t = strval($_GET['t']);
 $s = strval($_GET['s']); // Texte supplémentaire
-$lat = doubleval($_GET['lat']);
-$lon = doubleval($_GET['lon']);
+$geo = strval($_GET['geo']);
 
 $resp_table = 'reponses_spatiales';
 $home_table = 'domiciles';
@@ -47,7 +46,7 @@ $db_con = connect();
 if (!function_exists($db_update_func)) {
 	die('Update function not found!' . mysqli_error($db_con));
 }
-$db_update_func($db_con,$table,$id,$q,$t,$lat,$lon,$s);
+$db_update_func($db_con,$table,$id,$q,$t,$s,$geo);
 disconnect($db_con);
 
 function connect()
@@ -65,21 +64,21 @@ function createNewTable($table_name)
 	//CREATE TABLE `rep_spat` (`id_part` varchar(8) collate utf8_unicode_ci NOT NULL,`num_quest` varchar(3) collate utf8_unicode_ci NOT NULL,`type_rep` varchar(8) collate utf8_unicode_ci NOT NULL,`nom` varchar(80) collate utf8_unicode_ci NOT NULL, `geom_point` point default NULL,`geom_poly` polygon default NULL,PRIMARY KEY  (`id_part`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tableau pour les réponses spatiales au questionnaire ISIS'
 }
 
-function do_mysql_insert_or_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
-	if (!do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s))
-		do_mysql_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s);
+function do_mysql_insert_or_modify($db,$tbl,$id,$q,$t,$s,$g) {
+	if (!do_mysql_insert($db,$tbl,$id,$q,$t,$s,$g))
+		do_mysql_modify($db,$tbl,$id,$q,$t,$s,$g);
 }
 
-function do_mysql_insert_or_modify_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
-	if (!do_mysql_insert_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s))
-		do_mysql_modify_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s);
+function do_mysql_insert_or_modify_poly($db,$tbl,$id,$q,$t,$s,$g) {
+	if (!do_mysql_insert_poly($db,$tbl,$id,$q,$t,$s,$g))
+		do_mysql_modify_poly($db,$tbl,$id,$q,$t,$s,$g);
 }
 
-function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+function do_mysql_insert($db,$tbl,$id,$q,$t,$s,$g) {
 	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($db,"veritas");
 	echo "ID: ".$id;
-	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, geom_point, addr_point) values ('".$id."','".$q."','".$t."',GeomFromText('point(".$lat." ".$lon.")'),'".$s."')";
+	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, geom_point, addr_text) values ('".$id."','".$q."','".$t."',GeomFromText('".$g."'),'".$s."')";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
@@ -90,10 +89,10 @@ function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	return true;
 }
 
-function do_mysql_insert_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+function do_mysql_insert_poly($db,$tbl,$id,$q,$t,$s,$g) {
 	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($db,"veritas");
-	$sql="insert into ".$tbl." (id_part, num_quest, geom_poly) values ('".$id."','".$q."',GeomFromText('".$s."'))";
+	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, addr_text, geom_poly) values ('".$id."','".$q."','".$t."','".$s."',GeomFromText('".$g."'))";
 	echo "INSERTING: ".$sql;
 	if (!mysqli_query($db,$sql)) {
 	  echo('Error: ' . mysqli_error($db));
@@ -103,9 +102,9 @@ function do_mysql_insert_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	return true;
 }
 
-function do_mysql_modify_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+function do_mysql_modify_poly($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="update ".$tbl." set geom_poly=GeomFromText('".$s."' where id_part='".$id."'";
+	$sql="update ".$tbl." set addr_text='".$s."',geom_poly=GeomFromText('".$g."' where id_part='".$id."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
@@ -114,7 +113,7 @@ function do_mysql_modify_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	echo "1 poly record modified";
 }
 
-function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
 	$sql="SELECT astext(geom) as geom, addr_texte FROM ".$tbl." WHERE id_part = '".$id."'";
 	$result = mysqli_query($db,$sql);
@@ -125,14 +124,14 @@ function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
     }
 }
 
-function do_mysql_home_insert_or_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
-	if (!do_mysql_home_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s))
-		do_mysql_home_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s);
+function do_mysql_home_insert_or_modify($db,$tbl,$id,$q,$t,$s,$g) {
+	if (!do_mysql_home_insert($db,$tbl,$id,$q,$t,$s,$g))
+		do_mysql_home_modify($db,$tbl,$id,$q,$t,$s,$g);
 }
 
-function do_mysql_home_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+function do_mysql_home_insert($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="insert into ".$tbl." (id_part, geom, addr_texte) values ('".$id."',GeomFromText('point(".$lat." ".$lon.")'),'".$s."')";
+	$sql="insert into ".$tbl." (id_part, geom, addr_texte) values ('".$id."',GeomFromText('".$g."'),'".$s."')";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
@@ -143,9 +142,9 @@ function do_mysql_home_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	return true;
 }
 
-function do_mysql_home_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+function do_mysql_home_modify($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="update ".$tbl." set geom=GeomFromText('point(".$lat." ".$lon.")'),addr_texte='".$s."' where id_part='".$id."'";
+	$sql="update ".$tbl." set geom=GeomFromText('".$g."'),addr_texte='".$s."' where id_part='".$id."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {
@@ -154,22 +153,22 @@ function do_mysql_home_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	echo "1 home record modified";
 }
 
-function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="SELECT astext(geom_point) as geom, addr_point FROM ".$tbl." WHERE id_part = '".$id."' and num_quest='".$q."'";
+	$sql="SELECT astext(geom_point) as geom, addr_text FROM ".$tbl." WHERE id_part = '".$id."' and num_quest='".$q."'";
 	$result = mysqli_query($db,$sql);
 
 	while($row = mysqli_fetch_array($result))
 	{
-		echo $row['geom']."||".$row['addr_point'];
+		echo $row['geom']."||".$row['addr_text'];
 		return;
     }
 	return "";
 }
 
-function do_mysql_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+function do_mysql_modify($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="update ".$tbl." set num_quest='".$q."',type_rep='".$t."',addr_point='".$s."',geom_point=GeomFromText('point(".$lat." ".$lon.")') where id_part='".$id."'";
+	$sql="update ".$tbl." set num_quest='".$q."',type_rep='".$t."',addr_text='".$s."',geom_point=GeomFromText('".$g."') where id_part='".$id."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {

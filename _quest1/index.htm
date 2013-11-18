@@ -113,7 +113,8 @@
 			_httpReqSaveLoc = new XMLHttpRequest();
 			_httpReqSaveLoc.onreadystatechange=locSaveResp;
 			var addr_shown = document.getElementById('address').value;
-			var php_url = "reponses_bdd.php?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode + "&lat=" + marker.getPosition().lat().toFixed(8) + "&lon=" + marker.getPosition().lng().toFixed(8) + "&s=" + encodeURI(addr_shown);
+			var point_wkt = "point(" + marker.getPosition().lat().toFixed(8) + " " + marker.getPosition().lng().toFixed(8) + ")";
+			var php_url = "reponses_bdd.php?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
 			_httpReqSaveLoc.open("post",php_url,true);
 			_httpReqSaveLoc.send();
 		}
@@ -210,6 +211,7 @@
 		var _lastAddressText = null;
 		var _lastPlaceIconClicked = null;
 		var _drawnPolygon = null;
+		var _geocodedSpecial = null;
 		
 		var tripiniconpath = "media/mapmark.png";
 		
