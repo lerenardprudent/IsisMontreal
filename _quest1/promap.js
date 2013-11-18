@@ -1287,8 +1287,8 @@ function homeAddressLookupResp()
 	var ok = false;
 	if (_httpReqHomeLookup.readyState==4 && _httpReqHomeLookup.status==200) {
 		var resp = _httpReqHomeLookup.responseText;
-		var tokens = resp.split("||");
-		if (tokens.length == 2) {
+		var tokens = resp.split("$");
+		if (tokens.length == 3) {
 			var point_resp = tokens[0];
 			var home_addr_text = tokens[1];
 			var homepos = getLatLngFromText(point_resp);
@@ -1306,7 +1306,16 @@ function homeAddressLookupResp()
 					google.maps.event.addListener(homepin, 'mouseover', function() { _domicileInfoWindow.open(_map); });
 					google.maps.event.addListener(homepin, 'mouseout', function() { _domicileInfoWindow.close(); });
 				}
-				ok = true;
+				var isEligible = tokens[2];
+				if ( isEligible == '0' && _mode != MODE_DESSIN.DomicileVerification ) { // Pas éligible de remplir les autres questions!
+					var title = "Fin du questionnaire";
+					var text =  "Nous sommes désolés, mais le deuxième questionnaire porte uniquement sur les habitants de la région métropolitaine de Montréal. Vous n’êtes donc pas admissible. Merci beaucoup pour votre participation!";
+					var delay = 10;
+					remercier_et_fermer(title, text, delay);
+				}
+				else {
+					ok = true;
+				}
 			}
 		}
 		if (!ok) {
@@ -1577,11 +1586,17 @@ function saveHomeResp()
 
 function remercier_et_fermer(titre, texte, delay)
 {
+	disableInputs();
 	if (typeof(delay) === 'undefined' || delay == null) {
 		delay = 5; //sec
 	}
 	popup_info_to_user(texte, delay, titre);
-	setTimeout("retournerdanslimesurvey();" , delay*1000);
+	//setTimeout("retournerdanslimesurvey();" , delay*1000);
+}
+
+function disableInputs()
+{
+	$("#infopanel button,input").attr("disabled", true); // Go jquery!
 }
 
 function retournerdanslimesurvey()

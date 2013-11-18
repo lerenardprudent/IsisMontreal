@@ -6,6 +6,7 @@ $q = strval($_GET['q']);
 $t = strval($_GET['t']);
 $s = strval($_GET['s']); // Texte supplémentaire
 $geo = strval($_GET['geo']);
+$GLOBALS['colsep'] = '$';
 
 $resp_table = 'reponses_spatiales';
 $home_table = 'domiciles';
@@ -115,12 +116,11 @@ function do_mysql_modify_poly($db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="SELECT astext(geom) as geom, addr_texte FROM ".$tbl." WHERE id_part = '".$id."'";
+	$sql="SELECT astext(geom) as geom, addr_texte, eligible FROM ".$tbl." WHERE id_part = '".$id."'";
 	$result = mysqli_query($db,$sql);
-
 	while($row = mysqli_fetch_array($result))
 	{
-		echo $row['geom']."||".$row['addr_texte'];
+		echo $row['geom'].$GLOBALS['colsep'].$row['addr_texte'].$GLOBALS['colsep'].$row['eligible'];
     }
 }
 
@@ -161,7 +161,7 @@ function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$s,$g) {
 
 	while($row = mysqli_fetch_array($result))
 	{
-		echo $row['geom_point']."$".$row['geom_poly']."$".$row['addr_text'];
+		echo $row['geom_point'].$GLOBALS['colsep'].$row['geom_poly'].$GLOBALS['colsep'].$row['addr_text'];
 		return;
     }
 	return "";
