@@ -1590,7 +1590,9 @@ function remercier_et_fermer(titre, texte, delay)
 	if (typeof(delay) === 'undefined' || delay == null) {
 		delay = 5; //sec
 	}
-	popup_info_to_user(texte, delay, titre);
+	else if (delay > 0) {
+		popup_info_to_user(texte, delay, titre);
+	}
 	setTimeout("retournerdanslimesurvey();" , delay*1000);
 }
 
