@@ -169,7 +169,10 @@ function fillmapdata(mda)
 		google.maps.event.addListener(obj, 'click', function(e) 
 		{
 			var ctrl, wp, op;
-			if (_editon && _delobjon) { clearfavsmarker(this.prop1); return; }
+			if (_editon && _delobjon) {
+				clearfavsmarker(this.prop1);
+				return;
+			}
 			deselectfavs();
 			setobjcenter(this);
 			_infowin.setContent(makeinfowindowcontent(this, "ciw", 0));
@@ -224,7 +227,7 @@ function onwindowsize()
 
 
 
-function setdrawtools()
+function setDrawTools()
 {
 	var i;
 	var newobj;
@@ -287,57 +290,25 @@ function setdrawtools()
 		_mapmark.setVisible(false);
 		_drawman.setMap(_map);
 		drawevents();
+	clickPoly();
 }
 
 function drawevents()
 {
-	var newobj, obtype, pozz, obp;
-	google.maps.event.addListener(_drawman, 'overlaycomplete', function(e) 
-	{
-		newobj = e.overlay;
-		obtype = e.type;
-		//newobj.prop1 = _favobjects.length;
-		newobj.prop2 = _currpg;
-		newobj.prop13 = setplacecat();			// "Custom";
-		newobj.prop15 = setplacename();			// "Custom place " + _favobjects.length;
-		newobj.title = newobj.prop15;
-		if (obtype == google.maps.drawing.OverlayType.MARKER) 
-		{
-			newobj.prop6 = "M";
-			newobj.prop11 = 0;
-			newobj.prop12 = 1;
-			newobj.prop8 = "media/mk-red-dot.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-		}
-		else if (obtype == google.maps.drawing.OverlayType.CIRCLE)
-		{
-			newobj.prop6 = "C";
-			newobj.prop11 = 1;
-			newobj.prop12 = .5;
-			newobj.prop8 = "media/mk-trans.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-		}
-		else if (obtype == google.maps.drawing.OverlayType.RECTANGLE)
-		{
-			newobj.prop6 = "R";
-			newobj.prop11 = 1;
-			newobj.prop12 = .5;
-			newobj.prop8 = "media/mk-trans.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-		}
-		else if (obtype == google.maps.drawing.OverlayType.POLYGON)
-		{
-			newobj.prop6 = "P";
-			newobj.prop11 = 1;
-			newobj.prop12 = .5;
-			newobj.prop8 = "media/mk-trans.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-		}
-		else if (obtype == google.maps.drawing.OverlayType.POLYLINE)
-		{
-			newobj.prop6 = "L";
-			newobj.prop11 = 4;
-			newobj.prop12 = .5;
-			newobj.prop8 = "media/mk-trans.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-		}
+	google.maps.event.addListener(_drawman, 'overlaycomplete', polygonDrawnHandler);
+}
 
-		newobj.prop0 = true;
+function polygonDrawnHandler(e)
+	{
+	var newobj = e.overlay;
+	var obtype = e.type;
+	console.log(e);
+	newobj.prop6 = "P";
+	newobj.prop11 = 1;
+	/*
+	newobj.prop12 = .5;
+	newobj.prop8 = "media/mk-trans.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+	newobj.prop0 = true;
 		//newobj.prop1 = -1;
 		//newobj.prop2 = _currpg;
 		newobj.prop3 = "";
@@ -387,52 +358,53 @@ function drawevents()
 		newobj.prop47 = "";
 		newobj.prop48 = "";
 		newobj.prop49 = "";
-		
+*/		
 
 		newobj.prop1 = _favobjects.length;
-		_favobjects[_favobjects.length] = newobj;
-		if (newobj.prop6 == "M")
-		{
-			newobj.setIcon(newobj.prop8);
+		if ( _drawnPolygon != null ) {
+			removePolygonFromMap();
 		}
-		else 
-		{
-			obp = { strokeWeight:newobj.prop11 };
-			newobj.setOptions(obp);
-		}
-		setobjcenter(newobj);
-		
-		google.maps.event.addListener(newobj, 'dragend', function(e) 
+		_drawnPolygon = newobj;
+		var polyCenter = calcPolyCenter(newobj);
+		_map.setCenter(polyCenter);
+		obp = { strokeWeight:newobj.prop11 };
+		newobj.setOptions(obp);
+				
+		google.maps.event.addListener(newobj, 'dragend', polygonDragged);
+		google.maps.event.addListener(newobj, 'click', polygonClicked);
+	}
+
+function polygonDragged(e) 
 		{
 			setobjcenter(this);
 			//if (this.prop6 == "M") { _mapmark.setVisible(false); } else { _mapmark.setVisible(true); }
 			if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
-		});
+		}
 		
-		google.maps.event.addListener(newobj, 'click', function(e) 
-		{
-			var ctrl, wp, op;
-			if (_editon && _delobjon) { clearfavsmarker(this.prop1); return; }
-			deselectfavs();
-			setobjcenter(this);
-			_infowin.setContent(makeinfowindowcontent(this, "ciw", 0));
-			_mapmark.setVisible(false);
-			if (this.prop6 != "M")
-			{
-				// _mapmark.setVisible(true);
-				_infowin.setPosition(_loca);
-				op = { strokeWeight:4 };
-				this.setOptions(op);
-				if (!_editon) { _infowin.open(_map); }	
-			}
-			else
-			{
-				this.setIcon(this.prop8.substr(0, 13) + "sta.png");
-				if (!_editon) { _infowin.open(_map, this); }
-			}
-			if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }			
-		});
-	});
+function polygonClicked(e)
+{
+	var ctrl, wp, op;
+	if (_editon && _delobjon) {
+		removePolygonFromMap();
+		return; 
+	}
+	deselectfavs();
+	setobjcenter(this);
+	_infowin.setContent(makeinfowindowcontent(this, "ciw", 0));
+	_mapmark.setVisible(false);
+	if (this.prop6 != "M")
+	{
+		// _mapmark.setVisible(true);
+		_infowin.setPosition(_loca);
+		op = { strokeWeight:4 };
+			this.setOptions(op);
+		if (!_editon) { _infowin.open(_map); }	
+	}
+	else {
+		this.setIcon(this.prop8.substr(0, 13) + "sta.png");
+		if (!_editon) {	_infowin.open(_map, this); }
+	}
+	if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }			
 }
 
 function setobjcenter(ob)
@@ -476,6 +448,16 @@ function setobjcenter(ob)
 		_loca =  new google.maps.LatLng(cc[0], cc[1]);
 		geocodepos(ob, _loca);
 	}
+}
+
+function calcPolyCenter(poly)
+{
+	var a = [];
+	path = poly.getPath().getArray();
+	for (i = 0; i < path.length; i++){ a[i]=[path[i].lat(), path[i].lng()]; }
+	var cc = polygoncentroid(a);
+	var center = _loca =  new google.maps.LatLng(cc[0], cc[1]);
+	return center;
 }
 
 function polygoncentroid(pts) 
@@ -607,10 +589,10 @@ function geocodestrview(adr)
 	updateaddress(adr, false);
 }
 
-function selecteditsubbtn(ib)
+function selectDrawButton(ib)
 {
 	if (ib != 2) { _delobjon = false; }	
-	var a = ["btn11", /*"btn12", "btn13", "btn14",*/ "btn15", /*"btn16",*/ "btn17"];
+	var a = ["btn_select_cursor", "btn_draw_poly", "btn_erase_poly"];
 	for(var i=0; i<a.length;i++)
 	{
 		if(i != ib){ document.getElementById(a[i]).style.borderColor = "#a0a0a0"; }
@@ -653,7 +635,7 @@ function enableproximitysearch()
 function stopDraw()
 {
 	_drawman.setDrawingMode(google.maps.drawing.OverlayType.NULL);
-	selecteditsubbtn(0);
+	selectDrawButton(0);
 	_map.setOptions({ draggableCursor: 'default' });
 }
 /*
@@ -682,8 +664,8 @@ function clickRect()
 function clickPoly()
 {
 	_drawman.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
-	selecteditsubbtn(1);
-	_map.setOptions({ draggableCursor: 'default' });
+	selectDrawButton(1);
+	_map.setOptions({ draggableCursor: 'crosshair' });
 }
 
 function clickLine()
@@ -697,8 +679,8 @@ function clickEditDel()
 {
 	stopDraw();
 	_delobjon = true;
-	selecteditsubbtn(2);
-	_map.setOptions({ draggableCursor: 'crosshair' });
+	selectDrawButton(2);
+	_map.setOptions({ draggableCursor: 'default' });
 }
 
 
@@ -1307,7 +1289,7 @@ function homeAddressLookupResp()
 			var home_addr_text = tokens[1];
 			var homepos = getLatLngFromText(point_resp);
 			if (homepos != null) {
-				if (_qno == 'A2') {
+				if ( _mode == MODE_DESSIN.DomicileVerification ) {
 					setMapPin(homepos, null, true, true);
 					updateAddressText(home_addr_text);
 					findCurrentAddressMunicipality();
@@ -1501,7 +1483,7 @@ function setMapPin(latlng, iconPath, canDrag, centerOnPin)
 function confirmeraddress()
 {
 	_mapmark.setVisible(false);
-	if ( _qno == 'A2' ) {
+	if ( _mode == MODE_DESSIN.DomicileVerification ) {
 		saveHomeAddress(_mapmark);
 		var inRMM = check_if_marker_in_rmm();
 		if (!inRMM) {
@@ -1513,12 +1495,14 @@ function confirmeraddress()
 		}
 	}
 	else {
-		saveLocationToDB(_mapmark);
-		setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
-		remercier_et_fermer("Retourner dans le questionnaire textuel", "Merci!");
-		//var region_hint_to_geocoder = ",QC'";
-		//var addr = document.getElementById("address").value + region_hint_to_geocoder;
-		//_geocoder.geocode( { 'address': addr }, makefavgeocoderresphandler );
+		if ( _mode == MODE_DESSIN.Polygone ) {
+
+		}
+		else {
+			saveLocationToDB(_mapmark);
+			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
+			remercier_et_fermer("Retourner dans le questionnaire textuel", "Merci!");
+		}
 	}
 }
 
@@ -1618,7 +1602,15 @@ function clearfavsmarker(id)
 	_infowin.close();
 }
 
+function removePolygonFromMap(id)
+{
+	google.maps.event.clearListeners(_drawnPolygon, 'click');
+	_drawnPolygon.setMap(null);
+	_infowin.close();
+}
+
 /*
+
 function clearfavspanel()
 {
 	document.getElementById('findtype').value = "";

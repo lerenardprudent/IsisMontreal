@@ -129,9 +129,9 @@
 	<script type="text/javascript">
 	
 		var MODE_DESSIN = {
-		  Point : {value: 0, name: "point"}, 
-		  Polygone: {value: 1, name: "polygone"},
-		  DomicileVerification: {value: 2, name: "domver" }
+		  Point : {value: 0, nom: "point"}, 
+		  Polygone: {value: 1, nom: "polygone"},
+		  DomicileVerification: {value: 2, nom: "domver" }
 		};
 		var LANGUE = {
 			Français : { val: "fr" },
@@ -144,6 +144,7 @@
 			AucunIdParticipant : { nom : 'idpart', val : 102 },
 			AucunNumQuestion : { nom : 'numquest', val : 103 },
 			NumQuestionInvalide : { nom : 'numquestinv', val : 104 },
+			ModeDessinInvalide : { nom : 'modedessin', val : 105 },
 			
 			Inconnu : { nom : 'inconnu', val : 999 }
 		};
@@ -157,6 +158,8 @@
 														  'an' : "The question number is missing." };
 		_erreurs[CODE_ERREUR.NumQuestionInvalide.nom] = { 'fr' : "Le numéro de question n'est pas valide.",
 														  'an' : "The question number is not valid." };
+		_erreurs[CODE_ERREUR.ModeDessinInvalide.nom] = 	{ 'fr' : "Un mode de dessin configuré est invalide",
+														  'an' : "A configured drawing mode is invalid" };
 		_erreurs[CODE_ERREUR.Inconnu.nom] = 			{ 'fr' : "Erreur inconnue",
 														  'an': "Unknown error" };
 			
@@ -205,6 +208,7 @@
 		var _lastGeocodedAddrComps = null;
 		var _lastAddressText = null;
 		var _lastPlaceIconClicked = null;
+		var _drawnPolygon = null;
 		
 		var tripiniconpath = "media/mapmark.png";
 		
@@ -261,15 +265,15 @@
 				mapinit();					
 				inputs_init();
 				
-				if ( _mode == MODE_DESSIN.Polygone.name )
+				if ( _mode == MODE_DESSIN.Polygone )
 				{
-					setdrawtools();
+					setDrawTools();
 				}
 				else {
 					document.getElementById("drawbuttonsspan").innerHTML = ""; // Hide draw buttons
 				}
 				
-				if (_qno == 'A2') {
+				if ( _mode == MODE_DESSIN.DomicileVerification ) {
 					var home_addr_encoded = getUrlParam('addr');
 					if (home_addr_encoded != null) {
 						var home_addr = decodeURI(home_addr_encoded);
@@ -647,57 +651,10 @@
 			var content = null;
 			var paramsValide = false;
 			var question = null;
-			var errCode = CODE_ERREUR.PasUneErreur;
+			var errCode = lookForUrlErrors();
 			
-			var langue = getUrlParam('langue');
-			if ( langue != null ) {
-				if (langue == LANGUE.Français.val ) {
-					_langue = LANGUE.Français;
-				}
-				else if (langue == LANGUE.Anglais.val ) {
-					_langue = LANGUE.Anglais;
-				}
-				else {
-					errCode = CODE_ERREUR.LangueErronnée;
-				}
-			}
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				if ( getUrlParam('quest') == null ) {
-					errCode = CODE_ERREUR.AucuneNumQuestion;
-				}
-				else {
-					var quest_no = getUrlParam('quest');
-					for ( var i = 0; i < questionnaire_texte.length; i++ ) {
-						quest = questionnaire_texte[i];
-						if (quest.question_no == quest_no) {
-							if ( _langue == LANGUE.Anglais ) {
-								question = quest.question_an;
-							}
-							else {
-								question = quest.question_fr;
-							}
-							_question = quest;
-							_mode = quest.mode_dessin;
-							_qno = quest_no;
-							break;
-						}
-					}
-					if ( question == null ) {
-						errCode = CODE_ERREUR.NumQuestionInvalide;
-					}
-					else {
-						var particip_id = getUrlParam('pid');
-						if ( particip_id == null || particip_id == "") {
-							errCode = CODE_ERREUR.AucunIdParticipant;
-						}
-						else {
-							_id_participant = particip_id;	
-						}
-					}
-				}
-			}
-			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<b>Question " + quest_no + ": <i>" + question + "</i><b>";
+				content = "<b>Question " + _qno + ": <i>" + question + "</i><b>";
 				paramsValide = true;
 			}
 			else {
@@ -714,6 +671,67 @@
 				err = CODE_ERREUR.Inconnu;
 			}
 			return _erreurs[err.nom][_langue.val];
+		}
+		
+		function lookForUrlErrors()
+		{
+			var langue = getUrlParam('langue');
+			if ( langue != null ) {
+				if (langue == LANGUE.Français.val ) {
+					_langue = LANGUE.Français;
+				}
+				else if (langue == LANGUE.Anglais.val ) {
+					_langue = LANGUE.Anglais;
+				}
+				else {
+					return CODE_ERREUR.LangueErronnée;
+				}
+			}
+			
+			if ( getUrlParam('quest') == null ) {
+				return CODE_ERREUR.AucuneNumQuestion;
+			}
+			
+			var quest_no = getUrlParam('quest');
+			for ( var i = 0; i < questionnaire_texte.length; i++ ) {
+				quest = questionnaire_texte[i];
+				if (quest.question_no == quest_no) {
+					if ( _langue == LANGUE.Anglais ) {
+						question = quest.question_an;
+					}
+					else {
+						question = quest.question_fr;
+					}
+					_question = quest;
+					var mode_dessin = quest.mode_dessin;
+					if ( mode_dessin == MODE_DESSIN.Point.nom ) {
+						_mode = MODE_DESSIN.Point;
+					}
+					else if ( mode_dessin == MODE_DESSIN.Polygone.nom ) {
+						_mode = MODE_DESSIN.Polygone;
+					}
+					else if ( mode_dessin == MODE_DESSIN.DomicileVerification.nom ) {
+						_mode = MODE_DESSIN.DomicileVerification;
+					}
+					else {
+						return CODE_ERREUR.ModeDessinInvalide;
+					}
+					_qno = quest_no;
+					break;
+				}
+			}
+			if ( question == null ) {
+				return CODE_ERREUR.NumQuestionInvalide;
+			}
+			
+			var particip_id = getUrlParam('pid');
+			if ( particip_id == null || particip_id == "") {
+				return CODE_ERREUR.AucunIdParticipant;
+			}
+				
+			_id_participant = particip_id;	
+			
+			return CODE_ERREUR.PasUneErreur;
 		}
 		
 	</script>
