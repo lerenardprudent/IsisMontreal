@@ -17,7 +17,8 @@
 	<link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.css" />
 	<style>		
 		.myCustomStyle  {
-		   font-size: 12px
+		   font-size: 15px;
+		   width: 500px
 		}
 		
 		.tooltiptext{
@@ -41,6 +42,8 @@
 			width: auto;
 		
 		.inline-radio { display: inline-block; }
+		
+		.button_space { margin-left: 20px;}
 	</style>
 	<style type="text/css" media="screen">
 		html, body { width:100%; height:100%; }
@@ -350,16 +353,13 @@
 						</span>
 						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer ce qui est indiqué sur la carte"></button>
 						<!-- <img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/> -->
-						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
-						<!--<div class="tooltiptext">
-							Pour situer le lieu en question, veuillez saisir son adresse en la tapant ou en l'indiquant directement avec une clique sur la carte ci-dessous. Une fois que le marqueur est correctement situé, veuillez sauvegarder votre sélection en appuyant sur le bouton <i>Confirmer</i>. Ensuite, pour fermer cette page et retourner au questionnaire, veuillez cliquer le bouton <i>X</i> en haut à droite.
-						</div>-->
 						<br/>
 						<form>
 					<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
 					<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
 					<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
 					<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
+					<img id="helpicon" style="margin-left:290px; border:none; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>
 				</form>
 					</td>
 				</tr>
@@ -654,7 +654,7 @@
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<b>Question " + _qno.toUpperCase() + ": <i>" + _question + "</i><b>";
+				content = "<b>Question " + _qno.toUpperCase() + ": <i>" + _question + "</i></b>";
 				paramsValide = true;
 			}
 			else {
