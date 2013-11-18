@@ -197,6 +197,7 @@
 		var _maxfavs = 1;
 		var _mode;
 		var _question;
+		var _consigne;
 		var _langue = LANGUE.Français;
 		var _id_participant;
 		var _searchradius = 2000;
@@ -204,7 +205,7 @@
 		var _urlParams = {};
 		var _qtip_text = "";
 		var _qtip_title = "Questionnaire ISIS";
-		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc;
+		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc, _httpReqSavePoly;
 		var _lastGeocodedAddrComps = null;
 		var _lastAddressText = null;
 		var _lastPlaceIconClicked = null;
@@ -254,14 +255,12 @@
 				document.getElementById('dash').style.visibility = "visible";
 				var consigne, titre;
 				if ( _langue == LANGUE.Français ) {
-					consigne = _question.consigne_fr;
 					titre = 'Questionnaire ISIS: Consigne pour répondre à cette question';
 				}
 				else {
-					consigne = _question.consigne_an;
 					titre = 'ISIS Survey: How to answer this question';
 				}
-				popup_info_to_user(consigne, 8, titre);
+				popup_info_to_user(_consigne, 8, titre);
 				mapinit();					
 				inputs_init();
 				
@@ -342,12 +341,12 @@
 						<input id="address" type="text" maxlength="150" style="width:450px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
 						<button id="search_btn" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
 						<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
-						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
 						<span id="drawbuttonsspan">
 							<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor.png); " title="Confirmer l'adresse indiquée"></button>
 							<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/polygon.png); " title="Confirmer l'adresse indiquée"></button>
 							<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase.png); " title="Confirmer l'adresse indiquée"></button>
 						</span>
+						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer l'adresse indiquée"></button>
 						<!-- <img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/> -->
 						<img id="helpicon" style="background-color:#F2F2F4; border:none; vertical-align:middle" src="media/Icon-information.svg" width="30" height="30"/>
 						<!--<div class="tooltiptext">
@@ -650,11 +649,10 @@
 			var style = "style=\"background-color:LightBlue; padding:5px\"";
 			var content = null;
 			var paramsValide = false;
-			var question = null;
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<b>Question " + _qno + ": <i>" + question + "</i><b>";
+				content = "<b>Question " + _qno + ": <i>" + _question + "</i><b>";
 				paramsValide = true;
 			}
 			else {
@@ -694,15 +692,16 @@
 			
 			var quest_no = getUrlParam('quest');
 			for ( var i = 0; i < questionnaire_texte.length; i++ ) {
-				quest = questionnaire_texte[i];
+				var quest = questionnaire_texte[i];
 				if (quest.question_no == quest_no) {
 					if ( _langue == LANGUE.Anglais ) {
-						question = quest.question_an;
+						_question = quest.question_an;
+						_consigne = quest.consigne_an;
 					}
 					else {
-						question = quest.question_fr;
+						_question = quest.question_fr;
+						_consigne = quest.consigne_fr;
 					}
-					_question = quest;
 					var mode_dessin = quest.mode_dessin;
 					if ( mode_dessin == MODE_DESSIN.Point.nom ) {
 						_mode = MODE_DESSIN.Point;
@@ -720,7 +719,7 @@
 					break;
 				}
 			}
-			if ( question == null ) {
+			if ( _question == null ) {
 				return CODE_ERREUR.NumQuestionInvalide;
 			}
 			

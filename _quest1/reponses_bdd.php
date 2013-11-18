@@ -8,7 +8,7 @@ $s = strval($_GET['s']); // Texte supplémentaire
 $lat = doubleval($_GET['lat']);
 $lon = doubleval($_GET['lon']);
 
-$resp_table = 'rep_spat';
+$resp_table = 'reponses_spatiales';
 $home_table = 'domiciles';
 $table = $resp_table;
 
@@ -30,9 +30,13 @@ else if (strcmp($up,"rl") == 0)  // Response lookup
 {
 	$db_update_func = 'do_mysql_resp_lookup';
 }
-else if (strcmp($up,"in") == 0)  // Response lookup
+else if (strcmp($up,"in") == 0)
 {
 	$db_update_func = 'do_mysql_insert_or_modify';
+}
+else if (strcmp($up,"ip") == 0)
+{
+	$db_update_func = 'do_mysql_insert_or_modify_poly';
 }
 else {
 	die("Could not recognise update type");
@@ -66,6 +70,11 @@ function do_mysql_insert_or_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 		do_mysql_modify($db,$tbl,$id,$q,$t,$lat,$lon,$s);
 }
 
+function do_mysql_insert_or_modify_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+	if (!do_mysql_insert_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s))
+		do_mysql_modify_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s);
+}
+
 function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($db,"veritas");
@@ -79,6 +88,30 @@ function do_mysql_insert($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
 	  }
 	echo "1 record added";
 	return true;
+}
+
+function do_mysql_insert_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+	echo "\nInserting into ".$tbl."...\n";
+	mysqli_select_db($db,"veritas");
+	$sql="insert into ".$tbl." (id_part, num_quest, geom_poly) values ('".$id."','".$q."',GeomFromText('".$s."'))";
+	echo "INSERTING: ".$sql;
+	if (!mysqli_query($db,$sql)) {
+	  echo('Error: ' . mysqli_error($db));
+	  return false;
+	}
+	echo "1 record added";
+	return true;
+}
+
+function do_mysql_modify_poly($db,$tbl,$id,$q,$t,$lat,$lon,$s) {
+	mysqli_select_db($db,"veritas");
+	$sql="update ".$tbl." set geom_poly=GeomFromText('".$s."' where id_part='".$id."'";
+	echo "Sending ".$sql."\n";
+	if (!mysqli_query($db,$sql))
+	  {
+	  die('Error: ' . mysqli_error($db));
+	  }
+	echo "1 poly record modified";
 }
 
 function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$lat,$lon,$s) {

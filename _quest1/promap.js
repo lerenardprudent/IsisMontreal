@@ -453,7 +453,7 @@ function setobjcenter(ob)
 function calcPolyCenter(poly)
 {
 	var a = [];
-	path = poly.getPath().getArray();
+	var path = poly.getPath().getArray();
 	for (i = 0; i < path.length; i++){ a[i]=[path[i].lat(), path[i].lng()]; }
 	var cc = polygoncentroid(a);
 	var center = _loca =  new google.maps.LatLng(cc[0], cc[1]);
@@ -1229,9 +1229,9 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 
 function geocoderResponseCenter(results, status)
 {
-	geoResp = geocoderResponse(results, status);
+	var geoResp = geocoderResponse(results, status);
 	if ( geoResp != null ) {
-		_map.setCenter(reoResp.coords);
+		_map.setCenter(geoResp.coords);
 	}
 }
 
@@ -1266,7 +1266,7 @@ function rechercher()
 
 function geocodeHomeAddress(homeAddr)
 {
-	_geocoder.geocode( { 'address': homeAddr }, geocoderResponseCenter );
+	_geocoder.geocode( { 'address': homeAddr }, geocoderResponseUpdateDisplayAndCenterMap );
 }
 
 function puthomepin()
@@ -1496,13 +1496,45 @@ function confirmeraddress()
 	}
 	else {
 		if ( _mode == MODE_DESSIN.Polygone ) {
-
+			if ( _drawnPolygon == null ) {
+				alert( "Veuillez dessiner une zone sur la carte." );
+			}
+			else {
+				var pointList = [];
+				var path = _drawnPolygon.getPath().getArray();
+				for (i = 0; i < path.length; i++) {
+					pointList.push( { 'lat' : path[i].lat(), 'lon' : path[i].lng() } );
+				}
+				savePolyToDB(pointList);
+			}
 		}
 		else {
 			saveLocationToDB(_mapmark);
 			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
 			remercier_et_fermer("Retourner dans le questionnaire textuel", "Merci!");
 		}
+	}
+}
+
+function savePolyToDB(pointlist)
+{
+	_httpReqSavePoly = new XMLHttpRequest();
+	_httpReqSavePoly.onreadystatechange=savePolyResp;
+	// insert into rep_spat (id_part,geom_poly) values ('xxx',GeomFromText("POLYGON((121.44842136764532 31.22119260287111,121.45076025390631 31.221990825071376,121.45402182006842 31.218366658611853,121.45091045761114 31.217054584347302,121.44842136764532 31.22119260287111))"))
+	var polyStrForInsert = "POLYGON((";
+	for (var i = 0; i < pointlist.length; i++) {
+		polyStrForInsert += pointlist[i].lat + " " + pointlist[i].lon + ", ";
+	}
+	polyStrForInsert += pointlist[0].lat + " " + pointlist[0].lon + "))"; // Repeat the first point to make a closed polygon
+	var php_url = "reponses_bdd.php?up=ip&id=" + _id_participant + "&q=" + _qno + "&s=" + encodeURI(polyStrForInsert);
+	_httpReqSavePoly.open("post",php_url,true);
+	_httpReqSavePoly.send();
+}
+
+function savePolyResp()
+{
+	if (_httpReqSavePoly.readyState==4 && _httpReqSavePoly.status==200) {
+		// Handling ?
 	}
 }
 
