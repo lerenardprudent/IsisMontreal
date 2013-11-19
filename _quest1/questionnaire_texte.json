@@ -4,7 +4,7 @@ var questionnaire_texte = [
 		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile actuel ?",
 		question_an : "Is this where you reside ?",
 		mode_dessin : "domver",
-		consigne_fr : "Si oui appuyez sur la coche.<br/><br/>Si non, merci de corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte. Lorsque le lieu sur la carte correspond à votre domicile actuel, appuyez sur Confirmer",
+		consigne_fr : "Si oui appuyez sur la coche.<br>Si non, merci de corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte.<br>Lorsque le lieu sur la carte correspond à votre domicile actuel, appuyez sur Confirmer",
 		consigne_an : "If it is, then please confirm"
 	},
 	{ 

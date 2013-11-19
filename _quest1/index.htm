@@ -47,7 +47,8 @@
 	</style>
 	<style type="text/css" media="screen">
 		html, body { width:100%; height:100%; }
-		body { margin:0px; padding:0px; overflow:hidden; color:#404040; background-color:#f2f2f4; }
+		body { margin:0px; padding:0px; overflow:hidden; color:#404040; background-color:White; }
+		button { margin-right: 3px; }
 		a:link, a:visited { color:#dd0000; text-decoration:none; }
 		a:active, a:hover { color:#404040; text-decoration:none; }
 		input { background-color:#ffffff; margin:0px; padding:0px; border:1px solid #999; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
@@ -63,11 +64,10 @@
 		#mainswf { position:absolute; left:0px; top:0px; width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
 		#findtype { width:180px; } 
 		#findrads { width:70px; } 
-		#dragmain { height:60px; padding:2px }
-		#infopanel { position:absolute; top:55px; left:0px; width:1900px; height:120px; padding:0px; background-color:#F2F2F4; text-wrap:none; white-space:nowrap; overflow:hidden; }
-		#infolab1, #infolab2, #infolab3 { width:100px; color:#c0c0c0; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
+		#infopanel { position:absolute; top:55px; left:0px; width:1900px; height:100px; padding:0px; background-color:DarkGrey; text-wrap:none; white-space:nowrap; overflow:hidden; }
+		#infolab1, #infolab2, #infolab3 { width:100px; color:DarkBlue; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
-		#mapdiv { position:absolute; top:170px; left:0px; width:1900px; height:690px; overflow:hidden; }
+		#mapdiv { position:absolute; top:170px; left:0px; width:1900px; height:690px; overflow:hidden; background-color:DarkGrey }
 		#strviewdiv { position:absolute; top:175px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; border-width: 2px; border-style: outset; border-color: orange;  }
 		#findspanel, #favspanel { position:absolute; left:1000px; top:200px; width: 200px; height:280px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
 		#places, #objects { position:absolute; left:0px; top:20px; width:195px; height: 234px; border-style:solid; border-width:0px 1px 0px 1px; border-color:#999; padding-left:4px; overflow-x:hidden; overflow-y:scroll;}
@@ -274,7 +274,8 @@
 					setDrawTools();
 				}
 				else {
-					document.getElementById("drawbuttonsspan").innerHTML = ""; // Hide draw buttons
+					var drawbtns = document.getElementById("drawbuttonsspan");
+					drawbtns.innerHTML = ""; // Hide draw buttons
 				}
 				
 				if ( _mode == MODE_DESSIN.DomicileVerification ) {
@@ -335,200 +336,37 @@
 		<div id="mapdiv"></div>
 		<div id="strviewdiv"></div>
 		<div id="infopanel">
-			<div id="questionpanel">
+			<div id="questionpanel" style="background-color:Grey">
 			</div>
-			<table id="dash" style="visibility:hidden">
-				<tr>
-					<td>
-						<span id="infolab1"><b>Recherche:&nbsp;&nbsp;&nbsp;</b></span>
-					</td>
-					<td>
-						<input id="address" type="text" maxlength="150" style="width:450px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
-						<button id="search_btn" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
-						<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
-						<span id="drawbuttonsspan">
-							<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor.png); " title="Déplacer ou modifier la forme du polygone"></button>
-							<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/polygon.png); " title="Desssiner un polygone"></button>
-							<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase.png); " title="Effacer un polygone"></button>
-						</span>
-						<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer ce qui est indiqué sur la carte"></button>
-						<!-- <img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/> -->
-						<br/>
-						<form>
-					<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
-					<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
-					<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
-					<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
-					<img id="helpicon" style="margin-left:290px; border:none; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>
-				</form>
-					</td>
-				</tr>
-				
-				<!--
-				<tr>
-					<td>
-						<span id="infolab2"><b>Recherche:</b></span>
-					</td>
-					<td>
-						<select id="findtype"  title="Categories/types of places" style="width:150px; height:20px;" placeholder="Type">
-							<option value=""></option>
-							<option value="accounting">Accounting</option>
-							<option value="airport">Airport</option>
-							<option value="amusement_park">Amusement park</option>
-							<option value="aquarium">Aquarium</option>
-							<option value="art_gallery">Art gallery</option>
-							<option value="atm">ATM</option>
-							<option value="bakery">Bakery</option>
-							<option value="bank">Bank</option>
-							<option value="bar">Bar</option>
-							<option value="beauty_salon">Beauty salon</option>
-							<option value="bicycle_store">Bicycle store</option>
-							<option value="book_store">Book store</option>
-							<option value="bowling_alley">Bowling alley</option>
-							<option value="bus_station">Bus station</option>
-							<option value="cafe">Cafe</option>
-							<option value="campground">Campground</option>
-							<option value="car_dealer">Car dealer</option>
-							<option value="car_rental">Car rental</option>
-							<option value="car_repair">Car repair</option>
-							<option value="car_wash">Car wash</option>
-							<option value="casino">Casino</option>
-							<option value="cemetery">Cemetery</option>
-							<option value="church">Church</option>
-							<option value="city_hall">City hall</option>
-							<option value="clothing_store">Clothing store</option>
-							<option value="convenience_store">Convenience store</option>
-							<option value="courthouse">Courthouse</option>
-							<option value="dentist">Dentist</option>
-							<option value="department_store">Department store</option>
-							<option value="doctor">Doctor</option>
-							<option value="electrician">Electrician</option>
-							<option value="electronics_store">Electronics store</option>
-							<option value="embassy">Embassy</option>
-							<option value="establishment">Establishment</option>
-							<option value="finance">Finance</option>
-							<option value="fire_station">Fire Station</option>
-							<option value="florist">Florist</option>
-							<option value="food">Food</option>
-							<option value="funeral_home">Funeral home</option>
-							<option value="furniture_store">Furniture store</option>
-							<option value="gas_station">Gas station</option>
-							<option value="general_contractor">General contractor</option>
-							<option value="grocery_or_supermarket">Grocery or supermarket</option>
-							<option value="gym">Gym</option>
-							<option value="hair_care">Hair care</option>
-							<option value="hardware_store">Hardware store</option>
-							<option value="health">Health</option>
-							<option value="hindu_temple">Hindu temple</option>
-							<option value="home_goods_store">Home goods store</option>
-							<option value="hospital">Hospital</option>
-							<option value="insurance_agency">Insurance agency</option>
-							<option value="jewelry_store">Jewelry store</option>
-							<option value="laundry">Laundry</option>
-							<option value="lawyer">Lawyer</option>
-							<option value="library">Library</option>
-							<option value="liquor_store">Liquor store</option>
-							<option value="local_government_office">Local government office</option>
-							<option value="locksmith">Locksmith</option>
-							<option value="lodging">Lodging</option>
-							<option value="meal_delivery">Meal delivery</option>
-							<option value="meal_takeaway">Meal takeaway</option>
-							<option value="mosque">Mosque</option>
-							<option value="movie_rental">Movie rental</option>
-							<option value="movie_theater">Movie theater</option>
-							<option value="moving_company">Moving company</option>
-							<option value="museum">Museum</option>
-							<option value="night_club">Night club</option>
-							<option value="painter">Painter</option>
-							<option value="park">Park</option>
-							<option value="parking">Parking</option>
-							<option value="pet_store">Pet store</option>
-							<option value="pharmacy">Pharmacy</option>
-							<option value="physiotherapist">Physiotherapist</option>
-							<option value="place_of_worship">Place of worship</option>
-							<option value="plumber">Plumber</option>
-							<option value="police">Police</option>
-							<option value="post_office">Post office</option>
-							<option value="real_estate_agency">Real estate agency</option>
-							<option value="restaurant">Restaurant</option>
-							<option value="roofing_contractor">Roofing contractor</option>
-							<option value="rv_park">RV park</option>
-							<option value="school">School</option>
-							<option value="shoe_store">Shoe store</option>
-							<option value="shopping_mall">Shopping mall</option>
-							<option value="spa">Spa</option>
-							<option value="stadium">Stadium</option>
-							<option value="storage">Storage</option>
-							<option value="store">Store</option>
-							<option value="subway_station">Subway station</option>
-							<option value="synagogue">Synagogue</option>
-							<option value="taxi_stand">Taxi stand</option>
-							<option value="train_station">Train station</option>
-							<option value="travel_agency">Travel agency</option>
-							<option value="university">University</option>
-							<option value="veterinary_care">Veterinary care</option>
-							<option value="zoo">Zoo</option>
-						</select>
-						<input id="findkwds" type="text" maxlength="150" style="width:200px; height:18px;" placeholder="Keywords" />
-						<select id="findrads" style="width:70px; height:20px;">
-							<option value="1000" selected>1 Km</option>
-							<option value="2000">2 Km</option>
-							<option value="3000">3 Km</option>
-							<option value="4000">4 Km</option>
-							<option value="5000">5 Km</option>
-							<option value="7000">7 Km</option>
-							<option value="10000">10 Km</option>
-							<option value="15000">15 Km</option>
-							<option value="20000">20 Km</option>
-							<option value="25000">25 Km</option>
-							<option value="30000">30 Km</option>
-							<option value="35000">35 Km</option>
-							<option value="40000">40 Km</option>
-							<option value="45000">45 Km</option>
-							<option value="50000">50 Km</option>
-						</select>
-						<button id="btn4" type="button" title="Search places on category or keywords inside the range." onclick='findplace()'>Find</button>
-						<button id="btn5" type="button" title="Remove all search results." onclick='clearfindall();clearfindpanel()'>Clear</button>
-					</td>			
-				</tr>
-				-->
-				<tr id="drawtools">
-					<td style="height:28px; max-height:28px; padding-top:5px;">
-						<span id="infolab3"><b>Outils de dessin:&nbsp;&nbsp;</b></span>
-					</td>
-					<td style="height:28px; max-height:28px; padding-top:5px;">
-						<!-- <button id="btn6" type="button" value="U" title="Toggle the marker/shape editor.">Edit</button> -->
-						<span id="edittools" style="display:none;">
-							<button id="btn11" type="button" style="background-image:url(media/cursor.png); padding:2px 6px 2px 6px;" title="Move the markers/shapes to a new position." onclick="stopDraw()">&nbsp;&nbsp;</button>
-							<!-- <button id="btn12" type="button" style="background-image:url(media/tkico1.png); padding:2px 6px 2px 6px;" title="Create a new marker." onclick="clickMarker()">&nbsp;&nbsp;</button>
-							<button id="btn13" type="button" style="background-image:url(media/tkico2.png); padding:2px 6px 2px 6px;" title="Create a circle shape." onclick="clickCirc()">&nbsp;&nbsp;</button>
-							<button id="btn14" type="button" style="background-image:url(media/tkico3.png); padding:2px 6px 2px 6px;" title="Create a rectangular shape." onclick="clickRect()">&nbsp;&nbsp;</button> -->
-							<button id="btn15" type="button" style="background-image:url(media/polygon.png); padding:2px 6px 2px 6px;" title="Create a poligon shape." onclick="clickPoly()">&nbsp;&nbsp;</button>
-							<!-- <button id="btn16" type="button" style="background-image:url(media/tkico5.png); padding:2px 6px 2px 6px;" title="Create a polyline." onclick="clickLine()">&nbsp;&nbsp;</button> -->
-							<button id="btn17" type="button" style="background-image:url(media/erase.png); padding:2px 6px 2px 6px;" title="Delete marker/shape." onclick="clickEditDel()">&nbsp;&nbsp;</button>
-						</span>
-						<!--<button id="btn7" type="button" title="Shows diferent map features and contents." onclick="toggleviewpanel();">View...</button> -->
-						<!--<button id="btn8" type="button" title="Get the path betwen two places (markers only).">Directions</button> -->
-					<!--	<span style="display:inline-block; width:240px; margin-left:5px;" id="timeline"><input id="slider" name="slider" value="720" />
-							<script type="text/javascript">
-								$("#slider").slider({ 
-								from:0, 
-								to:1440, 
-								step:15, 
-								dimension:'', 
-								scale:['|','|','|','|','|'], 
-								limits:true, 
-								round:0,
-								calculate:function( value ){ 
-								var hours = Math.floor( value / 60 ); 
-								var mins = ( value - hours*60 ); 
-								return (hours < 10 ? "0"+hours : hours) + ":" + ( mins == 0 ? "00" : mins );
-								}});
-							</script>
-						</span>-->
-					</td>
-				</tr>
-			</table>
+			<div id="righthalf">
+				<table id="dash" style="float: right; visibility:hidden">
+					<tr>
+						<td>
+							<span id="infolab1"><b>Recherche:</b></span>&nbsp;&nbsp;
+						</td>
+						<td>
+							<input id="address" type="text" maxlength="150" style="width:350px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
+							<button id="search_btn" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
+							<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
+							<span id="drawbuttonsspan">
+								<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor.png); " title="Déplacer ou modifier la forme du polygone"></button>
+								<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/polygon.png); " title="Desssiner un polygone"></button>
+								<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase.png); " title="Effacer un polygone"></button>
+							</span>
+							<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer ce qui est indiqué sur la carte"></button>
+							<!-- <img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/> -->
+							<br/>
+							<form>
+						<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
+						<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
+						<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
+						<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
+						<!--<img id="helpicon" style="margin-left:290px; border:noone; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>-->
+					</form>
+						</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 		<div id="findspanel">
 			<ol id="places"></ol>
@@ -648,13 +486,14 @@
 		function validerUrlParams()
 		{
 			var questionpanel = document.getElementById('questionpanel');
-			var style = "style=\"background-color:LightBlue; padding:5px\"";
+			var style = "style=\"font-size: 13px; max-width: 50px; float:left; padding:0px\"";
 			var content = null;
 			var paramsValide = false;
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<b>Question " + _qno.toUpperCase() + ": <i>" + _question + "</i></b>";
+				content = "<span style=\"font-size:15px; padding: 1px; background-color:LightGrey\"><b><u>QUESTION " + _qno.toUpperCase() + ": " + _question + 
+				"</u></span><br><i>" + _consigne + "</i></b>";
 				paramsValide = true;
 			}
 			else {

@@ -225,8 +225,6 @@ function onwindowsize()
 	try { _map.setCenter(_loca); } catch (er) {}	
 }
 
-
-
 function setDrawTools()
 {
 	var i;
@@ -1519,20 +1517,6 @@ function confirmeraddress()
 			console.log(er);
 		}
 		
-		$('confirm text').dialog(
-    {
-        modal:true, //Not necessary but dims the page background
-        buttons:{
-            'Save':function() {
-                //Whatever code you want to run when the user clicks save goes here
-             },
-             'Delete':function() {
-                 //Code for delete goes here
-              }
-        }
-    }
-);
-		console.info(parsedCsv);
 		var inRMM = check_if_marker_in_rmm();
 		var title, text;
 		var delay = null;
