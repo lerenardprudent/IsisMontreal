@@ -11,8 +11,13 @@
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" type="text/css" />
 	<link rel="stylesheet" href="objs/css/jslider.css" type="text/css" />
 	-->
+	
+	 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.js"></script>
+	
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 	<!-- CSS file -->
 	<link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.css" />
 	<style>		
@@ -220,6 +225,22 @@
 		
 		$(document).ready( function()
 		{
+			 $(function() {
+				$( "#dialog-confirm" ).dialog({
+				resizable: false,
+				modal: true,
+				buttons: {
+					"Delete all items": function() {
+				$( this ).dialog( "close" );
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+				}
+			});
+		});
+		$( ".selector" ).dialog( "option", "height", 500 );
+		
 			$('img[id="helpicon"]').each(function() {
 					$(this).qtip({
 						content: {
@@ -317,6 +338,10 @@
 	<div id="mainswf">
 	</div>
 	
+	<div id="dialog-confirm" title="Empty the recycle bin?">
+		<p><span class="ui-icon ui-icon-pencil" style="float: left; margin: 0 7px 20px 0"></span>These items will be permanently deleted and cannot be recovered. Are you sure?</p>
+	</div>
+
 	<!-- PAGE LAYOUT STARTS HERE -->
 	<div id="maindiv" class="maindivclass">
 		<div id="dragmain" class="dragmain">
@@ -490,13 +515,13 @@
 		function validerUrlParams()
 		{
 			var questionpanel = document.getElementById('questionpanel');
-			var style = "style=\"font-size: 13px; max-width: 50px; float:left; padding:0px\"";
+			var style = "style=\"font-size: 13px; max-width: 100px; float:left; padding:0px\"";
 			var content = null;
 			var paramsValide = false;
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<span style=\"font-size:15px; padding: 1px; background-color:LightGrey\"><b><u>QUESTION " + _qno.toUpperCase() + ": " + _question + 
+				content = "<span style=\"font-size:15px; padding: 1px; background-color:LightGrey\"><b><u><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
 				"</u></span><br><i>" + _consigne + "</i></b>";
 				paramsValide = true;
 			}

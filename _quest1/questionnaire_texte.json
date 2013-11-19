@@ -17,10 +17,10 @@ var questionnaire_texte = [
 	},
 	{ 
 		question_no : "45",
-		question_fr : "Pouvez-vous indiquer le nom et l\’adresse de l\'endroit où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé ?",
+		question_fr : "Localiser le lieu où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé.",
 		question_an : "Some question in English",
 		mode_dessin : "point",
-		consigne_fr : "Question AAA!",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "You know what you want to do"
 	},
 	{ 
