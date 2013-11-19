@@ -64,10 +64,10 @@
 		#mainswf { position:absolute; left:0px; top:0px; width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
 		#findtype { width:180px; } 
 		#findrads { width:70px; } 
-		#infopanel { position:absolute; top:55px; left:0px; width:1900px; height:100px; padding:0px; background-color:DarkGrey; text-wrap:none; white-space:nowrap; overflow:hidden; }
+		#infopanel { margin-top:5px; position:absolute; top:55px; left:0px; width:1900px; height:110px; padding:0px; background-color:DarkGrey; text-wrap:none; white-space:nowrap; overflow:hidden; }
 		#infolab1, #infolab2, #infolab3 { width:100px; color:DarkBlue; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
-		#mapdiv { position:absolute; top:170px; left:0px; width:1900px; height:690px; overflow:hidden; background-color:DarkGrey }
+		#mapdiv { position:absolute; top:167px; left:0px; width:1900px; height:690px; overflow:hidden; background-color:DarkGrey }
 		#strviewdiv { position:absolute; top:175px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; border-width: 2px; border-style: outset; border-color: orange;  }
 		#findspanel, #favspanel { position:absolute; left:1000px; top:200px; width: 200px; height:280px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
 		#places, #objects { position:absolute; left:0px; top:20px; width:195px; height: 234px; border-style:solid; border-width:0px 1px 0px 1px; border-color:#999; padding-left:4px; overflow-x:hidden; overflow-y:scroll;}
@@ -330,9 +330,7 @@
 
 		    </div>
 		</div>
-		<div id="titre">
-			
-		</div>
+		
 		<div id="mapdiv"></div>
 		<div id="strviewdiv"></div>
 		<div id="infopanel">
@@ -342,27 +340,33 @@
 				<table id="dash" style="float: right; visibility:hidden">
 					<tr>
 						<td>
-							<span id="infolab1"><b>Recherche:</b></span>&nbsp;&nbsp;
 						</td>
 						<td>
-							<input id="address" type="text" maxlength="150" style="width:350px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
+							<input id="address" type="text" maxlength="150" style="width:300px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
 							<button id="search_btn" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
-							<!-- <button id="btn3" type="button" value="U" title="Basculer la fenêtre qui offre une vue sur la rue localisée à l'adresse indiquée" onclick="togglestreetview();">Visualiser</button> -->
-							<span id="drawbuttonsspan">
-								<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor.png); " title="Déplacer ou modifier la forme du polygone"></button>
-								<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/polygon.png); " title="Desssiner un polygone"></button>
-								<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase.png); " title="Effacer un polygone"></button>
-							</span>
 							<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer ce qui est indiqué sur la carte"></button>
-							<!-- <img id="drawicon" style="background-color:#F2F2F4; border:none; vertical-align:middle; visibility:hidden" src="media/pencil.png" width="30" height="30"/> -->
-							<br/>
+							<br>
 							<form>
-						<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
-						<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
-						<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
-						<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
-						<!--<img id="helpicon" style="margin-left:290px; border:noone; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>-->
-					</form>
+								<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
+								<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
+								<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
+								<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
+								
+								<!--<img id="helpicon" style="margin-left:290px; border:noone; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>-->
+							</form>
+						</td>
+					</tr>
+					<tr id="drawrow">
+						<td>
+							
+						</td>
+						<td>
+							<span id="drawbuttonsspan" style="float:right">
+								<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp;
+								<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 25px 25px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Déplacer ou modifier la forme du polygone"></button>
+								<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 25px 25px; background-repeat: no-repeat; display: inline-block; background-image:url(media/drawpoly.png); " title="Desssiner un polygone"></button>
+								<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 25px 25px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Effacer un polygone"></button>
+							</span>	
 						</td>
 					</tr>
 				</table>

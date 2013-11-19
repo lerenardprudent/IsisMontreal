@@ -1,11 +1,19 @@
 var questionnaire_texte = [
 	{
 		question_no : "A2",
-		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile actuel ?",
+		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile ?",
 		question_an : "Is this where you reside ?",
-		mode_dessin : "domver",
-		consigne_fr : "Si oui appuyez sur la coche.<br>Si non, merci de corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte.<br>Lorsque le lieu sur la carte correspond à votre domicile actuel, appuyez sur Confirmer",
+		mode_dessin : "domver", 
+		consigne_fr : "Si oui cliquez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\" style=\"background-color:#F2F2F4\"/>.<br>Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte?<br>Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\" style=\"background-color:#F2F2F4\"/>.",
 		consigne_an : "If it is, then please confirm"
+	},
+	{ 
+		question_no : "6",
+		question_fr : "A l’aide de la souris, dessiner la zone qui correspond à votre quartier tel que vous le percevez.",
+		question_an : "Some question in English",
+		mode_dessin : "polygone",
+		consigne_fr : "Cliquez sur la carte pour tracer la zone et double-cliquez pour la fermer.<br>Pour modifier le tracé, cliquez sur les points avec l’outil <img src=\"media/cursor2.png\" width=\"15\" height=\"15\"/>.<br>Pour effacer la zone, cliquez sur la zone avec  l’outil <img src=\"media/erase2.png\" width=\"15\" height=\"15\"/>.<br>Lorsque vous êtes satisfait(e) de la zone dessinée, cliquez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "You know what you want to do"
 	},
 	{ 
 		question_no : "45",
