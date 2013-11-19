@@ -144,7 +144,7 @@
 		};
 		var LANGUE = {
 			Français : { val: "fr" },
-			Anglais : { val: "an" }
+			Anglais : { val: "en" }
 		};
 
 		var CODE_ERREUR = {
@@ -370,7 +370,7 @@
 						<td>
 						</td>
 						<td>
-							<input id="address" type="text" maxlength="150" style="width:300px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
+							<input id="address" type="text" maxlength="150" style="width:250px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
 							<button id="search_btn" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
 							<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer ce qui est indiqué sur la carte"></button>
 							<br>
@@ -518,13 +518,13 @@
 		function validerUrlParams()
 		{
 			var questionpanel = document.getElementById('questionpanel');
-			var style = "style=\"font-size: 13px; max-width: 100px; float:left; padding:0px\"";
+			var style = "style=\"line-height: 1.3; font-size: 12px; max-width: 100px; float:left; padding:0px\"";
 			var content = null;
 			var paramsValide = false;
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<span style=\"font-size:15px; padding: 1px; background-color:LightGrey\"><b><u><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
+				content = "<span style=\"font-size:13px; padding: 1px; background-color:LightGrey\"><b><u><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
 				"</u></span><br><i>" + _consigne + "</i></b>";
 				paramsValide = true;
 			}

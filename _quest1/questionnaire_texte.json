@@ -51,7 +51,7 @@ var questionnaire_texte = [
 		question_no : "84",
 		question_fr : "Localiser le lieu où vous faites vos achats alimentaires le plus souvent",
 		question_an : "What are you doing right now?" ,
-		mode_dessin : "polygone",
+		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "Translation is working!"
 	},
@@ -59,7 +59,7 @@ var questionnaire_texte = [
 		question_no : "88",
 		question_fr : "Localiser le deuxième lieu où vous faites vos achats alimentaires régulièrement",
 		question_an : "What are you doing right now?" ,
-		mode_dessin : "polygone",
+		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "Translation is working!"
 	},
@@ -67,7 +67,7 @@ var questionnaire_texte = [
 		question_no : "93",
 		question_fr : "Localiser le lieu où vous faites des activités physiques ou des sports",
 		question_an : "What are you doing right now?" ,
-		mode_dessin : "polygone",
+		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "Translation is working!"
 	},
@@ -75,7 +75,7 @@ var questionnaire_texte = [
 		question_no : "98",
 		question_fr : "Localiser le lieu où vous faites des activités de loisirs",
 		question_an : "What are you doing right now?" ,
-		mode_dessin : "polygone",
+		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "Translation is working!"
 	},
@@ -83,7 +83,7 @@ var questionnaire_texte = [
 		question_no : "102",
 		question_fr : "Localiser le lieu où vous faites des activités de loisirs",
 		question_an : "What are you doing right now?" ,
-		mode_dessin : "polygone",
+		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "Translation is working!"
 	},
@@ -91,7 +91,7 @@ var questionnaire_texte = [
 		question_no : "107",
 		question_fr : "Localiser sur la carte l'autre lieu où vous passez régulièrement du temps",
 		question_an : "What are you doing right now?" ,
-		mode_dessin : "polygone",
+		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "Translation is working!"
 	}

@@ -1602,7 +1602,8 @@ function saveHomeResp()
 
 function remercier_et_fermer(titre, texte, delay)
 {
-	//disableInputs();
+	/*
+	disableInputs();
 	if (typeof(delay) === 'undefined' || delay == null) {
 		delay = 5; //sec
 	}
@@ -1610,6 +1611,8 @@ function remercier_et_fermer(titre, texte, delay)
 		popup_info_to_user(texte, delay, titre);
 	}
 	setTimeout(retournerdanslimesurvey, delay*1000);
+	*/
+	retournerdanslimesurvey();
 }
 
 function disableInputs()
@@ -1619,7 +1622,8 @@ function disableInputs()
 
 function retournerdanslimesurvey()
 {
-	window.location.href = "https://www.isis-montreal.ca/questionnaire/fakeVeritas.php";
+	var urlLimeSurvey = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&next=1";
+	window.location.href = urlLimeSurvey;
 }
 
 function setplacename()
