@@ -1503,6 +1503,36 @@ function confirmeraddress()
 {
 	_mapmark.setVisible(false);
 	if ( _mode == MODE_DESSIN.DomicileVerification ) {
+		var munic_csv;
+		$.ajax({
+			type : 'GET',
+			url : 'ext/RMR_muni.csv',
+			dataType : 'text',
+			async: false,
+			success: function(data) {munic_csv=data;}});
+		var parsedCsv;
+		try {
+			//parsedCsv = $.csv.toArray(munic_csv, { separator : ','} );
+		}
+		catch (er) {
+			console.log("CSV parsing error");
+			console.log(er);
+		}
+		
+		$('confirm text').dialog(
+    {
+        modal:true, //Not necessary but dims the page background
+        buttons:{
+            'Save':function() {
+                //Whatever code you want to run when the user clicks save goes here
+             },
+             'Delete':function() {
+                 //Code for delete goes here
+              }
+        }
+    }
+);
+		console.info(parsedCsv);
 		var inRMM = check_if_marker_in_rmm();
 		var title, text;
 		var delay = null;
@@ -1586,12 +1616,14 @@ function saveHomeResp()
 
 function remercier_et_fermer(titre, texte, delay)
 {
-	disableInputs();
+	//disableInputs();
 	if (typeof(delay) === 'undefined' || delay == null) {
 		delay = 5; //sec
 	}
-	popup_info_to_user(texte, delay, titre);
-	setTimeout("retournerdanslimesurvey();" , delay*1000);
+	else if ( delay > 0 ) {
+		popup_info_to_user(texte, delay, titre);
+	}
+	setTimeout(retournerdanslimesurvey, delay*1000);
 }
 
 function disableInputs()
