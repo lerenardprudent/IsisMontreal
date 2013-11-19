@@ -4,12 +4,12 @@ var questionnaire_texte = [
 		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile ?",
 		question_an : "Is this where you reside ?",
 		mode_dessin : "domver", 
-		consigne_fr : "Si oui cliquez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\" style=\"background-color:#F2F2F4\"/>.<br>Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte?<br>Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\" style=\"background-color:#F2F2F4\"/>.",
+		consigne_fr : "Si oui cliquez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.<br>Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte?<br>Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "If it is, then please confirm"
 	},
 	{ 
 		question_no : "6",
-		question_fr : "A l’aide de la souris, dessiner la zone qui correspond à votre quartier tel que vous le percevez.",
+		question_fr : "A l’aide de la souris, dessiner la zone qui correspond à votre quartier tel que vous le percevez",
 		question_an : "Some question in English",
 		mode_dessin : "polygone",
 		consigne_fr : "Cliquez sur la carte pour tracer la zone et double-cliquez pour la fermer.<br>Pour modifier le tracé, cliquez sur les points avec l’outil <img src=\"media/cursor2.png\" width=\"15\" height=\"15\"/>.<br>Pour effacer la zone, cliquez sur la zone avec  l’outil <img src=\"media/erase2.png\" width=\"15\" height=\"15\"/>.<br>Lorsque vous êtes satisfait(e) de la zone dessinée, cliquez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
@@ -17,18 +17,82 @@ var questionnaire_texte = [
 	},
 	{ 
 		question_no : "45",
-		question_fr : "Localiser le lieu où vous allez habituellement lorsque vous êtes malade ou avez  besoin de conseils en matière de santé.",
+		question_fr : "Localiser le lieu où vous allez habituellement lorsque vous êtes malade ou avez besoin de conseils en matière de santé",
 		question_an : "Some question in English",
 		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "You know what you want to do"
 	},
 	{ 
-		question_no : "69",
-		question_fr : "Pouvez-vous indiquer votre crème glacée préférée ?" ,
+		question_no : "67",
+		question_fr : "Localiser l’établissement que vous fréquentez pour faire vos études",
+		question_an : "Some question in English",
+		mode_dessin : "point",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "You know what you want to do"
+	},
+	{ 
+		question_no : "74",
+		question_fr : "Localiser votre lieu (principal) de travail",
+		question_an : "What are you doing right now?" ,
+		mode_dessin : "point",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "Translation is working!"
+	},
+	{ 
+		question_no : "80",
+		question_fr : "Localiser votre deuxième lieu de travail",
+		question_an : "What are you doing right now?" ,
+		mode_dessin : "point",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "Translation is working!"
+	},
+	{ 
+		question_no : "84",
+		question_fr : "Localiser le lieu où vous faites vos achats alimentaires le plus souvent",
 		question_an : "What are you doing right now?" ,
 		mode_dessin : "polygone",
-		consigne_fr : "Question BBB!",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "Translation is working!"
+	},
+	{ 
+		question_no : "88",
+		question_fr : "Localiser le deuxième lieu où vous faites vos achats alimentaires régulièrement",
+		question_an : "What are you doing right now?" ,
+		mode_dessin : "polygone",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "Translation is working!"
+	},
+	{ 
+		question_no : "93",
+		question_fr : "Localiser le lieu où vous faites des activités physiques ou des sports",
+		question_an : "What are you doing right now?" ,
+		mode_dessin : "polygone",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "Translation is working!"
+	},
+	{ 
+		question_no : "98",
+		question_fr : "Localiser le lieu où vous faites des activités de loisirs",
+		question_an : "What are you doing right now?" ,
+		mode_dessin : "polygone",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "Translation is working!"
+	},
+	{ 
+		question_no : "102",
+		question_fr : "Localiser le lieu où vous faites des activités de loisirs",
+		question_an : "What are you doing right now?" ,
+		mode_dessin : "polygone",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
+		consigne_an : "Translation is working!"
+	},
+	{ 
+		question_no : "107",
+		question_fr : "Localiser sur la carte l'autre lieu où vous passez régulièrement du temps",
+		question_an : "What are you doing right now?" ,
+		mode_dessin : "polygone",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur <img src=\"media/tick.png\" width=\"15\" height=\"15\"/>.",
 		consigne_an : "Translation is working!"
 	}
 ];

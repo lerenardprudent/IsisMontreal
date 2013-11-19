@@ -216,13 +216,15 @@ function onwindowsize()
 	vh = parseInt(document.getElementById('maindiv').style.height);
 	document.getElementById('mapdiv').style.width = vw + "px"; 
 	document.getElementById('mapdiv').style.height = (vh - 2) + "px";
-	document.getElementById('infopanel').style.width = (vw - 6) + "px";
-	document.getElementById('strviewdiv').style.left = (Math.round( vw * .6) + 10) + "px"; 
-	document.getElementById('strviewdiv').style.width = Math.round( vw * .4) + "px"; 
-	document.getElementById('strviewdiv').style.height = document.getElementById('mapdiv').style.height; 
+	document.getElementById('infopanel').style.width = (vw/* - 6*/) + "px";
+	//document.getElementById('strviewdiv').style.left = (Math.round( vw * .6) + 10) + "px"; 
+	//document.getElementById('strviewdiv').style.width = Math.round( vw * .4) + "px"; 
+	//document.getElementById('strviewdiv').style.height = document.getElementById('mapdiv').style.height; 
 	//document.getElementById('btn9').style.left = (vw - 40) + "px";
 	document.getElementById('btn10').style.left = (vw - 20) + "px";
-	try { _map.setCenter(_loca); } catch (er) {}	
+	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {}	
+	//alert( "MAP: " + document.getElementById('mapdiv').style.width + " " +
+	//	document.getElementById('infopanel').style.width);
 }
 
 function setDrawTools()
