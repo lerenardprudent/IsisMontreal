@@ -221,7 +221,8 @@ function onwindowsize()
 	//document.getElementById('strviewdiv').style.width = Math.round( vw * .4) + "px"; 
 	//document.getElementById('strviewdiv').style.height = document.getElementById('mapdiv').style.height; 
 	//document.getElementById('btn9').style.left = (vw - 40) + "px";
-	document.getElementById('btn10').style.left = (vw - 20) + "px";
+	//document.getElementById('btn10').style.left = (vw - 20) + "px";
+	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - 25) + "px";
 	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {}	
 	//alert( "MAP: " + document.getElementById('mapdiv').style.width + " " +
 	//	document.getElementById('infopanel').style.width);
