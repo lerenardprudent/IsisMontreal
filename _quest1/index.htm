@@ -14,11 +14,11 @@
  <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />-->
 	
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.js"></script>
+<!--	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.js"></script> -->
 	
 <!--	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
 	<!-- CSS file -->
-	<link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.css" />
+<!--	<link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.css" />-->
 	
 	<link rel="stylesheet" href="objs/messi.css" />
 	<script src="objs/messi.js"></script>
@@ -74,10 +74,10 @@
 		#mainswf { position:absolute; left:0px; top:0px; width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
 		#findtype { width:180px; } 
 		#findrads { width:70px; } 
-		#infopanel { border-bottom: 2px solid green; margin-top:5px; position:absolute; top:55px; left:0px; width:1200px; height:200px; padding:0px; background-color:DarkGrey; text-wrap:none; white-space:nowrap; overflow:hidden; }
+		#infopanel { margin-left: auto; margin-right:auto; margin-top:20px; margin-bottom:20px; display:block; left:0px; width:90%; height:230px; padding:5px; background-color:White; text-wrap:none; white-space:nowrap; overflow:hidden; }
 		#infolab1, #infolab2, #infolab3 { font-size: 11px; width:80px; color:DarkBlue; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
-		#mapdiv { position:absolute; top:260px; left:0px; width:1200px; height:690px; overflow:hidden; background-color:DarkGrey }
+		#mapdiv { border: 2px solid green; background-color: #999999; position:absolute; top:300px; left:0px; width:1200px; height:690px; overflow:hidden;}
 		#strviewdiv { position:absolute; top:175px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; border-width: 2px; border-style: outset; border-color: orange;  }
 		#findspanel, #favspanel { position:absolute; left:1000px; top:200px; width: 200px; height:280px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
 		#places, #objects { position:absolute; left:0px; top:20px; width:195px; height: 234px; border-style:solid; border-width:0px 1px 0px 1px; border-color:#999; padding-left:4px; overflow-x:hidden; overflow-y:scroll;}
@@ -94,7 +94,7 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4qnbkOe5X7pll7qyIFtkeLzjzkbPnAGo&amp;libraries=places,drawing,geometry,panoramio,weather&region=ca&sensor=false"></script>
 
 	<script type="text/javascript" src="questionnaire_texte.json"></script>
-	<script type="text/javascript" src="mousewheel.js"></script>
+<!--	<script type="text/javascript" src="mousewheel.js"></script> -->
 	<script type="text/javascript" src="promap.js"></script>
 	
 	<!--
@@ -105,10 +105,10 @@
 	<script src="http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js"></script>
 	<script src="http://code.jquery.com/jquery-2.0.0.js"/>
 	-->
-	
+	<!--
 	<script type="text/javascript" src="objs/tmpl.js"></script>
 	<script type="text/javascript" src="objs/draggable-0.1.js"></script>
-	<script type="text/javascript" src="objs/jshashtable-2.1_src.js"></script>
+	<script type="text/javascript" src="objs/jshashtable-2.1_src.js"></script> -->
 	
 	<!--
 	<script type="text/javascript" src="objs/jquery.dependClass-0.1.js"></script>
@@ -116,11 +116,12 @@
 	<script type="text/javascript" src="objs/jquery.numberformatter-1.2.3.js"></script>
 	-->
 	
+	<!--
 	<link rel="stylesheet" type="text/css" media="all" href="objs/toolbar-js/jquery.toolbars.css">
 	<link rel="stylesheet" type="text/css" media="all" href="objs/toolbar-js/bootstrap.icons.css">
 	<script type="text/javascript" src="objs/toolbar-js/jquery.toolbar.min.js"></script>
 	
-	<script type="text/javascript" src="objs/wtooltip_latest.js"></script>
+	<script type="text/javascript" src="objs/wtooltip_latest.js"></script>-->
 	<script>	
 		function saveLocationToDB(marker)
 		{
@@ -326,32 +327,24 @@
 	
 </head>
 
-<body onresize="resizebody();">
-	<div id="mainswf">
-	</div>
-
+<body onresize="resizebody();"  style="background-color:#999999">
 	<!-- PAGE LAYOUT STARTS HERE -->
-	<div id="maindiv" class="maindivclass">
-		<div id="dragmain">
-			<div>
-				<img id="logo" src="media/logo_isis.jpg" style="display: block; margin-left: auto; margin-right: auto; background-color:#F2F2F4; vertical-align:middle" width="200px" height="50px"/>
-			</div>
+	<div id="maindiv">
+		<!--<div id="dragmain">
 			<div id="user-options" class="toolbar-icons" style="display: none;">
 			    <a id="outil1" href="#"><em class="icon-hand-up"></em></a>
 			    <a id="outil2" href="#"><em class="icon-edit"></em></a>
 			    <a id="outil3" href="#"><em class="icon-remove"></em></a>
-
 		    </div>
-		</div>
+		</div>-->
 		
 		<div id="mapdiv"></div>
 		<div id="strviewdiv"></div>
 		<div id="infopanel">
-		
-	<div id="dialog-confirm" title="Empty the recycle bin?">
-		<!--<p><span class="ui-icon ui-icon-pencil" style="float: left; margin: 0 7px 20px 0"></span>These items will be permanently deleted and cannot be recovered. Are you sure?</p>-->
-	</div>
-			<table id="dash" style="width:500px; float: center; margin-left:auto; margin-right:auto">
+			<div style="position:fixed; margin:2px">
+				<img id="logo" src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle" width="200px" height="50px"/>
+			</div>
+			<table id="dash" style="width:500px; margin-left:auto; margin-right:auto">
 					<tr>
 						<td>
 						</td>
@@ -369,19 +362,24 @@
 										<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Effacer un polygone"></button>
 									</span>	
 								</span>
-								<form>	
-									<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
-									<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
-									<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
-									<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
-									<br>
-									<br>
-										<div id="directions" style="float right">
-											<button id="backbtn" type="button" title="Aller à la question précédente" style="background-color:Red; float:right; margin: 2px; padding:2px; width:125px; float:left"><b>&lt;&lt; Précédente</b></button>
-											<button id="forwbtn" type="button" title="Aller à la question suivante" style="background-color:Red; float:right; margin: 2px; padding:2px; width: 125px; float:right" onclick="confirmeraddress();"><b>Suivante &gt;&gt;</b></button>
+								<div id="below" style="margin-top:2px">
+									<form>	
+										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
+										<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
+										<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
+										<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
+										<br>
+										<br>
+										<br>
+										<div id="bob" style="text-align:center; border: solid 0 Red; border-top-width:1px; padding-top:0.5ex"">
+											<span id="directions" style="display:inline-block">
+												<button id="backbtn" type="button" title="Aller à la question précédente" style="height: 35px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:left; margin: 2px; padding:2px; width:100px">&lt;&lt; Précédent</button>
+												<button id="forwbtn" type="button" title="Aller à la question suivante" style="height: 35px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:right; margin: 2px; padding:2px; width: 100px" onclick="confirmeraddress();">Suivant &gt;&gt;</button>
+											</span>
 										</div>
-									<!--<img id="helpicon" style="margin-left:290px; border:noone; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>-->
-								</form>
+										<!--<img id="helpicon" style="margin-left:290px; border:noone; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>-->
+									</form>
+								</div>
 							</div>
 						</td>
 					</tr>
@@ -418,11 +416,13 @@
 	<!-- PAGE LAYOUT ENDS HERE -->
 	<script type="text/javascript">
 		$(function(){
+		/*
 		  $('#drawicon').toolbar({
 			  content: '#user-options',
 			  position: 'bottom',
 			  hideOnClick: true
 		  });
+		  */
 		  $('#drawicon').on('toolbarItemClick', function(event, item){
 			// when the user clicks an icon we call this function
 			//console.dir(item);

@@ -210,17 +210,27 @@ function onwindowsize()
 	var vw, vh;
 	_winh = $(window).height();
 	_winw = $(window).width();
-	document.getElementById('maindiv').style.width = _winw + "px";
-	document.getElementById('maindiv').style.height = (_winh - 150) + "px";
-	vw =  parseInt(document.getElementById('maindiv').style.width);
-	vh = parseInt(document.getElementById('maindiv').style.height);
-	document.getElementById('mapdiv').style.width = vw + "px"; 
-	var num_buttons = 1, mdv = 260;
+	//document.getElementById('maindiv').style.width = _winw + "px";
+	//document.getElementById('maindiv').style.height = (_winh - 150) + "px";
+	//vw =  parseInt(document.getElementById('maindiv').style.width);
+	//vh = parseInt(document.getElementById('maindiv').style.height);
+	var num_buttons = 1;
+	var iph = $("#infopanel").height();
 	if ( _mode == MODE_DESSIN.Polygone ) {
 		num_buttons = 4;
 	}
-	document.getElementById('mapdiv').style.height = (_winh-260) + "px";
-	document.getElementById('infopanel').style.width = (vw/* - 6*/) + "px";
+	else {
+		var extra = 40;
+		var mdh = $("#mapdiv").height();
+		var mdt = $("#mapdiv").position().top;
+		document.getElementById('infopanel').style.height = (iph - extra) + "px";
+	}
+	var ipb = $("#infopanel").position().top + iph;
+	var mdt = ipb+20;
+	document.getElementById('mapdiv').style.top = mdt + "px" ;
+	document.getElementById('mapdiv').style.height = (_winh - mdt - 5) + "px";
+	document.getElementById('mapdiv').style.width = _winw + "px";
+	//document.getElementById('mapdiv').style.height = (_winh-260) + "px";
 	//document.getElementById('strviewdiv').style.left = (Math.round( vw * .6) + 10) + "px"; 
 	//document.getElementById('strviewdiv').style.width = Math.round( vw * .4) + "px"; 
 	//document.getElementById('strviewdiv').style.height = document.getElementById('mapdiv').style.height; 
