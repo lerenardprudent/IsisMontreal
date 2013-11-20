@@ -53,7 +53,7 @@
 	<style type="text/css" media="screen">
 		html, body { width:100%; height:100%; }
 		body { margin:0px; padding:0px; overflow:hidden; color:#404040; background-color:White; }
-		button { margin-right: 3px; }
+		button { margin-right: 1px; }
 		a:link, a:visited { color:#dd0000; text-decoration:none; }
 		a:active, a:hover { color:#404040; text-decoration:none; }
 		input { background-color:#ffffff; margin:0px; padding:0px; border:1px solid #999; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
@@ -70,7 +70,7 @@
 		#findtype { width:180px; } 
 		#findrads { width:70px; } 
 		#infopanel { margin-top:5px; position:absolute; top:55px; left:0px; width:1200px; height:110px; padding:0px; background-color:DarkGrey; text-wrap:none; white-space:nowrap; overflow:hidden; }
-		#infolab1, #infolab2, #infolab3 { width:100px; color:DarkBlue; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
+		#infolab1, #infolab2, #infolab3 { font-size: 11px; width:80px; color:DarkBlue; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
 		#mapdiv { position:absolute; top:170px; left:0px; width:1200px; height:690px; overflow:hidden; background-color:DarkGrey }
 		#strviewdiv { position:absolute; top:175px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; border-width: 2px; border-style: outset; border-color: orange;  }
@@ -83,8 +83,9 @@
 		#view1, #view2, #view3, #view4, #view5, #view6 { font-size:12px; font-weight:bold; } 
 		#btn11, #btn12, #btn13, #btn14, #btn15, #btn16, #btn17, #btn18 { background-repeat:no-repeat; background-position:1px 1px; }
 		#btn9 { position:absolute; top:8px; left:1860px; width:14px; height:14px;  background-repeat:no-repeat; background-position:-1px -1px; }
-		#btn10 { position:absolute; top:8px; left:1880px; width:14px; height:14px;  background-repeat:no-repeat; background-position:-1px -1px; }
 	</style>
+	<!--#btn10 { position:absolute; top:8px; left:1880px; width:14px; height:14px;  background-repeat:no-repeat; background-position:-1px -1px; }-->
+	
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4qnbkOe5X7pll7qyIFtkeLzjzkbPnAGo&amp;libraries=places,drawing,geometry,panoramio,weather&region=ca&sensor=false"></script>
 
 	<script type="text/javascript" src="questionnaire_texte.json"></script>
@@ -347,10 +348,11 @@
 -->
 	<!-- PAGE LAYOUT STARTS HERE -->
 	<div id="maindiv" class="maindivclass">
-		<div id="dragmain" class="dragmain">
+		<div id="dragmain">
 			<button id="btn9" type="button" title="Save" style="background-image:url(media/x-save.png);"></button>
-			<button id="btn10" type="button" onclick="confirmExit();" title="Fermer et retourner au questionnaire" style="background-image:url(media/x-close.png);"></button>
-			<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:left" width="200" height="50px"/>
+			<div>
+				<img src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle; float:left" width="200" height="50px"/>
+			</div>
 			<div id="user-options" class="toolbar-icons" style="display: none;">
 			    <a id="outil1" href="#"><em class="icon-hand-up"></em></a>
 			    <a id="outil2" href="#"><em class="icon-edit"></em></a>
@@ -370,33 +372,38 @@
 						<td>
 						</td>
 						<td>
-							<input id="address" type="text" maxlength="150" style="width:250px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
+							<input id="address" type="text" maxlength="150" style="width:350px; height:20px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
 							<button id="search_btn" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
-							<button id="btn_confirm" type="button" value="U"  onclick="confirmeraddress();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 30px 30px; background-repeat: no-repeat; display: inline-block; background-image:url(media/tick.png); " title="Confirmer ce qui est indiqué sur la carte"></button>
 							<br>
 							<form>
 								<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
 								<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
 								<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
 								<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
-								
+								<br>
+								<br>
+									<div id="directions" style="float right">
+										<button id="backbtn" type="button" title="Aller à la question précédente" style="background-color:Red; float:right; margin: 2px; padding:2px; width:125px; float:left"><b>&lt;&lt; Précédente</b></button>
+										<button id="forwbtn" type="button" title="Aller à la question suivante" style="background-color:Red; float:right; margin: 2px; padding:2px; width: 125px; float:right" onclick="confirmeraddress();"><b>Suivante &gt;&gt;</b></button>
+									</div>
 								<!--<img id="helpicon" style="margin-left:290px; border:noone; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>-->
 							</form>
 						</td>
 					</tr>
 					<tr id="drawrow">
-						<td>
-							
-						</td>
+						<td></td>
 						<td>
 							<span id="drawbuttonsspan" style="float:right">
 								<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp;
-								<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 25px 25px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Déplacer ou modifier la forme du polygone"></button>
-								<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 25px 25px; background-repeat: no-repeat; display: inline-block; background-image:url(media/drawpoly.png); " title="Desssiner un polygone"></button>
-								<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 30px; width:30px; background-size: 25px 25px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Effacer un polygone"></button>
+								<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Déplacer ou modifier la forme du polygone"></button>
+								<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/drawpoly.png); " title="Desssiner un polygone"></button>
+								<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Effacer un polygone"></button>
 							</span>	
 						</td>
 					</tr>
+					
+					
+					
 				</table>
 			</div>
 		</div>
@@ -518,14 +525,14 @@
 		function validerUrlParams()
 		{
 			var questionpanel = document.getElementById('questionpanel');
-			var style = "style=\"line-height: 1.3; font-size: 12px; max-width: 100px; float:left; padding:0px\"";
+			var style = "style=\"line-height: 1.2; font-size: 12px; max-width: 100px; float:left; padding:0px\"";
 			var content = null;
 			var paramsValide = false;
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<span style=\"font-size:13px; padding: 1px; background-color:LightGrey\"><b><u><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
-				"</u></span><br><i>" + _consigne + "</i></b>";
+				content = "<span style=\"font-size:14px; padding: 1px; background-color:LightGrey\"><b><u><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
+				"</u></span><br>" + _consigne + "</b>";
 				paramsValide = true;
 			}
 			else {

@@ -1612,7 +1612,7 @@ function remercier_et_fermer(titre, texte, delay)
 	}
 	setTimeout(retournerdanslimesurvey, delay*1000);
 	*/
-	retournerdanslimesurvey();
+	retournerdanslimesurvey({ dir: 'next'} );
 }
 
 function disableInputs()
@@ -1620,9 +1620,9 @@ function disableInputs()
 	$("#infopanel button,input").attr("disabled", true); // Go jquery!
 }
 
-function retournerdanslimesurvey()
+function retournerdanslimesurvey(flag)
 {
-	var urlLimeSurvey = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&next=1";
+	var urlLimeSurvey = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&" + flag.dir + "=1";
 	window.location.href = urlLimeSurvey;
 }
 
