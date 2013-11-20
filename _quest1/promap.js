@@ -215,14 +215,19 @@ function onwindowsize()
 	vw =  parseInt(document.getElementById('maindiv').style.width);
 	vh = parseInt(document.getElementById('maindiv').style.height);
 	document.getElementById('mapdiv').style.width = vw + "px"; 
-	document.getElementById('mapdiv').style.height = (vh - 2) + "px";
+	var num_buttons = 1, mdv = 260;
+	if ( _mode == MODE_DESSIN.Polygone ) {
+		num_buttons = 4;
+	}
+	document.getElementById('mapdiv').style.height = (_winh-260) + "px";
 	document.getElementById('infopanel').style.width = (vw/* - 6*/) + "px";
 	//document.getElementById('strviewdiv').style.left = (Math.round( vw * .6) + 10) + "px"; 
 	//document.getElementById('strviewdiv').style.width = Math.round( vw * .4) + "px"; 
 	//document.getElementById('strviewdiv').style.height = document.getElementById('mapdiv').style.height; 
 	//document.getElementById('btn9').style.left = (vw - 40) + "px";
 	//document.getElementById('btn10').style.left = (vw - 20) + "px";
-	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - 25) + "px";
+	
+	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - (28*num_buttons)) + "px";
 	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {}	
 	//alert( "MAP: " + document.getElementById('mapdiv').style.width + " " +
 	//	document.getElementById('infopanel').style.width);
@@ -1292,8 +1297,16 @@ function homeAddressLookupResp()
 		if (tokens.length == 3) {
 			var point_resp = tokens[0];
 			var home_addr_text = tokens[1];
+			var isEligible = tokens[2];
 			var homepos = getLatLngFromText(point_resp);
 			if (homepos != null) {
+				if ( isEligible == '0' && _mode != MODE_DESSIN.DomicileVerification ) { // Pas éligible de remplir les autres questions!
+					freezeBackground();
+					endSession();
+				}
+				else {
+					ok = true;
+				}
 				if ( _mode == MODE_DESSIN.DomicileVerification ) {
 					setMapPin(homepos, null, true, true);
 					updateAddressText(home_addr_text);
@@ -1306,16 +1319,6 @@ function homeAddressLookupResp()
 					_domicileInfoWindow.setPosition(homepos);
 					google.maps.event.addListener(homepin, 'mouseover', function() { _domicileInfoWindow.open(_map); });
 					google.maps.event.addListener(homepin, 'mouseout', function() { _domicileInfoWindow.close(); });
-				}
-				var isEligible = tokens[2];
-				if ( isEligible == '0' && _mode != MODE_DESSIN.DomicileVerification ) { // Pas éligible de remplir les autres questions!
-					var title = "Fin du questionnaire";
-					var text =  "Nous sommes désolés, mais le deuxième questionnaire porte uniquement sur les habitants de la région métropolitaine de Montréal. Vous n’êtes donc pas admissible. Merci beaucoup pour votre participation!";
-					var delay = 10;
-					remercier_et_fermer(title, text, delay);
-				}
-				else {
-					ok = true;
 				}
 			}
 		}
@@ -1524,22 +1527,21 @@ function confirmeraddress()
 		var title, text;
 		var delay = null;
 		if (!inRMM) {
-			title = "Fin du questionnaire";
-			text =  "Nous sommes désolés, mais le deuxième questionnaire porte uniquement sur les habitants de la région métropolitaine de Montréal. Vous n’êtes donc pas admissible. Merci beaucoup pour votre participation!";
-			delay = 10;
+			endSession();
 		}
 		else {
 			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
-			title = "Retourner dans le questionnaire textuel";
-			text = "L'emplacement de votre domicile est enregistré";
 		}
 		saveHomeAddress(_mapmark, inRMM);
-		remercier_et_fermer(title, text, delay);
 	}
 	else {
 		if ( _mode == MODE_DESSIN.Polygone ) {
 			if ( _drawnPolygon == null ) {
-				alert( "Veuillez dessiner une zone sur la carte." );
+				new Messi("Vous n'avez pas dessiné votre quartier",
+				{title: 'Êtes-vous sûr ?', 
+				buttons: [{id: 0, label: 'Dessiner mon quartier', val: 'Y'},
+						  {id: 1, label: 'Continuer sans dessiner mon quartier', val: 'N'}],
+						  callback: messi_test });
 			}
 			else {
 				var pointList = [];
@@ -1549,15 +1551,13 @@ function confirmeraddress()
 				}
 				savePolyToDB(pointList);
 				//_drawnPolygon.setVisible(false);
-				_drawnPolygon.setOptions({fillColor: "#009933"});
+				_drawnPolygon.setOptions({fillColor: "#009933", fillOpacity: 1});
 				//_drawnPolygon.setVisible(true);
-				remercier_et_fermer("Retourner dans le questionnaire textuel", "Votre dessin est enregistré");
 			}
 		}
 		else {
 			saveLocationToDB(_mapmark);
 			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
-			remercier_et_fermer("Retourner dans le questionnaire textuel", "Merci!");
 		}
 	}
 }
@@ -1623,8 +1623,14 @@ function disableInputs()
 
 function retournerdanslimesurvey(flag)
 {
-	var urlLimeSurvey = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&" + flag.dir + "=1";
-	window.location.href = urlLimeSurvey;
+	var nextUrl;
+	if ( flag.dir == 'away') {
+		nextUrl = "http://isis-montreal.ca/index.php/fr/";
+	}
+	else {
+		nextUrl = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&" + flag.dir + "=1";
+	}
+	window.location.href = nextUrl;
 }
 
 function setplacename()
@@ -2118,4 +2124,26 @@ function existingRespHandler()
 			}
 		}
 	}
+}
+
+function freezeBackground()
+{
+	document.getElementById('mapdiv' ).style.width = "0px";
+}
+
+function endSession()
+{
+	new Messi("Nous sommes désolés, mais le deuxième questionnaire porte uniquement sur les habitants de la région métropolitaine de Montréal. Vous n’êtes donc pas admissible. Merci beaucoup pour votre participation!", 
+		{title: 'Votre session est terminée !', 
+		titleClass: 'anim warning', 
+		buttons: [{id: 0, label: 'Confirmer', val: 'X'}],
+		callback: function(val) {
+			retournerdanslimesurvey({dir: 'away'});
+		}
+		});
+}
+
+function messi_test(val)
+{
+	alert('Your selection: ' + val);
 }
