@@ -223,13 +223,14 @@ function onwindowsize()
 		var extra = 40;
 		var mdh = $("#mapdiv").height();
 		var mdt = $("#mapdiv").position().top;
-		document.getElementById('infopanel').style.height = (iph - extra) + "px";
+		iph -= extra;
+		document.getElementById('infopanel').style.height = iph + "px";
 	}
-	var ipb = $("#infopanel").position().top + iph;
-	var mdt = ipb+20;
+	var ipb = $("#infopanel").position().top + iph + 20;
+	var mdt = ipb+30;
 	document.getElementById('mapdiv').style.top = mdt + "px" ;
-	document.getElementById('mapdiv').style.height = (_winh - mdt - 5) + "px";
-	document.getElementById('mapdiv').style.width = _winw + "px";
+	document.getElementById('mapdiv').style.height = (_winh - mdt - 3) + "px";
+	document.getElementById('mapdiv').style.width = (_winw - 3 ) + "px";
 	//document.getElementById('mapdiv').style.height = (_winh-260) + "px";
 	//document.getElementById('strviewdiv').style.left = (Math.round( vw * .6) + 10) + "px"; 
 	//document.getElementById('strviewdiv').style.width = Math.round( vw * .4) + "px"; 
