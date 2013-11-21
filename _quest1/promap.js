@@ -35,8 +35,6 @@ function mapinit()
 	fillmapdata(_mapdata);
 	_serv = new google.maps.places.PlacesService(_map);
 //	updateobjaddr("");
-	
-	try { onwindowsize(); } catch (er) { }	
 }
 
 
@@ -210,8 +208,6 @@ function onwindowsize()
 	var vw, vh;
 	_winh = $(window).height();
 	_winw = $(window).width();
-	//document.getElementById('maindiv').style.width = _winw + "px";
-	//document.getElementById('maindiv').style.height = (_winh - 150) + "px";
 	//vw =  parseInt(document.getElementById('maindiv').style.width);
 	//vh = parseInt(document.getElementById('maindiv').style.height);
 	var num_buttons = 1;
@@ -229,19 +225,10 @@ function onwindowsize()
 	var ipb = $("#infopanel").position().top + iph + 20;
 	var mdt = ipb+30;
 	document.getElementById('mapdiv').style.top = mdt + "px" ;
-	document.getElementById('mapdiv').style.height = (_winh - mdt - 3) + "px";
-	document.getElementById('mapdiv').style.width = (_winw - 3 ) + "px";
-	//document.getElementById('mapdiv').style.height = (_winh-260) + "px";
-	//document.getElementById('strviewdiv').style.left = (Math.round( vw * .6) + 10) + "px"; 
-	//document.getElementById('strviewdiv').style.width = Math.round( vw * .4) + "px"; 
-	//document.getElementById('strviewdiv').style.height = document.getElementById('mapdiv').style.height; 
-	//document.getElementById('btn9').style.left = (vw - 40) + "px";
-	//document.getElementById('btn10').style.left = (vw - 20) + "px";
-	
+	document.getElementById('mapdiv').style.height = (_winh - mdt - 4) + "px";
+	document.getElementById('mapdiv').style.width = (_winw - 4) + "px";
 	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - (36*num_buttons)) + "px";
 	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {}	
-	//alert( "MAP: " + document.getElementById('mapdiv').style.width + " " +
-	//	document.getElementById('infopanel').style.width);
 }
 
 function setDrawTools()
@@ -2056,17 +2043,6 @@ function updateaddress(newlatlng, markermoved)
 	{
 		_strviewser.getPanoramaByLocation(_loca, 30, showstrview);
 	}*/
-}
-
-function inputs_init()
-{
-	//disableproximitysearch();
-	var searchradtooltiptext = "Faire une recherche de lieux par mots-clés dans un rayon de " + _searchradius + "m du marqueur";
-	document.getElementById('radio_nom').title = searchradtooltiptext;
-	document.getElementById('search_prox_label').title = searchradtooltiptext;
-	clearAddressField();
-	//address_input.addEventListener("keyup", keyUpTextField, false);
-	//document.getElementById('btn3').disabled = true; // Visualiser
 }
 
 function keyUpTextField(e) {

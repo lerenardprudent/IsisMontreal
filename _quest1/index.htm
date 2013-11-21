@@ -168,18 +168,27 @@
 		};
 		
 		var _erreurs = { };
-		_erreurs[CODE_ERREUR.LangueErronnée.nom] = 		{ 'fr' : "Langue n'est pas reconnue", 
-														  'an': "Invalid language option" };
-		_erreurs[CODE_ERREUR.AucunIdParticipant.nom] = 	{ 'fr' : "Aucun identifiant de participant n'est fourni",
-														  'an': "No participant ID" };
-		_erreurs[CODE_ERREUR.AucunNumQuestion.nom] = 	{ 'fr' : "Le numéro de question n'est pas spécifié.",
-														  'an' : "The question number is missing." };
-		_erreurs[CODE_ERREUR.NumQuestionInvalide.nom] = { 'fr' : "Le numéro de question n'est pas valide.",
-														  'an' : "The question number is not valid." };
-		_erreurs[CODE_ERREUR.ModeDessinInvalide.nom] = 	{ 'fr' : "Un mode de dessin configuré est invalide",
-														  'an' : "A configured drawing mode is invalid" };
-		_erreurs[CODE_ERREUR.Inconnu.nom] = 			{ 'fr' : "Erreur inconnue",
-														  'an': "Unknown error" };	
+		var e1 = {}, e2 = {}, e3 = {}, e4 = {}, e5 = {}, e6 = {};
+		e1[LANGUE.Français.val] = "Langue n'est pas reconnue";
+		e1[LANGUE.Anglais.val] = "Invalid language option";			
+		e2[LANGUE.Français.val] = "Aucun identifiant de participant n'est fourni";
+		e2[LANGUE.Anglais.val] = "No participant ID";
+		e3[LANGUE.Français.val] = "Le numéro de question n'est pas spécifié.";
+		e3[LANGUE.Anglais.val] = "The question number is missing.";
+		e4[LANGUE.Français.val] = "Le numéro de question n'est pas valide.";
+		e4[LANGUE.Anglais.val] = "The question number is not valid.";
+		e5[LANGUE.Français.val] = "Un mode de dessin configuré est invalide";
+		e5[LANGUE.Anglais.val] = "A configured drawing mode is invalid";
+		e6[LANGUE.Français.val] = "Erreur inconnue";
+		e6[LANGUE.Anglais.val] = "Unknown error";
+		
+		_erreurs[CODE_ERREUR.LangueErronnée.nom] = e1;
+		_erreurs[CODE_ERREUR.AucunIdParticipant.nom] = e2;
+		_erreurs[CODE_ERREUR.AucunNumQuestion.nom] = e3;
+		_erreurs[CODE_ERREUR.NumQuestionInvalide.nom] = e4;
+		_erreurs[CODE_ERREUR.ModeDessinInvalide.nom] = e5;
+		_erreurs[CODE_ERREUR.Inconnu.nom] = e6;
+														  
 		var _winbro;
 		var _winw;		//window width
 		var _winh;		//window height
@@ -279,8 +288,8 @@
 			}
 			
 			translateTagsForLang();
-			mapinit();					
-			inputs_init();
+			//mapinit();					
+			try { onwindowsize(); } catch (er) { }	
 				
 			if ( _mode == MODE_DESSIN.Polygone )
 			{
@@ -342,7 +351,7 @@
 			<div style="position:fixed; margin:2px">
 				<img id="logo" src="media/logo_isis.jpg" style="background-color:#F2F2F4; vertical-align:middle" width="150px" height="50px"/>
 			</div>
-			<table id="dash" style="width:500px; margin-left:auto; margin-right:auto">
+			<table id="dash" style="width:650px; margin-left:auto; margin-right:auto">
 					<tr>
 						<td>
 						</td>
@@ -351,27 +360,27 @@
 							</p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
-									<input id="address" type="text" maxlength="150" style="width:300px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
+									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
 									<span id="drawbuttonsspan" style="vertical-align:bottom">
 									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
-										<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Mettre le pointeur de souris en mode d'édition pour déplacer ou modifier la zone tracée / Puts the mouse cursor in Edit mode to move or modify the zone drawn"></button>
-										<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/drawpoly.png); " title="Mettre le pointeur de souris en mode de dessin pour tracer votre zone / Puts the mouse cursor in Draw mode to mark out the boundaries of your zone"></button>
-										<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Effacer immédiatement toute zone sur la carte / Removes any zone currently on the map"></button>
+										<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Outil d'édition / Edit tool"></button>
+										<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/drawpoly.png); " title="Outil de tracé / Drawing tool"></button>
+										<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Outil d'effacement / Eraser tool"></button>
 									</span>	
 								</span>
 								<div id="below" style="margin-top:4px">
 									<form>	
 										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
-										<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
+										<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp; / Address&nbsp;&nbsp;</label>
 										<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
-										<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
+										<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés / Keywords</label>
 										<br>
 										<br>
 										<div id="bob" style="text-align:center; border: solid 0 Red; border-top-width:1px; padding-top:0.5ex"">
 											<span id="directions" style="display:inline-block">
-												<button id="backbtn" type="button" title="Aller à la question précédente / Go to the previous question" style="height: 35px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:left; margin: 2px; padding:2px; width:100px">&lt;&lt; Précédent / &lt;&lt; Previous</button>
-												<button id="forwbtn" type="button" title="Aller à la question suivante / Go to the next question" style="height: 35px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:right; margin: 2px; padding:2px; width: 100px" onclick="confirmeraddress();">Suivant &gt;&gt; / Next &gt;&gt;</button>
+												<button id="backbtn" type="button" title="Aller à la question précédente / Go to the previous question" style="height: 30px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:left; margin: 2px; padding:2px; width:90px">&lt;&lt; Précédent / &lt;&lt; Previous</button>
+												<button id="forwbtn" type="button" title="Aller à la question suivante / Go to the next question" style="height: 30px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:right; margin: 2px; padding:2px; width: 90px" onclick="confirmeraddress();">Suivant &gt;&gt; / Next &gt;&gt;</button>
 											</span>
 										</div>
 										<!--<img id="helpicon" style="margin-left:290px; border:noone; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>-->
@@ -507,8 +516,8 @@
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<span style=\"font-size:14px; padding: 1px; background-color:LightGrey\"><b><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
-				"</span><p style=\"margin:4px;\"/>" + _consigne + "</b>";
+				content = "<span style=\"text-align: center; font-size:14px; padding: 1px; \"><b><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
+				"</span><p style=\"margin:4px; text-align:justify; font-size:12\"/>" + _consigne + "</b>";
 				paramsValide = true;
 			}
 			else {
@@ -614,7 +623,7 @@
 		
 		function translateTagsForLang() {
 			$("button[title], input[title]").attr("title", setTitleForLang );
-			$("button, input").each(setLabelForLang);
+			$("button, input, label").each(setLabelForLang);
 		}
 	</script>
 	
