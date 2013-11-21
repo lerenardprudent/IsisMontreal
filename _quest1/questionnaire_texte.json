@@ -2,14 +2,14 @@ var questionnaire_texte = [
 	{
 		question_no : "A2",
 		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile ?",
-		question_an : "Is this where you reside ?",
+		question_an : "Does the location on the map match your home address?",
 		mode_dessin : "domver", 
-		consigne_fr : "Si oui cliquez sur le bouton 'Suivant'.",
-		consigne_an : "If it is, then please confirm"
+		consigne_fr : "Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte? Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur le bouton 'Suivant'.",
+		consigne_an : "If yes, click 'Next'. If no, please correct your home address or locate your address by clicking on the map.When the location on the map matches your address, click 'Next'",
 	},
 	{ 
 		question_no : "6",
-		question_fr : "Dessinez la zone qui correspond à votre quartier tel que vous le percevez.",
+		question_fr : "Dessinez la zone qui correspond à votre quartier tel que vous la percevez.",
 		question_an : "Some question in English",
 		mode_dessin : "polygone",
 		consigne_fr : "Cliquez sur la carte pour tracer la zone et double-cliquez pour la fermer.<br>Pour modifier le tracé, cliquez sur les points avec l’outil <img src=\"media/cursor2.png\" width=\"15\" height=\"15\"/>.<br>Pour effacer la zone, cliquez sur la zone avec  l’outil <img src=\"media/erase2.png\" width=\"15\" height=\"15\"/>.<br>Lorsque vous êtes satisfait(e) de la zone dessinée, cliquez sur le bouton 'Suivant'.",

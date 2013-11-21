@@ -53,6 +53,8 @@
 		
 		.button_space { margin-left: 20px;}
 		
+		.smallSpaceClass { margin:3px; }
+		
 		#searchspan input, #searchspan button {vertical-align:bottom; }
 	</style>
 	<style type="text/css" media="screen">
@@ -74,7 +76,7 @@
 		#mainswf { position:absolute; left:0px; top:0px; width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
 		#findtype { width:180px; } 
 		#findrads { width:70px; } 
-		#infopanel { margin-left: auto; margin-right:auto; margin-top:20px; margin-bottom:20px; display:block; left:0px; width:90%; height:230px; padding:5px; background-color:White; text-wrap:none; white-space:nowrap; overflow:hidden; }
+		#infopanel { margin-left: auto; margin-right:auto; margin-top:20px; margin-bottom:20px; display:block; left:0px; width:90%; height:230px; padding:5px; background-color:White; text-wrap:none; overflow:hidden; }
 		#infolab1, #infolab2, #infolab3 { font-size: 11px; width:80px; color:DarkBlue; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
 		#mapdiv { border: 2px solid green; background-color: #999999; position:absolute; top:300px; left:0px; width:1200px; height:690px; overflow:hidden;}
@@ -150,8 +152,8 @@
 		  DomicileVerification: {value: 2, nom: "domver" }
 		};
 		var LANGUE = {
-			Français : { val: "fr" },
-			Anglais : { val: "en" }
+			Français : { ind: 0, val: "fr" },
+			Anglais : { ind: 1, val: "en" }
 		};
 
 		var CODE_ERREUR = {
@@ -227,11 +229,13 @@
 		var _drawnPolygon = null;
 		var _geocodedSpecial = null;
 		var _domicileInfoWindow = new google.maps.InfoWindow();
+		var bilingue_tag = ' / ';
 		
 		var tripiniconpath = "media/mapmark.png";
 		
 		$(document).ready( function()
 		{
+		/*
 			$('img[id="helpicon"]').each(function() {
 					$(this).qtip({
 						content: {
@@ -258,6 +262,7 @@
 						}
 					});
 			});
+			*/
 			
 			$("#address").keyup( function(event)
 			{
@@ -273,41 +278,34 @@
 				return;
 			}
 			
-				var consigne, titre;
-				if ( _langue == LANGUE.Français ) {
-					titre = 'Questionnaire ISIS: Consigne pour répondre à cette question';
+			translateTagsForLang();
+			mapinit();					
+			inputs_init();
+				
+			if ( _mode == MODE_DESSIN.Polygone )
+			{
+				setDrawTools();
+			}
+			else {
+				var drawbtns = document.getElementById("drawbuttonsspan");
+				drawbtns.innerHTML = ""; // Hide draw buttons
+			}
+				
+			if ( _mode == MODE_DESSIN.DomicileVerification ) {
+				var home_addr_encoded = getUrlParam('addr');
+				if (home_addr_encoded != null) {
+					var home_addr = decodeURI(home_addr_encoded);
+					geocodeHomeAddress(home_addr);
 				}
 				else {
-					titre = 'ISIS Survey: How to answer this question';
-				}
-				popup_info_to_user(_consigne, 8, titre);
-				mapinit();					
-				inputs_init();
-				
-				if ( _mode == MODE_DESSIN.Polygone )
-				{
-					setDrawTools();
-				}
-				else {
-					var drawbtns = document.getElementById("drawbuttonsspan");
-					drawbtns.innerHTML = ""; // Hide draw buttons
-				}
-				
-				if ( _mode == MODE_DESSIN.DomicileVerification ) {
-					var home_addr_encoded = getUrlParam('addr');
-					if (home_addr_encoded != null) {
-						var home_addr = decodeURI(home_addr_encoded);
-						geocodeHomeAddress(home_addr);
-					}
-					else {
-						puthomepin();
-					}
-				}
-				else
-				{
 					puthomepin();
-					init_map_pin_if_question_already_answered(_qno);
 				}
+			}
+			else
+			{
+				puthomepin();
+				init_map_pin_if_question_already_answered(_qno);
+			}
 		});
 		
 		/*
@@ -354,15 +352,15 @@
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
 									<input id="address" type="text" maxlength="150" style="width:300px; height:25px;" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
-									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche" onclick="rechercher()"></button>
+									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
 									<span id="drawbuttonsspan" style="vertical-align:bottom">
 									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
-										<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Déplacer ou modifier la forme du polygone"></button>
-										<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/drawpoly.png); " title="Desssiner un polygone"></button>
-										<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Effacer un polygone"></button>
+										<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Mettre le pointeur de souris en mode d'édition pour déplacer ou modifier la zone tracée / Puts the mouse cursor in Edit mode to move or modify the zone drawn"></button>
+										<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/drawpoly.png); " title="Mettre le pointeur de souris en mode de dessin pour tracer votre zone / Puts the mouse cursor in Draw mode to mark out the boundaries of your zone"></button>
+										<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Effacer immédiatement toute zone sur la carte / Removes any zone currently on the map"></button>
 									</span>	
 								</span>
-								<div id="below" style="margin-top:2px">
+								<div id="below" style="margin-top:4px">
 									<form>	
 										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
 										<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp;</label>
@@ -370,11 +368,10 @@
 										<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés</label>
 										<br>
 										<br>
-										<br>
 										<div id="bob" style="text-align:center; border: solid 0 Red; border-top-width:1px; padding-top:0.5ex"">
 											<span id="directions" style="display:inline-block">
-												<button id="backbtn" type="button" title="Aller à la question précédente" style="height: 35px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:left; margin: 2px; padding:2px; width:100px">&lt;&lt; Précédent</button>
-												<button id="forwbtn" type="button" title="Aller à la question suivante" style="height: 35px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:right; margin: 2px; padding:2px; width: 100px" onclick="confirmeraddress();">Suivant &gt;&gt;</button>
+												<button id="backbtn" type="button" title="Aller à la question précédente / Go to the previous question" style="height: 35px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:left; margin: 2px; padding:2px; width:100px">&lt;&lt; Précédent / &lt;&lt; Previous</button>
+												<button id="forwbtn" type="button" title="Aller à la question suivante / Go to the next question" style="height: 35px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:right; margin: 2px; padding:2px; width: 100px" onclick="confirmeraddress();">Suivant &gt;&gt; / Next &gt;&gt;</button>
 											</span>
 										</div>
 										<!--<img id="helpicon" style="margin-left:290px; border:noone; vertical-align:middle" src="media/Icon-information.svg" width="20" height="20"/>-->
@@ -510,8 +507,8 @@
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<span style=\"font-size:14px; padding: 1px; background-color:LightGrey\"><b><u><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
-				"</u></span><br>" + _consigne + "</b>";
+				content = "<span style=\"font-size:14px; padding: 1px; background-color:LightGrey\"><b><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
+				"</span><p style=\"margin:4px;\"/>" + _consigne + "</b>";
 				paramsValide = true;
 			}
 			else {
@@ -597,6 +594,27 @@
 			if ( exit ) {
 				remercier_et_fermer( "", "", 0 );
 			}
+		}
+		
+		function setTitleForLang(index, doubleTitle) {
+			if (doubleTitle.indexOf(bilingue_tag)===-1)
+				return doubleTitle;
+			var tokens = doubleTitle.split(bilingue_tag);
+			return tokens[_langue.ind];
+		}
+			
+		function setLabelForLang() {
+			val = $(this).text();
+			if (val.indexOf(bilingue_tag)===-1) {
+				return;
+			}
+			var tokens = val.split(bilingue_tag);
+			$(this).text(tokens[_langue.ind]);
+		}
+		
+		function translateTagsForLang() {
+			$("button[title], input[title]").attr("title", setTitleForLang );
+			$("button, input").each(setLabelForLang);
 		}
 	</script>
 	
