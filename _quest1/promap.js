@@ -1222,6 +1222,7 @@ function geocoderResponseUpdateDisplay(results, status)
 		setMapPin(geoResp.coords, null, true);
 		updateAddressText( geoResp.addr );
 		document.getElementById('radio_adresse').checked = "checked";
+		_pointPlaced = true;
 		return geoResp;
 	}
 	return null;
@@ -1299,8 +1300,7 @@ function homeAddressLookupResp()
 			var homepos = getLatLngFromText(point_resp);
 			if (homepos != null) {
 				if ( isEligible == '0' && _mode != MODE_DESSIN.DomicileVerification ) { // Pas éligible de remplir les autres questions!
-					freezeBackground();
-					endSession();
+				// TODO: Ineligible handling
 				}
 				else {
 					ok = true;
@@ -1525,7 +1525,7 @@ function confirmeraddress()
 		var title, text;
 		var delay = null;
 		if (!inRMM) {
-			endSession();
+			// TODO: Ineligible
 		}
 		else {
 			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
@@ -1535,11 +1535,7 @@ function confirmeraddress()
 	else {
 		if ( _mode == MODE_DESSIN.Polygone ) {
 			if ( _drawnPolygon == null ) {
-				new Messi("Vous n'avez pas dessiné votre quartier",
-				{title: 'Êtes-vous sûr ?', 
-				buttons: [{id: 0, label: 'Dessiner mon quartier', val: 'Y'},
-						  {id: 1, label: 'Continuer sans dessiner mon quartier', val: 'N'}],
-						  callback: messi_test });
+				warnUserBeforeAdvancing("Vous n'avez pas dessiné votre quartier. / You have not marked out your neighbourhood." );
 			}
 			else {
 				var pointList = [];
@@ -1554,6 +1550,9 @@ function confirmeraddress()
 			}
 		}
 		else {
+			if ( !_pointPlaced ) {
+				warnUserBeforeAdvancing("Vous n'avez pas localisé de lieu. / You have not identified a location.");
+			}
 			saveLocationToDB(_mapmark);
 			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
 		}
@@ -2076,6 +2075,7 @@ function existingRespHandler()
 				if (locpos != null) {
 					setMapPin(locpos, null, true, true);
 					updateAddressText(loc_addr_text);
+					_pointPlaced;
 					findCurrentAddressMunicipality();
 					ok = true;
 				}
@@ -2116,21 +2116,4 @@ function existingRespHandler()
 function freezeBackground()
 {
 	document.getElementById('mapdiv' ).style.width = "0px";
-}
-
-function endSession()
-{
-	new Messi("Nous sommes désolés, mais le deuxième questionnaire porte uniquement sur les habitants de la région métropolitaine de Montréal. Vous n’êtes donc pas admissible. Merci beaucoup pour votre participation!", 
-		{title: 'Votre session est terminée !', 
-		titleClass: 'anim warning', 
-		buttons: [{id: 0, label: 'Confirmer', val: 'X'}],
-		callback: function(val) {
-			retournerdanslimesurvey({dir: 'away'});
-		}
-		});
-}
-
-function messi_test(val)
-{
-	alert('Your selection: ' + val);
 }

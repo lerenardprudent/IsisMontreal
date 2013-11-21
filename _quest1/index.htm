@@ -20,8 +20,8 @@
 	<!-- CSS file -->
 <!--	<link type="text/css" rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.0/jquery.qtip.min.css" />-->
 	
-	<link rel="stylesheet" href="objs/messi.css" />
-	<script src="objs/messi.js"></script>
+	<link rel="stylesheet" href="objs/jquery-impromptu.css" />
+	<script src="objs/jquery-impromptu.js"></script>
 	
 	<style>		
 		.myCustomStyle  {
@@ -76,7 +76,7 @@
 		#mainswf { position:absolute; left:0px; top:0px; width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
 		#findtype { width:180px; } 
 		#findrads { width:70px; } 
-		#infopanel { margin-left: auto; margin-right:auto; margin-top:20px; margin-bottom:20px; display:block; left:0px; width:90%; height:230px; padding:5px; background-color:White; text-wrap:none; overflow:hidden; }
+		#infopanel { margin-left: auto; margin-right:auto; margin-top:20px; margin-bottom:20px; display:block; left:0px; width:90%; height:230px; padding:5px; background-color:White; text-wrap:none; overflow:auto; }
 		#infolab1, #infolab2, #infolab3 { font-size: 11px; width:80px; color:DarkBlue; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
 		.ui-resizable-helper { border:1px dotted gray; }
 		#mapdiv { border: 2px solid green; background-color: #999999; position:absolute; top:300px; left:0px; width:1200px; height:690px; overflow:hidden;}
@@ -239,11 +239,11 @@
 		var _geocodedSpecial = null;
 		var _domicileInfoWindow = new google.maps.InfoWindow();
 		var bilingue_tag = ' / ';
+		var _pointPlaced = false;
 		
 		var tripiniconpath = "media/mapmark.png";
 		
-		$(document).ready( function()
-		{
+		$(document).ready( function() {
 		/*
 			$('img[id="helpicon"]').each(function() {
 					$(this).qtip({
@@ -288,7 +288,7 @@
 			}
 			
 			translateTagsForLang();
-			//mapinit();					
+			mapinit();					
 			try { onwindowsize(); } catch (er) { }	
 				
 			if ( _mode == MODE_DESSIN.Polygone )
@@ -360,7 +360,7 @@
 							</p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
-									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés --" autofocus="autofocus"/>&nbsp;
+									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or key words --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
 									<span id="drawbuttonsspan" style="vertical-align:bottom">
 									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
@@ -377,7 +377,7 @@
 										<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés / Keywords</label>
 										<br>
 										<br>
-										<div id="bob" style="text-align:center; border: solid 0 Red; border-top-width:1px; padding-top:0.5ex"">
+										<div id="bob" style="width: 80%; text-align:center; border: solid 0 Red; border-top-width:1px; padding-top:0.5ex"">
 											<span id="directions" style="display:inline-block">
 												<button id="backbtn" type="button" title="Aller à la question précédente / Go to the previous question" style="height: 30px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:left; margin: 2px; padding:2px; width:90px">&lt;&lt; Précédent / &lt;&lt; Previous</button>
 												<button id="forwbtn" type="button" title="Aller à la question suivante / Go to the next question" style="height: 30px; color:#FFFFFF; background-color:#C71F2D; font-size: 12px; float:right; margin: 2px; padding:2px; width: 90px" onclick="confirmeraddress();">Suivant &gt;&gt; / Next &gt;&gt;</button>
@@ -552,7 +552,7 @@
 			}
 			
 			if ( getUrlParam('quest') == null ) {
-				return CODE_ERREUR.AucuneNumQuestion;
+				return CODE_ERREUR.AucunNumQuestion;
 			}
 			
 			var quest_no = getUrlParam('quest');
@@ -606,25 +606,54 @@
 		}
 		
 		function setTitleForLang(index, doubleTitle) {
-			if (doubleTitle.indexOf(bilingue_tag)===-1)
+			sub = bilingualSubstitution(doubleTitle);
+			if (sub == null)
 				return doubleTitle;
-			var tokens = doubleTitle.split(bilingue_tag);
-			return tokens[_langue.ind];
+			return sub;
 		}
 			
 		function setLabelForLang() {
 			val = $(this).text();
-			if (val.indexOf(bilingue_tag)===-1) {
+			sub = bilingualSubstitution(val);
+			if (sub == null)
 				return;
-			}
-			var tokens = val.split(bilingue_tag);
-			$(this).text(tokens[_langue.ind]);
+			
+			$(this).text(sub);
 		}
 		
 		function translateTagsForLang() {
 			$("button[title], input[title]").attr("title", setTitleForLang );
 			$("button, input, label").each(setLabelForLang);
+			$("input[placeholder]").attr("placeholder", setTitleForLang );
 		}
+		
+		function bilingualSubstitution(str)
+		{
+			if (str.indexOf(bilingue_tag)===-1) {
+				return null;
+			}
+			var tokens = str.split(bilingue_tag);
+			return tokens[_langue.ind];
+		}
+		
+		function warnUserBeforeAdvancing(msg)
+		{
+			$.prompt(bilingualSubstitution(msg), {
+								title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to jump to the next question?"),
+
+								buttons: { "Rester sur la page" : true, 
+											"Continuer" : false },
+								submit: function(e,resterSurPage,m,f){
+									// use e.preventDefault() to prevent closing when needed or return false. 
+									// e.preventDefault(); 
+									if ( resterSurPage ) {
+									}
+									else {
+									}
+								}
+							});
+			$('div.jqi').css('width','530px');
+}
 	</script>
 	
 </body>
