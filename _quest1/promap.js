@@ -1354,6 +1354,9 @@ function confirmeraddress()
 	var ok = false;
 	_mapmark.setVisible(false);
 	if ( _mode == MODE_DESSIN.DomicileVerification ) {
+	
+	// Will use below later
+	/*
 		var munic_csv;
 		$.ajax({
 			type : 'GET',
@@ -1363,13 +1366,13 @@ function confirmeraddress()
 			success: function(data) {munic_csv=data;}});
 		var parsedCsv;
 		try {
-			//parsedCsv = $.csv.toArray(munic_csv, { separator : ','} );
+			parsedCsv = $.csv.toArray(munic_csv, { separator : ','} );
 		}
 		catch (er) {
 			console.info("CSV parsing error");
 			console.info(er);
 		}
-		
+		*/
 		var inRMM = check_if_marker_in_rmm();
 		var title, text;
 		var delay = null;
