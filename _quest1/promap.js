@@ -1381,9 +1381,9 @@ function confirmeraddress()
 		}
 		else {
 			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
+			ok = true;
 		}
 		saveHomeAddress(_mapmark, inRMM);
-		ok = true;
 	}
 	else if ( _mode == MODE_DESSIN.Polygone ) {
 		if ( _drawnPolygon == null ) {
