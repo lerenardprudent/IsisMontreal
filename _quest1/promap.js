@@ -32,7 +32,7 @@ function mapinit()
 	google.maps.event.addListener(_mapmark, 'dragend', dragmarkerhandler);
 	google.maps.event.addListener(_strviewpano, 'position_changed', strvwposchangehandler);
 	
-	fillmapdata(_mapdata);
+//	fillmapdata(_mapdata);
 	_serv = new google.maps.places.PlacesService(_map);
 //	updateobjaddr("");
 }
@@ -228,7 +228,7 @@ function onwindowsize()
 	document.getElementById('mapdiv').style.height = (_winh - mdt - 4) + "px";
 	document.getElementById('mapdiv').style.width = (_winw - 4) + "px";
 	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - (36*num_buttons)) + "px";
-	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {}	
+	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {console.log("Tried to center map but failed: " + er);}
 }
 
 function setDrawTools()
@@ -1505,7 +1505,7 @@ function confirmeraddress()
 {
 	var ok = false;
 	if ( !_pointPlaced ) {
-		console.log("User '" + _id_participant "' n'a pas fourni son adresse dans l'URL");
+		console.log("User '" + _id_participant + "' n'a pas fourni son adresse dans l'URL");
 	}
 	_mapmark.setVisible(false);
 	if ( _mode == MODE_DESSIN.DomicileVerification ) {
