@@ -306,18 +306,15 @@ function drawevents()
 
 function polygonDrawnHandler(e)
 {
-	var newobj = e.overlay;
 	if ( _drawnPolygon != null ) {
 		removePolygonFromMap();
 	}
-	processNewPolygonOnMap(newobj);
+	processNewPolygonOnMap(e.overlay);
 }
 
 function polygonDragged(e) 
 {
-	setobjcenter(this);
-	//if (this.prop6 == "M") { _mapmark.setVisible(false); } else { _mapmark.setVisible(true); }
-	if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
+	geocodeLatLng(e.overlay);
 }
 		
 function polygonClicked(e)
@@ -1987,5 +1984,5 @@ function reportIneligible()
 
 function jumpToUrl(url)
 {
-//	window.location.href = url;
+	window.location.href = url;
 }

@@ -8,7 +8,7 @@ $s = strval($_GET['s']); // Texte supplémentaire
 $geo = strval($_GET['geo']);
 $GLOBALS['colsep'] = '$';
 
-$resp_table = 'reponses_spatiales';
+$resp_table = 'reponses';
 $home_table = 'domiciles';
 $table = $resp_table;
 
