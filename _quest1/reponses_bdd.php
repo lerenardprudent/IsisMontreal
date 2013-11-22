@@ -169,7 +169,7 @@ function do_mysql_resp_lookup($db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_modify($db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($db,"veritas");
-	$sql="update ".$tbl." set num_quest='".$q."',type_rep='".$t."',addr_text='".$s."',geom_point=GeomFromText('".$g."') where id_part='".$id."'";
+	$sql="update ".$tbl." set type_rep='".$t."',addr_text='".$s."',geom_point=GeomFromText('".$g."') where id_part='".$id."' and num_quest='".$q."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($db,$sql))
 	  {

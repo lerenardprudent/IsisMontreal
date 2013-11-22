@@ -32,7 +32,7 @@ function mapinit()
 	google.maps.event.addListener(_mapmark, 'dragend', dragmarkerhandler);
 	google.maps.event.addListener(_strviewpano, 'position_changed', strvwposchangehandler);
 	
-	fillmapdata(_mapdata);
+	//fillmapdata(_mapdata);
 	_serv = new google.maps.places.PlacesService(_map);
 //	updateobjaddr("");
 }
@@ -303,73 +303,13 @@ function drawevents()
 }
 
 function polygonDrawnHandler(e)
-	{
+{
 	var newobj = e.overlay;
-	var obtype = e.type;
-	console.log(e);
-	newobj.prop6 = "P";
-	newobj.prop11 = 1;
-	/*
-	newobj.prop12 = .5;
-	newobj.prop8 = "media/mk-trans.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-	newobj.prop0 = true;
-		//newobj.prop1 = -1;
-		//newobj.prop2 = _currpg;
-		newobj.prop3 = "";
-		newobj.prop4 = "INP_414,INP_415";
-		newobj.prop5 = "16,17";
-		//newobj.prop6 = "M";
-		//newobj.prop7 = co[0] + "," + co[1];
-		//newobj.prop8 = iconfile;
-		newobj.prop9 = "#ff0000";
-		newobj.prop10 = "#000000";
-		//newobj.prop11 = 0;
-		//newobj.prop12 = 1;
-		//newobj.prop13 = setplacecat();			// "Custom";
-		newobj.prop14 = "";
-		//newobj.prop15 = setplacename();			// "Custom place " + _favobjects.length;
-		//newobj.prop16 = document.getElementById('ciw3').value;
-		newobj.prop17 = "";
-		//newobj.prop18 = co[0] + " " + co[1];
-		newobj.prop19 =  0;
-		newobj.prop20 =  "";
-		newobj.prop21 = "";
-		newobj.prop22 = "";
-		newobj.prop23 = "";
-		newobj.prop24 = "";
-		newobj.prop25 = 1;
-		newobj.prop26 = -1;
-		newobj.prop27 = 0;
-		newobj.prop28 = 0;
-		newobj.prop29 = 0;
-		newobj.prop30 = "";
-		newobj.prop31 = "";
-		newobj.prop32 = "";
-		newobj.prop33 = "";
-		newobj.prop34 = "";
-		newobj.prop35 = "";
-		newobj.prop36 = "";
-		newobj.prop37 = "";
-		newobj.prop38 = "";
-		newobj.prop39 = "";
-		newobj.prop40 = "";
-		newobj.prop41 = "";
-		newobj.prop42 = "";
-		newobj.prop43 = "";
-		newobj.prop44 = "";
-		newobj.prop45 = "";
-		newobj.prop46 = "";
-		newobj.prop47 = "";
-		newobj.prop48 = "";
-		newobj.prop49 = "";
-*/		
-
-		newobj.prop1 = _favobjects.length;
-		if ( _drawnPolygon != null ) {
-			removePolygonFromMap();
-		}
-		processNewPolygonOnMap(newobj);
+	if ( _drawnPolygon != null ) {
+		removePolygonFromMap();
 	}
+	processNewPolygonOnMap(newobj);
+}
 
 function polygonDragged(e) 
 		{
@@ -890,98 +830,6 @@ function clearfindall()
 	_findmarkers = [];
 }
 
-function keepfindmarker(id)
-{	
-	var co = document.getElementById('siw5').innerHTML.split(" ");
-	var poz = new google.maps.LatLng(co[0], co[1]);
-	var mark = new google.maps.Marker({ map:_map, position:poz, title:document.getElementById('siw2').value, draggable:false });
-	var iconfile = "media/mk-red-dot.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-	
-	mark.prop0 = true;
-	mark.prop1 = -1;
-	mark.prop2 = _currpg;
-	mark.prop3 = "";
-	mark.prop4 = "INP_414,INP_415";
-	mark.prop5 = "16,17";
-	mark.prop6 = "M";
-	
-	mark.prop7 = co[0] + "," + co[1];	//conditional by type (M, C, ...)
-	
-	mark.prop8 = iconfile;
-	mark.prop9 = "#ff0000";
-	mark.prop10 = "#000000";
-	mark.prop11 = 0;
-	mark.prop12 = 1;
-	mark.prop13 = document.getElementById('siw8').value;
-	mark.prop14 = document.getElementById('siw9').value;
-	mark.prop15 = document.getElementById('siw2').value;
-	mark.prop16 = document.getElementById('siw3').value;
-	mark.prop17 = document.getElementById('siw4').value;
-	mark.prop18 = co[0] + " " + co[1];
-	mark.prop19 = 0;
-	mark.prop20 = document.getElementById('siw6').value;
-	mark.prop21 = document.getElementById('siw7').value;
-	mark.prop22 = "";
-	mark.prop23 = "";
-	mark.prop24 = "";
-	mark.prop25 = 1;
-	mark.prop26 = -1;
-	mark.prop27 = 0;
-	mark.prop28 = 0;
-	mark.prop29 = 0;
-	mark.prop30 = "";
-	mark.prop31 = "";
-	mark.prop32 = "";
-	mark.prop33 = "";
-	mark.prop34 = "";
-	mark.prop35 = "";
-	mark.prop36 = "";
-	mark.prop37 = "";
-	mark.prop38 = "";
-	mark.prop39 = "";
-	mark.prop40 = "";
-	mark.prop41 = "";
-	mark.prop42 = "";
-	mark.prop43 = "";
-	mark.prop44 = "";
-	mark.prop45 = "";
-	mark.prop46 = "";
-	mark.prop47 = "";
-	mark.prop48 = "";
-	mark.prop49 = "";
-	
-	
-	clearfindmarker(id);
-
-	mark.prop1 = _favobjects.length;
-	_favobjects[_favobjects.length] = mark;
-	mark.setMap(_map);
-	mark.setIcon(iconfile);
-	setobjcenter(mark);
-	
-	google.maps.event.addListener(mark, 'dragend', function(e) 
-	{
-		setobjcenter(this);
-		//if (this.prop6 == "M") { _mapmark.setVisible(false); } else { _mapmark.setVisible(true); }
-		if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
-	});
-	
-	google.maps.event.addListener(mark, 'click', function(e)
-	{
-		if (this.prop6 == "M") { _mapmark.setVisible(false); } else { _mapmark.setVisible(true); }
-		if (_editon && _delobjon) { clearfavsmarker(this.prop1); return; }
-		deselectfavs();
-		_infowin.setContent("");
-		_infowin.setContent(makeinfowindowcontent(this, "ciw", 0));
-		setobjcenter(this);
-		if (!_editon) { _infowin.open(_map, this); }	
-		this.setIcon(this.prop8.substr(0, 13) + "sta.png"); 
-		updateobjaddr(this.prop16 + "|" + this.prop17);
-		if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
-	});
-}
-
-
 //---------------------------------------------------------------------
 
 function showhomegeocoderesphandler(results, status)
@@ -1048,7 +896,7 @@ function makefavgeocoderresphandler(results, status)
 	var poz;
 	var os = [];
 	var adr = document.getElementById("address").value;
-	var iconfile = "media/mk-red-dot.png"; 		//'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+	var iconfile = "media/mk-red-dot.png";
 	
 	if (status == google.maps.GeocoderStatus.OK)
 	{
@@ -1537,32 +1385,30 @@ function confirmeraddress()
 		saveHomeAddress(_mapmark, inRMM);
 		ok = true;
 	}
-	else {
-		if ( _mode == MODE_DESSIN.Polygone ) {
-			if ( _drawnPolygon == null ) {
-				warnUserBeforeAdvancing("Vous n'avez pas dessiné votre quartier. / You have not marked out your neighbourhood." );
-			}
-			else {
-				var pointList = [];
-				var path = _drawnPolygon.getPath().getArray();
-				for (i = 0; i < path.length; i++) {
-					pointList.push( { 'lat' : path[i].lat(), 'lon' : path[i].lng() } );
-				}
-				savePolyToDB(pointList);
-				//_drawnPolygon.setVisible(false);
-				_drawnPolygon.setOptions({fillColor: "#009933", fillOpacity: 1});
-				//_drawnPolygon.setVisible(true);
-				ok = true;
-			}
+	else if ( _mode == MODE_DESSIN.Polygone ) {
+		if ( _drawnPolygon == null ) {
+			warnUserBeforeAdvancing("Vous n'avez pas dessiné votre quartier. / You have not marked out your neighbourhood." );
 		}
 		else {
-			if ( !_pointPlaced ) {
-				warnUserBeforeAdvancing("Vous n'avez pas localisé de lieu. / You have not identified a location.");
+			var pointList = [];
+			var path = _drawnPolygon.getPath().getArray();
+			for (i = 0; i < path.length; i++) {
+				pointList.push( { 'lat' : path[i].lat(), 'lon' : path[i].lng() } );
 			}
-			saveLocationToDB(_mapmark);
-			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
+			savePolyToDB(pointList);
+			//_drawnPolygon.setVisible(false);
+			_drawnPolygon.setOptions({fillColor: "#009933", fillOpacity: 1});
+			//_drawnPolygon.setVisible(true);
 			ok = true;
 		}
+	}
+	else {
+		if ( !_pointPlaced ) {
+			warnUserBeforeAdvancing("Vous n'avez pas localisé de lieu. / You have not identified a location.");
+		}
+		saveLocationToDB(_mapmark);
+		setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
+		ok = true;
 	}
 	if ( ok ) {
 		retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
@@ -1616,7 +1462,7 @@ function disableInputs()
 function retournerdanslimesurvey(dir)
 {
 	var nextUrl = "https://www.isis-montreal.ca/questionnaire/index.php?sid=" + _id_participant + "&lang=" + _langue.val + "&" + dir.val + "=1";
-	window.location.href = nextUrl;
+	//window.location.href = nextUrl;
 }
 
 function setplacename()
@@ -2064,7 +1910,7 @@ function existingRespHandler()
 				if (locpos != null) {
 					setMapPin(locpos, null, true, true);
 					updateAddressText(loc_addr_text);
-					_pointPlaced;
+					_pointPlaced = true;
 					findCurrentAddressMunicipality();
 					ok = true;
 				}
@@ -2110,5 +1956,5 @@ function freezeBackground()
 function reportIneligible()
 {
 	console.log("Could not find (valid) home address for user '" + _id_participant + "'");
-	window.location.href = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
+//	window.location.href = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
 }
