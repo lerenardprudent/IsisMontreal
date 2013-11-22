@@ -82,7 +82,7 @@ var questionnaire_texte = [
 	{ 
 		question_no : "102",
 		question_fr : "Localisez sur la carte le lieu où vous passez régulièrement du temps.",
-		question_an : "What are you doing right now?" ,
+		question_an : "On the map, locate the place where you regularly spend time." ,
 		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
 		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
@@ -90,7 +90,7 @@ var questionnaire_texte = [
 	{ 
 		question_no : "107",
 		question_fr : "Localisez sur la carte l'autre lieu où vous passez régulièrement du temps.",
-		question_an : "On the map, locate the other place where you regularly spend time." ,
+		question_an : "On the map, locate another place where you regularly spend time." ,
 		mode_dessin : "point",
 		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte.<br>Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
 		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."

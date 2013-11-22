@@ -93,6 +93,7 @@
 			var addr_shown = document.getElementById('address').value;
 			var point_wkt = "point(" + marker.getPosition().lat().toFixed(_decimal_prec) + " " + marker.getPosition().lng().toFixed(_decimal_prec) + ")";
 			var php_url = "reponses_bdd.php?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
+			console.log("Saving location: " + php_url );
 			_httpReqSaveLoc.open("post",php_url,true);
 			_httpReqSaveLoc.send();
 		}
@@ -197,7 +198,7 @@
 		var _urlParams = {};
 		var _qtip_text = "";
 		var _qtip_title = "Questionnaire ISIS";
-		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc, _httpReqSavePoly;
+		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc, _httpReqSavePoly, _httpReqDeletePoly;
 		var _lastGeocodedAddrComps = null;
 		var _lastAddressText = null;
 		var _lastPlaceIconClicked = null;
@@ -609,9 +610,8 @@
 								submit: function(e,resterSurPage,m,f){
 									// use e.preventDefault() to prevent closing when needed or return false. 
 									// e.preventDefault(); 
-									if ( resterSurPage ) {
-									}
-									else {
+									if ( !resterSurPage ) {
+										retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
 									}
 								}
 							});

@@ -38,6 +38,10 @@ else if (strcmp($up,"ip") == 0)
 {
 	$db_update_func = 'do_mysql_insert_or_modify_poly';
 }
+else if (strcmp($up,"dp") == 0)
+{
+	$db_update_func = 'do_mysql_delete_poly';
+}
 else {
 	die("Could not recognise update type");
 }
@@ -112,6 +116,17 @@ function do_mysql_modify_poly($db,$tbl,$id,$q,$t,$s,$g) {
 	  die('Error: ' . mysqli_error($db));
 	  }
 	echo "1 poly record modified";
+}
+
+function do_mysql_delete_poly($db,$tbl,$id,$q,$t,$s,$g) {
+	mysqli_select_db($db,"veritas");
+	$sql="delete from ".$tbl." where id_part='".$id."' and num_quest='".$q."'";
+	echo "Sending ".$sql."\n";
+	if (!mysqli_query($db,$sql))
+	  {
+	  die('Error: ' . mysqli_error($db));
+	  }
+	echo "1 poly record deleted";
 }
 
 function do_mysql_home_lookup($db,$tbl,$id,$q,$t,$s,$g) {

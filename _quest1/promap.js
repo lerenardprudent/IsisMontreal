@@ -12,7 +12,7 @@ function mapinit()
           scaleControl: true,
           streetViewControl: false,
 		  mapTypeControl: false,
-		  draggableCursor: 'default',
+		  draggableCursor: 'crosshair',
           mapTypeId: google.maps.MapTypeId.ROADMAP		//HYBRID, SATELLITE, TERRAIN
     }	  
 	_map = new google.maps.Map(document.getElementById('mapdiv'), mapOptions);	  
@@ -312,11 +312,11 @@ function polygonDrawnHandler(e)
 }
 
 function polygonDragged(e) 
-		{
-			setobjcenter(this);
-			//if (this.prop6 == "M") { _mapmark.setVisible(false); } else { _mapmark.setVisible(true); }
-			if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
-		}
+{
+	setobjcenter(this);
+	//if (this.prop6 == "M") { _mapmark.setVisible(false); } else { _mapmark.setVisible(true); }
+	if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
+}
 		
 function polygonClicked(e)
 {
@@ -1352,9 +1352,6 @@ function setMapPin(latlng, iconPath, canDrag, centerOnPin)
 function confirmeraddress()
 {
 	var ok = false;
-	if ( !_pointPlaced ) {
-		console.log("User '" + _id_participant + "' n'a pas fourni son adresse dans l'URL");
-	}
 	_mapmark.setVisible(false);
 	if ( _mode == MODE_DESSIN.DomicileVerification ) {
 		var munic_csv;
@@ -1406,9 +1403,11 @@ function confirmeraddress()
 		if ( !_pointPlaced ) {
 			warnUserBeforeAdvancing("Vous n'avez pas localisé de lieu. / You have not identified a location.");
 		}
-		saveLocationToDB(_mapmark);
-		setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
-		ok = true;
+		else {
+			saveLocationToDB(_mapmark);
+			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
+			ok = true;
+		}
 	}
 	if ( ok ) {
 		retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
@@ -1425,6 +1424,7 @@ function savePolyToDB(pointlist)
 	}
 	polyStrForInsert += pointlist[0].lat + " " + pointlist[0].lon + "))"; // Repeat the first point to make a closed polygon
 	var php_url = "reponses_bdd.php?up=ip&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&s=" + encodeURI(_geocodedSpecial.addr) + "&geo=" + encodeURI(polyStrForInsert);
+	console.log("Saving poly: " + php_url);
 	_httpReqSavePoly.open("post",php_url,true);
 	_httpReqSavePoly.send();
 }
@@ -1462,6 +1462,7 @@ function disableInputs()
 function retournerdanslimesurvey(dir)
 {
 	var nextUrl = "https://www.isis-montreal.ca/questionnaire/index.php?sid=" + _id_participant + "&lang=" + _langue.val + "&" + dir.val + "=1";
+	console.log("Retour dans LimeSurvey: " + nextUrl);
 	//window.location.href = nextUrl;
 }
 
@@ -1539,6 +1540,18 @@ function removePolygonFromMap(id)
 	_drawnPolygon.setMap(null);
 	_drawnPolygon = null;
 	_infowin.close();
+	clearAddressField();
+	sendDelPolyToDB();
+}
+
+function sendDelPolyToDB()
+{
+	_httpReqDelPoly = new XMLHttpRequest();
+	_httpReqDelPoly.onreadystatechange=function() {};
+	var php_url = "reponses_bdd.php?up=dp&id=" + _id_participant + "&q=" + _qno;
+	console.log("Deleting polygon: " + php_url );
+	_httpReqDelPoly.open("post",php_url,true);
+	_httpReqDelPoly.send();
 }
 
 /*
@@ -1926,9 +1939,12 @@ function existingRespHandler()
 																 polygon_resp.length-expected_sfx.length);
 						var pointList = pointliststr.split(",");
 						var latLngList = [];
+						var polyBounds = new google.maps.LatLngBounds ();
 						for (var i=0; i < pointList.length; i++) {
 							var latAndLng = pointList[i].split(" ");
-							latLngList.push(new google.maps.LatLng(latAndLng[0], latAndLng[1]));
+							var newPoint = new google.maps.LatLng(latAndLng[0], latAndLng[1]);
+							polyBounds.extend(newPoint);
+							latLngList.push(newPoint);
 						}
 						savedZone = new google.maps.Polygon({
 							paths:latLngList,
@@ -1940,6 +1956,9 @@ function existingRespHandler()
 							editable: true });
 						savedZone.setMap(_map);
 						processNewPolygonOnMap(savedZone);
+						google.maps.event.trigger(_map, 'resize');
+						_map.fitBounds(polyBounds);
+						_map.panToBounds(polyBounds);
 						stopDraw();
 					}
 				}
@@ -1956,5 +1975,7 @@ function freezeBackground()
 function reportIneligible()
 {
 	console.log("Could not find (valid) home address for user '" + _id_participant + "'");
-//	window.location.href = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
+	var urlPourTerminer = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
+	console.log("Fin de questionnaire : " + urlPourTerminer);
+	//window.location.href = urlPourTerminer;
 }
