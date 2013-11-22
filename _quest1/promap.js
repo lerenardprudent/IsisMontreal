@@ -32,7 +32,7 @@ function mapinit()
 	google.maps.event.addListener(_mapmark, 'dragend', dragmarkerhandler);
 	google.maps.event.addListener(_strviewpano, 'position_changed', strvwposchangehandler);
 	
-//	fillmapdata(_mapdata);
+	fillmapdata(_mapdata);
 	_serv = new google.maps.places.PlacesService(_map);
 //	updateobjaddr("");
 }
@@ -228,7 +228,7 @@ function onwindowsize()
 	document.getElementById('mapdiv').style.height = (_winh - mdt - 4) + "px";
 	document.getElementById('mapdiv').style.width = (_winw - 4) + "px";
 	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - (36*num_buttons)) + "px";
-	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {console.log("Tried to center map but failed: " + er);}
+	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {}	
 }
 
 function setDrawTools()
@@ -2109,6 +2109,6 @@ function freezeBackground()
 
 function reportIneligible()
 {
-	window.location.href = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
 	console.log("Could not find (valid) home address for user '" + _id_participant + "'");
+	window.location.href = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
 }
