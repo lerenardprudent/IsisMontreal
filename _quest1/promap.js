@@ -1321,7 +1321,7 @@ function homeAddressLookupResp()
 			}
 		}
 		if (!ok) {
-			//alert( "Impossible d'afficher votre lieu de domicile" );
+			reportIneligible();
 		}
 	}
 }
@@ -1503,6 +1503,10 @@ function setMapPin(latlng, iconPath, canDrag, centerOnPin)
 
 function confirmeraddress()
 {
+	var ok = false;
+	if ( !_pointPlaced ) {
+		console.log("User '" + _id_participant "' n'a pas fourni son adresse dans l'URL");
+	}
 	_mapmark.setVisible(false);
 	if ( _mode == MODE_DESSIN.DomicileVerification ) {
 		var munic_csv;
@@ -1525,12 +1529,13 @@ function confirmeraddress()
 		var title, text;
 		var delay = null;
 		if (!inRMM) {
-			// TODO: Ineligible
+			reportIneligible();
 		}
 		else {
 			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
 		}
 		saveHomeAddress(_mapmark, inRMM);
+		ok = true;
 	}
 	else {
 		if ( _mode == MODE_DESSIN.Polygone ) {
@@ -1547,6 +1552,7 @@ function confirmeraddress()
 				//_drawnPolygon.setVisible(false);
 				_drawnPolygon.setOptions({fillColor: "#009933", fillOpacity: 1});
 				//_drawnPolygon.setVisible(true);
+				ok = true;
 			}
 		}
 		else {
@@ -1555,7 +1561,11 @@ function confirmeraddress()
 			}
 			saveLocationToDB(_mapmark);
 			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
+			ok = true;
 		}
+	}
+	if ( ok ) {
+		retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
 	}
 }
 
@@ -1598,35 +1608,14 @@ function saveHomeResp()
 	}
 }
 
-function remercier_et_fermer(titre, texte, delay)
-{
-	/*
-	disableInputs();
-	if (typeof(delay) === 'undefined' || delay == null) {
-		delay = 5; //sec
-	}
-	else if ( delay > 0 ) {
-		popup_info_to_user(texte, delay, titre);
-	}
-	setTimeout(retournerdanslimesurvey, delay*1000);
-	*/
-	retournerdanslimesurvey({ dir: 'next'} );
-}
-
 function disableInputs()
 {
 	$("#infopanel button,input").attr("disabled", true); // Go jquery!
 }
 
-function retournerdanslimesurvey(flag)
+function retournerdanslimesurvey(dir)
 {
-	var nextUrl;
-	if ( flag.dir == 'away') {
-		nextUrl = "http://isis-montreal.ca/index.php/fr/";
-	}
-	else {
-		nextUrl = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&" + flag.dir + "=1";
-	}
+	var nextUrl = "https://www.isis-montreal.ca/questionnaire/index.php?sid=" + _id_participant + "&lang=" + _langue.val + "&" + dir.val + "=1";
 	window.location.href = nextUrl;
 }
 
@@ -2116,4 +2105,10 @@ function existingRespHandler()
 function freezeBackground()
 {
 	document.getElementById('mapdiv' ).style.width = "0px";
+}
+
+function reportIneligible()
+{
+	window.location.href = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
+	console.log("Could not find (valid) home address for user '" + _id_participant + "'");
 }

@@ -5,7 +5,7 @@ var questionnaire_texte = [
 		question_an : "Does the location on the map match your home address?",
 		mode_dessin : "domver", 
 		consigne_fr : "Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte? Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur le bouton 'Suivant'.",
-		consigne_an : "If yes, click 'Next'. If no, please correct your home address or locate your address by clicking on the map. When the location on the map matches your address, click 'Next'",
+		consigne_an : "If yes, click 'Next'. If no, please correct your home address or locate your address by clicking on the map. When the location on the map matches your address, click 'Next'.",
 	},
 	{ 
 		question_no : "6",
