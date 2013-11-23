@@ -1,10 +1,10 @@
 <?php
 
-$resp_table = 'TEST_reponses';
-$home_table = 'TEST_domiciles';
+$resp_table = 'reponses';
+$home_table = 'domiciles';
 $table = $resp_table;
-$db = 'veritas';
-$user = 'veritas';
+$db = 'test'; //'veritas';
+$user = null; //'veritas';
 $pwd = 'v45W34eD787';
 
 $sql_conn = connect($db, $user, $pwd);

@@ -1190,6 +1190,25 @@ function getLatLngFromText(text)
 	return null;
 }
 
+function normaliserNomFrancais(s){
+                        var r=s.toLowerCase();
+                        r = r.replace(new RegExp("\\s", 'g'),"");
+                        r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
+                        r = r.replace(new RegExp("æ", 'g'),"ae");
+                        r = r.replace(new RegExp("ç", 'g'),"c");
+                        r = r.replace(new RegExp("[èéêë]", 'g'),"e");
+                        r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
+                        r = r.replace(new RegExp("ñ", 'g'),"n");                            
+                        r = r.replace(new RegExp("[òóôõö]", 'g'),"o");
+                        r = r.replace(new RegExp("œ", 'g'),"oe");
+                        r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
+                        r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
+						r = r.replace(new RegExp("st\\W", 'g'),"saint-");
+						r = r.replace(new RegExp("mt\\W", 'g'),"mont-");
+                        r = r.replace(new RegExp("\\W", 'g'),""); // Watch out for hyphen
+                        return r;
+};
+	
 function check_if_marker_in_rmm()
 {
 	var addr_comp = _lastGeocodedAddrComps.address_components;
@@ -1290,37 +1309,23 @@ function check_if_marker_in_rmm()
     for (var j=0; j<addr_comp.length; j++) {
         for (var k=0;k<addr_comp[j].types.length; k++) {
 			if ( addr_comp[j].types[k] == "locality" || addr_comp[j].types[k] == "political") {
-				short_names.push(addr_comp[j].short_name);
+				short_names.push(normaliserNomFrancais(addr_comp[j].short_name));
 			}
         }
     }
 	
-	tidy_accents = function(s){
-                        var r=s.toLowerCase();
-                        r = r.replace(new RegExp("\\s", 'g'),"");
-                        r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
-                        r = r.replace(new RegExp("æ", 'g'),"ae");
-                        r = r.replace(new RegExp("ç", 'g'),"c");
-                        r = r.replace(new RegExp("[èéêë]", 'g'),"e");
-                        r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
-                        r = r.replace(new RegExp("ñ", 'g'),"n");                            
-                        r = r.replace(new RegExp("[òóôõö]", 'g'),"o");
-                        r = r.replace(new RegExp("œ", 'g'),"oe");
-                        r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
-                        r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
-                        r = r.replace(new RegExp("\\W", 'g'),"");
-                        return r;
-    };
-	
 	var found_match = false;
 	var x, y;
-	for (x=0; x < short_names.length && !found_match; x++)
-		for (y=0; y < municipalities.length; y++) {
-			if (tidy_accents(short_names[x]) == tidy_accents(municipalities[y]) ){
+	for (y=0; y < municipalities.length; y++) {
+		var munic = normaliserNomFrancais(municipalities[y]);
+		for (x=0; x < short_names.length && !found_match; x++) {
+			var sn = short_names[x];
+			if (munic == sn) {
 				found_match = true;
 				break;
 			}
 		}
+	}
 
 /*		
 	if (found_match)
