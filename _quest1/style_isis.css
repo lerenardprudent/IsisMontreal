@@ -1,0 +1,66 @@
+#infopanel { margin-left: auto; margin-right:auto; margin-top:30px; margin-bottom:20px; display:block; left:0px; width:855px; height:228px; padding:5px; background-color:White; text-wrap:none; overflow:auto; }
+		html, body { width:100%; height:100%; }
+		body { margin:0px; padding:0px; overflow:hidden; color:#404040; background-color:White; }
+		button { margin-right: 1px; }
+		a:link, a:visited { color:#dd0000; text-decoration:none; }
+		a:active, a:hover { color:#404040; text-decoration:none; }
+		input { background-color:#ffffff; margin:0px; padding:0px; border:1px solid #999; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
+		*:focus{ outline:none; }
+		div { margin:0px; padding:0px; }
+		select { background-color:#ffffff; margin:0px; padding:0px; border:1px solid #999; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
+		ul, ol {list-style-type:none; padding:0px; margin:0px; }
+		li { background-color:#f4f4f4; padding:2px; text-overflow:ellipsis; white-space:nowrap; }
+		li:nth-child(odd) { background-color:#fdfdfd; padding:2px; text-overflow:ellipsis; white-space:nowrap; }
+		table, th, td { border-style:none; border-width:0px; border-collapse:collapse; padding:0px; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; }
+		th, td { height:24px; max-height:24px; }
+		span { margin:0px; padding:0px; }
+		#mainswf { position:absolute; left:0px; top:0px; width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px;}
+		#findtype { width:180px; } 
+		#findrads { width:70px; } 
+		
+		#infolab1, #infolab2, #infolab3 { font-size: 11px; width:80px; color:DarkBlue; text-wrap:none; white-space:nowrap; overflow:hidden; -webkit-user-select:none; -khtml-user-select:none; -moz-user-select:none; -o-user-select:none; user-select:none; }
+		.ui-resizable-helper { border:1px dotted gray; }
+		#mapdiv { border: 2px solid green; background-color: #999999; position:absolute; top:300px; left:0px; width:1200px; height:690px; overflow:hidden;}
+		#strviewdiv { position:absolute; top:175px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; border-width: 2px; border-style: outset; border-color: orange;  }
+		#findspanel, #favspanel { position:absolute; left:1000px; top:200px; width: 200px; height:280px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
+		#places, #objects { position:absolute; left:0px; top:20px; width:195px; height: 234px; border-style:solid; border-width:0px 1px 0px 1px; border-color:#999; padding-left:4px; overflow-x:hidden; overflow-y:scroll;}
+		#panheadfinds, #panheadfavs { top:0px; width:199px; height:20px; margin:0px; padding:2px 0px 0px 0px; border-style:solid; border-width:1px 1px 0px 1px; border-color:#999; font-weight:bold; }
+		#morefinds { position:absolute; top:255px; width:201px; height:25px; margin:0px; border-style:solid; border-width:0px 1px 1px 1px; border-color:#999; color:#dd0000; font-weight:bold; cursor: hand; cursor: pointer; }
+		#favsmode { position:absolute; top:255px; width:194px; height:20px; margin:0px; border-style:solid; border-width:0px 1px 1px 1px; border-color:#999; padding:4px 0px 0px 6px;}
+		#viewpanel { position:absolute; left:105px; top:115px; width:85px; height:220px; padding:15px; opacity:.9; border:1px solid #999; background:#efefef; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
+		#view1, #view2, #view3, #view4, #view5, #view6 { font-size:12px; font-weight:bold; } 
+		#btn11, #btn12, #btn13, #btn14, #btn15, #btn16, #btn17, #btn18 { background-repeat:no-repeat; background-position:1px 1px; }
+		#btn9 { position:absolute; top:8px; left:1860px; width:14px; height:14px;  background-repeat:no-repeat; background-position:-1px -1px; }
+		
+				.myCustomStyle  {
+		   font-size: 15px;
+		   width: 500px
+		}
+		
+		.tooltiptext{
+			display: none;
+		}
+		
+		.container {
+			width: 40%;
+			height: 40%;
+			background: #444;
+			margin: 0 auto;
+		}
+		.container img.wide {
+			max-width: 100%;
+			max-height: 100%;
+			height: auto;
+		}
+		.container img.tall {
+			max-height: 100%;
+			max-width: 100%;
+			width: auto;
+		
+		.inline-radio { display: inline-block; }
+		
+		.button_space { margin-left: 20px;}
+		
+		.smallSpaceClass { margin:3px; }
+		
+		#searchspan input, #searchspan button {vertical-align:bottom; }
