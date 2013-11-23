@@ -92,7 +92,7 @@
 			_httpReqSaveLoc.onreadystatechange=locSaveResp;
 			var addr_shown = document.getElementById('address').value;
 			var point_wkt = "point(" + marker.getPosition().lat().toFixed(_decimal_prec) + " " + marker.getPosition().lng().toFixed(_decimal_prec) + ")";
-			var php_url = "reponses_bdd.php?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
+			var php_url = _php_db_fname + "?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
 			console.info("Saving location: " + php_url );
 			_httpReqSaveLoc.open("post",php_url,true);
 			_httpReqSaveLoc.send();
@@ -207,7 +207,8 @@
 		var _domicileInfoWindow = new google.maps.InfoWindow();
 		var bilingue_tag = ' / ';
 		var _pointPlaced = false;
-		
+
+		var _php_db_fname = "req_bd.php";
 		var tripiniconpath = "media/mapmark.png";
 		
 		$(document).ready( function() {
@@ -518,7 +519,7 @@
 				}
 			}
 			else {
-				console.info("User '" + _id_participant + "' has no language tag. Defaulting to French");
+				console.info("User has no language tag. Defaulting to French");
 			}
 			
 			if ( getUrlParam('quest') == null ) {

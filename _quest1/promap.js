@@ -1129,7 +1129,8 @@ function puthomepin()
 {
 	_httpReqHomeLookup = new XMLHttpRequest();
 	_httpReqHomeLookup.onreadystatechange=homeAddressLookupResp;
-	var php_url = "reponses_bdd.php?up=hl&id=" + _id_participant;
+	var php_url = _php_db_fname + "?up=hl&id=" + _id_participant;
+	console.info("Home address lookup: " + php_url);
 	_httpReqHomeLookup.open("get",php_url,true);
 	_httpReqHomeLookup.send();
 }
@@ -1139,6 +1140,7 @@ function homeAddressLookupResp()
 	var ok = false;
 	if (_httpReqHomeLookup.readyState==4 && _httpReqHomeLookup.status==200) {
 		var resp = _httpReqHomeLookup.responseText;
+		console.info("Home address lookup resp: " + resp);
 		var tokens = resp.split("$");
 		if (tokens.length == 3) {
 			var point_resp = tokens[0];
@@ -1426,7 +1428,7 @@ function savePolyToDB(pointlist)
 		polyStrForInsert += pointlist[i].lat + " " + pointlist[i].lon + ", ";
 	}
 	polyStrForInsert += pointlist[0].lat + " " + pointlist[0].lon + "))"; // Repeat the first point to make a closed polygon
-	var php_url = "reponses_bdd.php?up=ip&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&s=" + encodeURI(_geocodedSpecial.addr) + "&geo=" + encodeURI(polyStrForInsert);
+	var php_url = _php_db_fname + "?up=ip&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&s=" + encodeURI(_geocodedSpecial.addr) + "&geo=" + encodeURI(polyStrForInsert);
 	console.info("Saving poly: " + php_url);
 	_httpReqSavePoly.open("post",php_url,true);
 	_httpReqSavePoly.send();
@@ -1435,7 +1437,7 @@ function savePolyToDB(pointlist)
 function savePolyResp()
 {
 	if (_httpReqSavePoly.readyState==4 && _httpReqSavePoly.status==200) {
-		// Handling ?
+		console.info("Save poly resp: \"" + _httpReqSavePoly.responseText + "\"");
 	}
 }
 
@@ -1445,7 +1447,7 @@ function saveHomeAddress(marker, isEligible)
 	_httpReqSaveHome.onreadystatechange=saveHomeResp;
 	var addr_shown = document.getElementById('address').value;
 	var point_wkt = "point(" + marker.getPosition().lat().toFixed(_decimal_prec) + " " + marker.getPosition().lng().toFixed(_decimal_prec) + ")";
-	var php_url = "reponses_bdd.php?up=dom&id=" + _id_participant + "&t=" + isEligible + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);;
+	var php_url = _php_db_fname + "?up=dom&id=" + _id_participant + "&t=" + isEligible + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);;
 	console.info("Lieu de domicile enregistré : " + php_url);
 	_httpReqSaveHome.open("post",php_url,true);
 	_httpReqSaveHome.send();
@@ -1454,7 +1456,7 @@ function saveHomeAddress(marker, isEligible)
 function saveHomeResp()
 {
 	if (_httpReqSaveHome.readyState==4 && _httpReqSaveHome.status==200) {
-		// Handling ?
+		console.info("Réponse de la BD: " + _httpReqSaveHome.responseText);
 	}
 }
 
@@ -1551,13 +1553,19 @@ function removePolygonFromMap(id)
 function sendDelPolyToDB()
 {
 	_httpReqDelPoly = new XMLHttpRequest();
-	_httpReqDelPoly.onreadystatechange=function() {};
-	var php_url = "reponses_bdd.php?up=dp&id=" + _id_participant + "&q=" + _qno;
+	_httpReqDelPoly.onreadystatechange=delPolyResp;
+	var php_url = _php_db_fname + "?up=dp&id=" + _id_participant + "&q=" + _qno;
 	console.info("Deleting polygon: " + php_url );
 	_httpReqDelPoly.open("post",php_url,true);
 	_httpReqDelPoly.send();
 }
 
+function delPolyResp()
+{
+	if (_httpReqDelPoly.readyState==4 && _httpReqDelPoly.status==200) {
+		console.info("Polygon deleted: \"" + _httpReqDelPoly.responseText + "\"");
+	}
+}
 /*
 
 function clearfavspanel()
@@ -1908,7 +1916,7 @@ function init_map_pin_if_question_already_answered(quest_no)
 {
 	_httpReqRespLookup =new XMLHttpRequest();
 	_httpReqRespLookup.onreadystatechange=existingRespHandler;
-	var php_url = "reponses_bdd.php?up=rl&id=" + _id_participant + "&q=" + quest_no;
+	var php_url = _php_db_fname + "?up=rl&id=" + _id_participant + "&q=" + quest_no;
 	_httpReqRespLookup.open("get",php_url,true);
 	_httpReqRespLookup.send();
 }
@@ -1987,5 +1995,5 @@ function reportIneligible()
 
 function jumpToUrl(url)
 {
-	window.location.href = url;
+//	window.location.href = url;
 }
