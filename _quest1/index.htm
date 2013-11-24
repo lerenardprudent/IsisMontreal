@@ -124,7 +124,7 @@
 		var _consigne;
 		var _langue = LANGUE.Français;
 		var _id_participant;
-		var _searchradius = 2000;
+		var _searchradius = 3; // 5km
 		var _decimal_prec = 8;
 		var _qno;
 		var _urlParams = {};
@@ -140,6 +140,7 @@
 		var bilingue_tag = ' / ';
 		var _pointPlaced = false;
 		var _jumpedOffPage = false;
+		var _existingRecInDB = false;
 
 		var _php_db_fname = "req_bd.php";
 		var tripiniconpath = "media/mapmark.png";
@@ -159,6 +160,7 @@
 				return;
 			}
 			
+			setRadioButtonTooltips();
 			translateTagsForLang();
 			mapinit();
 			try { onwindowsize(); } catch (er) { }	
@@ -232,7 +234,7 @@
 							</p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
-									<input id="address" type="text" maxlength="150" onClick="this.select();" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or key words --" autofocus="autofocus"/>&nbsp;
+									<input id="address" type="text" maxlength="150" onClick="this.select();" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
 									<span id="drawbuttonsspan" style="vertical-align:bottom">
 									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
@@ -244,9 +246,9 @@
 								<div id="below" style="margin-top:4px">
 									<form>	
 										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
-										<label  for="radio_adresse" class="inline-radio">Adresse&nbsp;&nbsp; / Address&nbsp;&nbsp;</label>
-										<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
-										<label id="search_prox_label" for="radio_nom" class="inline-radio" disabled="true">Mots-clés / Keywords</label>
+										<label  for="radio_adresse" id="radio_adresse_label" class="inline-radio">Adresse&nbsp;&nbsp; / Address&nbsp;&nbsp;</label>
+										<input type="radio" id="radio_nom" title="OH HAI!" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
+										<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés / Keywords</label>
 										<br/>
 										<br/>
 										<div id="bob" style="text-align:center; border: solid 0 Red; border-top-width:1px; padding-top:0.5ex"">
@@ -508,19 +510,21 @@
 		function warnUserBeforeAdvancing(msg)
 		{
 			$.prompt(bilingualSubstitution(msg), {
-								title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to jump to the next question?"),
-
-								buttons: { "Rester sur la page" : true, 
-											"Continuer" : false },
-								submit: function(e,resterSurPage,m,f){
-									// use e.preventDefault() to prevent closing when needed or return false. 
-									// e.preventDefault(); 
-									if ( !resterSurPage ) {
-										retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
-									}
-								}
-							});
-			$('div.jqi').css('width','530px');
+				title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to jump to the next question?"),
+				buttons: { "Rester sur la page" : true, 
+				  		   "Continuer" : false },
+				submit: function(e,resterSurPage,m,f) {
+						if ( !resterSurPage ) {
+							if (_existingRecInDB) {
+								sendDelPolyToDB();
+							}
+							else {
+								retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
+							}
+						}
+				}
+			});
+			$('div.jqi').css('width','530px'); // Makes the popup wider
 		}
 		
 		function goBack()
@@ -535,6 +539,17 @@
 				console.error( "DB update by " + func_name + " FAILED." );
 			}
 		}
+		
+		function setRadioButtonTooltips()
+		{
+			var addressOptTooltip = "Option pour une recherche par adresse (complète ou partielle) / Option for a search by address (complete or partial)";
+			var keyWordOptTooltip = "Option pour une recherche à proximité (dans un rayon de " + _searchradius + "km de l'épingle) par mots-clés / Option for a nearby search (within a " + _searchradius + "km of the map marker) by keywords";
+			document.getElementById("radio_adresse").title = addressOptTooltip;
+			document.getElementById("radio_adresse_label").title = addressOptTooltip;
+			document.getElementById("radio_nom").title = keyWordOptTooltip;
+			document.getElementById("radio_nom_label").title = keyWordOptTooltip;
+		}
+		
 	</script>
 	
 </body>
