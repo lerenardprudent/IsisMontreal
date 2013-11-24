@@ -21,7 +21,6 @@ function mapinit()
 	_mapmark.setMap(_map);
 	_mapmark.setIcon(tripiniconpath);
 	_mapmark.setVisible(false);
-	
 	_infowin = new google.maps.InfoWindow( { content:"Window" } );
 	google.maps.event.addListener(_infowin, 'closeclick', function(){ deselectfavs(); });
 	
@@ -215,19 +214,10 @@ function onwindowsize()
 	if ( _mode == MODE_DESSIN.Polygone ) {
 		num_buttons = 4;
 	}
-	/*
-	else {
-		var extra = 40;
-		var mdh = $("#mapdiv").height();
-		var mdt = $("#mapdiv").position().top;
-		iph -= extra;
-		document.getElementById('infopanel').style.height = iph + "px";
-	}
-	*/
-	var ipb = $("#infopanel").position().top + iph + 20;
-	var mdt = ipb+30;
+	var ipb = $("#infopanel").position().top + iph + 15;
+	var mdt = ipb+25;
 	document.getElementById('mapdiv').style.top = mdt + "px" ;
-	document.getElementById('mapdiv').style.height = (_winh - mdt - 4) + "px";
+	document.getElementById('mapdiv').style.height =  (_winh - mdt - 4) + "px";
 	document.getElementById('mapdiv').style.width = (_winw - 4) + "px";
 	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - (36*num_buttons)) + "px";
 	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {}	
@@ -324,23 +314,8 @@ function polygonClicked(e)
 		removePolygonFromMap(true);
 		return; 
 	}
-	deselectfavs();
-	setobjcenter(this);
-	_infowin.setContent(makeinfowindowcontent(this, "ciw", 0));
+	
 	_mapmark.setVisible(false);
-	if (this.prop6 != "M")
-	{
-		// _mapmark.setVisible(true);
-		_infowin.setPosition(_loca);
-		op = { strokeWeight:4 };
-			this.setOptions(op);
-		if (!_editon) { _infowin.open(_map); }	
-	}
-	else {
-		this.setIcon(this.prop8.substr(0, 13) + "sta.png");
-		if (!_editon) {	_infowin.open(_map, this); }
-	}
-	if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }			
 }
 
 function processNewPolygonOnMap(poly)
@@ -890,109 +865,6 @@ function find_local_match(results, addr_comp_type, addr_comp_value)
 	return 0;
 }
 
-function makefavgeocoderresphandler(results, status)
-{ 
-	var poz;
-	var os = [];
-	var adr = document.getElementById("address").value;
-	var iconfile = "media/mk-red-dot.png";
-	
-	if (status == google.maps.GeocoderStatus.OK)
-	{
-		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
-		_map.setCenter(results[res_index].geometry.location);
-		var mark = new google.maps.Marker({ map:_map, position:results[res_index].geometry.location, draggable:false });
-		saveLocationToDB(mark,results[res_index].formatted_address);
-	
-		mark.prop0 = true;
-		mark.prop1 = -1;
-		mark.prop2 = _currpg;
-		mark.prop3 = "";
-		mark.prop4 = "";
-		mark.prop5 = "";
-		mark.prop6 = "M";
-		mark.prop7 = mark.getPosition().lat() + "," + mark.getPosition().lng();
-		mark.prop8 = iconfile;
-		mark.prop9 = "#ff0000";
-		mark.prop10 = "#000000";
-		mark.prop11 = 0;
-		mark.prop12 = 1;
-		mark.prop13 = "custom";
-		mark.prop14 = "";
-		mark.prop15 = "";
-		mark.prop16 = adr;
-		mark.prop17 = "";
-		mark.prop18 = mark.getPosition().lat().toFixed(5) + " " + mark.getPosition().lng().toFixed(5);
-		mark.prop19 = 0;
-		mark.prop20 = "";
-		mark.prop21 = "";
-		mark.prop22 = "";
-		mark.prop23 = "";
-		mark.prop24 = "";
-		mark.prop25 = "";
-		mark.prop26 = -1;
-		mark.prop27 = 0;
-		mark.prop28 = 0;
-		mark.prop29 = 0;
-		mark.prop30 = "";
-		mark.prop31 = "";
-		mark.prop32 = "";
-		mark.prop33 = "";
-		mark.prop34 = "";
-		mark.prop35 = "";
-		mark.prop36 = "";
-		mark.prop37 = "";
-		mark.prop38 = "";
-		mark.prop39 = "";
-		mark.prop40 = "";
-		mark.prop41 = "";
-		mark.prop42 = "";
-		mark.prop43 = "";
-		mark.prop44 = "";
-		mark.prop45 = "";
-		mark.prop46 = "";
-		mark.prop47 = "";
-		mark.prop48 = "";
-		mark.prop49 = "";
-				
-		mark.prop13 = setplacecat();			// "Custom";
-		mark.prop15 = setplacename();			// "Custom place " + _favobjects.length;
-		mark.setTitle(mark.prop15);
-
-		mark.prop1 = _favobjects.length;
-		_favobjects[_favobjects.length] = mark;
-		mark.setMap(_map);
-		mark.setIcon(iconfile);
-		setobjcenter(mark);
-		mark.setVisible(true);
-				
-		google.maps.event.addListener(mark, 'dragend', function(e) 
-		{
-			setobjcenter(this);
-			//if (this.prop6 == "M") { _mapmark.setVisible(false); } else { _mapmark.setVisible(true); }
-			if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
-		});
-				
-		google.maps.event.addListener(mark, 'click', function() 
-		{
-			if (this.prop6 == "M") { _mapmark.setVisible(false); } else { _mapmark.setVisible(true); }	
-			if (_editon && _delobjon) { clearfavsmarker(this.prop1); return; }
-			deselectfavs();
-			_infowin.setContent(makeinfowindowcontent(this, "ciw", 0));
-			setobjcenter(this);
-			this.setIcon(this.prop8.substr(0, 13) + "sta.png");
-			if(!_editon){ _infowin.open(_map, this); }
-			updateobjaddr(this.prop16 + "|" + this.prop17);
-			if (_strviewon) { _strviewser.getPanoramaByLocation(_loca, 30, showstrview); }	
-			showfavs();
-		});
-	} 
-	else 
-	{
-		updateobjaddr("Geocoder failed.", "#dd0000")
-	}
-}
-
 function getAddressText()
 {
 	return document.getElementById("address").value;
@@ -1009,12 +881,10 @@ function restoreAddressText()
 	updateAddressText(_lastAddressText);
 }
 
-function geocodeAddress()
-{
-	var addr = getAddressText();
+function geocodeAddress(addr)
+{	
 	if ( addr.length > 0 ) {
-		var addrWithRegion =  addr + ",QC";
-		_geocoder.geocode( { 'address': addrWithRegion }, geocoderResponseUpdateDisplayAndCenterMap );
+		_geocoder.geocode( { 'address': addr }, geocoderResponseUpdateDisplayAndCenterMap );
 	}
 }
 
@@ -1118,11 +988,6 @@ function rechercher()
 			geocodeAddress();
 		}
 	}
-}
-
-function geocodeHomeAddress(homeAddr)
-{
-	_geocoder.geocode( { 'address': homeAddr }, geocoderResponseUpdateDisplayAndCenterMap );
 }
 
 function sendHTTPReq(req, url, debug)
@@ -1388,9 +1253,6 @@ function confirmeraddress()
 		}
 		*/
 		var inRMM = check_if_marker_in_rmm();
-		if (inRMM) {
-			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
-		}
 		saveHomeAddress(_mapmark, inRMM);
 	}
 	else if ( _mode == MODE_DESSIN.Polygone ) {
@@ -1398,12 +1260,7 @@ function confirmeraddress()
 			warnUserBeforeAdvancing("Vous n'avez pas dessiné votre quartier. / You have not marked out your neighbourhood." );
 		}
 		else {
-			var pointList = [];
-			var path = _drawnPolygon.getPath().getArray();
-			for (i = 0; i < path.length; i++) {
-				pointList.push( { 'lat' : path[i].lat(), 'lon' : path[i].lng() } );
-			}
-			savePolyToDB(pointList);
+			savePolyToDB();
 		}
 	}
 	else {
@@ -1411,27 +1268,25 @@ function confirmeraddress()
 			warnUserBeforeAdvancing("Vous n'avez pas localisé de lieu. / You have not identified a location.");
 		}
 		else {
-			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
-			saveLocationToDB(_mapmark);
+			saveLocationToDB();
 		}
-	}
-	
-	// We do the database updates synchrously now so that we don't jump to another page 
-	// before we know that the update request has been sent
-	if ( !_jumpedOffPage ) {
-		retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
 	}
 }
 
-function savePolyToDB(pointlist)
+function savePolyToDB()
 {
+	var pointList = [];
+	var path = _drawnPolygon.getPath().getArray();
+	for (i = 0; i < path.length; i++) {
+		pointList.push( { 'lat' : path[i].lat(), 'lon' : path[i].lng() } );
+	}
 	_httpReqSavePoly = new XMLHttpRequest();
 	_httpReqSavePoly.onreadystatechange=savePolyResp;
 	var polyStrForInsert = "POLYGON((";
-	for (var i = 0; i < pointlist.length; i++) {
-		polyStrForInsert += pointlist[i].lat + " " + pointlist[i].lon + ", ";
+	for (var i = 0; i < pointList.length; i++) {
+		polyStrForInsert += pointList[i].lat + " " + pointList[i].lon + ", ";
 	}
-	polyStrForInsert += pointlist[0].lat + " " + pointlist[0].lon + "))"; // Repeat the first point to make a closed polygon
+	polyStrForInsert += pointList[0].lat + " " + pointList[0].lon + "))"; // Repeat the first point to make a closed polygon
 	var php_url = _php_db_fname + "?up=ip&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&s=" + encodeURI(_geocodedSpecial.addr) + "&geo=" + encodeURI(polyStrForInsert);
 	sendHTTPReq(_httpReqSavePoly,php_url,"Enregistrement de polygone"); 
 }
@@ -1443,6 +1298,7 @@ function savePolyResp()
 		if ( !mysqlErrorResp( resp, 'savePolyToDB' ) ) {
 			_drawnPolygon.setOptions({fillColor: "#009933", fillOpacity: 1});
 			console.info("Résultat de l'enregistrement de polygone:\n\"" + _httpReqSavePoly.responseText + "\"");
+			retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
 		}
 	}
 }
@@ -1465,6 +1321,10 @@ function saveHomeResp()
 			console.info("Résultat de l'enregistrement de l'adresse du lieu de domicile:\n\"" + _httpReqSaveHome.responseText + "\"");
 			if ( resp.indexOf( "__PARTICIPANT_EST_INELIGIBLE__" ) >= 0 ) {
 				retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Fin);
+			}
+			else {
+				setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
+				retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
 			}
 		}
 	}
