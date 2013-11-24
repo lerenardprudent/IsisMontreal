@@ -9,32 +9,13 @@
 	<link rel="stylesheet" href="objs/jquery-impromptu.css" />
 	<script src="objs/jquery-impromptu.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4qnbkOe5X7pll7qyIFtkeLzjzkbPnAGo&amp;libraries=places,drawing,geometry,panoramio,weather&region=ca&sensor=false"></script>
+
 	<script type="text/javascript" src="questionnaire_texte.json"></script>
 	<script type="text/javascript" src="promap.js"></script>
+	<script type="text/javascript" src="interactions_bd.js"></script>
 	<link rel="stylesheet" href="style_isis.css" />
 		
 	<script>	
-		function saveLocationToDB()
-		{
-			_httpReqSaveLoc = new XMLHttpRequest();
-			_httpReqSaveLoc.onreadystatechange=locSaveResp;
-			var addr_shown = document.getElementById('address').value;
-			var point_wkt = "point(" + _mapmark.getPosition().lat().toFixed(_decimal_prec) + " " + _mapmark.getPosition().lng().toFixed(_decimal_prec) + ")";
-			var php_url = _php_db_fname + "?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
-			sendHTTPReq(_httpReqSaveLoc,php_url,"Enregistrement de point pour question " + _qno); 
-		}
-		
-		function locSaveResp()
-		{
-			if (_httpReqSaveLoc.readyState==4 && _httpReqSaveLoc.status==200) {
-				var resp = _httpReqSaveLoc.responseText;
-				if ( !mysqlErrorResp( resp, 'saveLocationToDB' ) ) {
-					setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
-					console.info("Résultat de l'enregistrement de point:\n\"" + _httpReqSaveLoc.responseText + "\"");
-					retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
-				}
-			}
-		}
 
 	</script>
 	<script type="text/javascript">
@@ -97,9 +78,6 @@
 		var _layerbike = null;		//layer bike om
 		var _layertrans = null;		//layer transit on
 		var _layertraff = null;		//layer traffic on
-		var _strviewser;			//streetview service
-		var _strviewpano;			//streetview panorama
-		var _strviewon = false;		//street view flag;
 		var _loca;		//location
 		var _addr;		//address
 		var _bnds;		//bounds
@@ -211,16 +189,7 @@
 <body onresize="resizebody();"  style="background-color:#999999">
 	<!-- PAGE LAYOUT STARTS HERE -->
 	<div id="maindiv">
-		<!--<div id="dragmain">
-			<div id="user-options" class="toolbar-icons" style="display: none;">
-			    <a id="outil1" href="#"><em class="icon-hand-up"></em></a>
-			    <a id="outil2" href="#"><em class="icon-edit"></em></a>
-			    <a id="outil3" href="#"><em class="icon-remove"></em></a>
-		    </div>
-		</div>-->
-		
 		<div id="mapdiv"></div>
-		<div id="strviewdiv"></div>
 		<div id="infopanel">
 			<div style="position:fixed; margin:2px">
 				<img id="logo" src="media/logo_isis.jpg" style="width:100px; height: 60px; background-color:#F2F2F4; vertical-align:middle" />
@@ -271,24 +240,6 @@
 				<img id="findsclose" title="Effacer les résultats de la recherche" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="clearAllSearchResults();" />
 			</div>
 			<button id="morefinds" style="visibility:hidden" type="button">Plus de résultats...</button>
-		</div>
-		<div id="favspanel">
-			<ol id="objects"></ol>
-			<div id="panheadfavs">&nbsp;&nbsp;Favorites (my places)<img id="favsclose"  alt="Close favs" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="document.getElementById('favspanel').style.visibility = 'hidden'; document.getElementById('view1').checked = false;" /></div>
-			<div id="favsmode"><input id="rfav1" type="radio" name="rfav" value="page" checked onclick="document.getElementById('view1').checked = true; document.getElementById('view2').checked = false; doview()" /> Current&nbsp;&nbsp;&nbsp;&nbsp;<input id="rfav2" type="radio" name="rfav" value="all" onclick="document.getElementById('view1').checked = true; document.getElementById('view2').checked = false; doview()" /> All</div>
-		</div>
-		<div id="viewpanel">
-			<input type="checkbox" id="view1" name="view1" value="ppg" onclick="if(this.checked){ document.getElementById('view2').checked = false; }" /> Favorites<br/>
-			<input type="checkbox" id="view2" name="view2" value="sea" onclick="if(this.checked){ document.getElementById('view1').checked = false; }" /> Search<br/><br/>
-			<input type="checkbox" id="view3" name="view3" value="roa" checked onclick="if(this.checked){ document.getElementById('view4').checked = false; document.getElementById('view5').checked = false; document.getElementById('view6').checked = false; } else { document.getElementById('view3').checked = true; }" /> Roadmap<br/>
-			<input type="checkbox" id="view4" name="view4" value="hyb" onclick="if(this.checked){ document.getElementById('view3').checked = false;document.getElementById('view5').checked = false; document.getElementById('view6').checked = false; } else { document.getElementById('view3').checked = true; }" /> Hybrid<br/>
-			<input type="checkbox" id="view5" name="view5" value="sat" onclick="if(this.checked){ document.getElementById('view3').checked = false;document.getElementById('view4').checked = false; document.getElementById('view6').checked = false; } else { document.getElementById('view3').checked = true; }" /> Satellite<br/>
-			<input type="checkbox" id="view6" name="view6" value="ter" onclick="if(this.checked){ document.getElementById('view3').checked = false;document.getElementById('view4').checked = false; document.getElementById('view5').checked = false; } else { document.getElementById('view3').checked = true; }" /> Terrain<br/><br/>
-			<input type="checkbox" id="view7" name="view7" value="bic" /> Bicycle paths<br/>
-			<input type="checkbox" id="view8" name="view8" value="tra" /> Transit map<br/>
-			<input type="checkbox" id="view9" name="view9" value="trf" /> Traffic map<br/>
-			<input type="checkbox" id="view10" name="view10" value="pan" /> Panoramio<br/><br/>
-			<button id="btn20" type="button" style="height:18px; font-size:11px;" onclick="document.getElementById('viewpanel').style.visibility = 'hidden'; doview()">OK</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="btn21" type="button" style="height:18px; font-size:11px;" onclick="document.getElementById('viewpanel').style.visibility = 'hidden';">Cancel</button>
 		</div>
 	</div>
 
@@ -510,7 +461,7 @@
 		function warnUserBeforeAdvancing(msg)
 		{
 			$.prompt(bilingualSubstitution(msg), {
-				title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to jump to the next question?"),
+				title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to go to the next question?"),
 				buttons: { "Rester sur la page" : true, 
 				  		   "Continuer" : false },
 				submit: function(e,resterSurPage,m,f) {
@@ -550,6 +501,37 @@
 			document.getElementById("radio_nom_label").title = keyWordOptTooltip;
 		}
 		
+		function confirmeraddress()
+		{
+			var ok = false;
+			_mapmark.setVisible(false);
+			if ( _mode == MODE_DESSIN.DomicileVerification ) {
+				if ( !_pointPlaced ) {
+					$.prompt( bilingualSubstitution( "Vous devez localiser votre lieu de domicile sur la carte avant de continuer. / You must locate your home address on the map before continuing."));
+				}
+				else {
+					var inRMM = check_if_marker_in_rmm();
+					saveHomeAddress(_mapmark, inRMM);
+				}
+			}
+			else if ( _mode == MODE_DESSIN.Polygone ) {
+				if ( _drawnPolygon == null ) {
+					warnUserBeforeAdvancing("Vous n'avez pas dessiné votre quartier. / You have not marked out your neighbourhood." );
+				}
+				else {
+					savePolyToDB();
+				}
+			}
+			else {
+				if ( !_pointPlaced ) {
+					warnUserBeforeAdvancing("Vous n'avez pas localisé de lieu. / You have not identified a location.");
+				}
+				else {
+					saveLocationToDB();
+				}
+			}
+		}
+
 	</script>
 	
 </body>
