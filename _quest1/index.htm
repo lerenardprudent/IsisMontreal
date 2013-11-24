@@ -23,15 +23,13 @@
 			var addr_shown = document.getElementById('address').value;
 			var point_wkt = "point(" + marker.getPosition().lat().toFixed(_decimal_prec) + " " + marker.getPosition().lng().toFixed(_decimal_prec) + ")";
 			var php_url = _php_db_fname + "?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
-			console.info("Saving location: " + php_url );
-			_httpReqSaveLoc.open("post",php_url,true);
-			_httpReqSaveLoc.send();
+			sendHTTPReq(_httpReqSaveLoc,php_url,"Enregistrement de point pour question " + _qno); 
 		}
 		
 		function locSaveResp()
 		{
 			if (_httpReqSaveLoc.readyState==4 && _httpReqSaveLoc.status==200) {
-				// Put some handling here?
+				console.info("Résultat de l'enregistrement de point:\n\"" + _httpReqSaveLoc.responseText + "\"");
 			}
 		}
 

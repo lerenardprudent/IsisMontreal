@@ -3,8 +3,8 @@
 $resp_table = 'reponses';
 $home_table = 'domiciles';
 $table = $resp_table;
-$db = 'test'; //'veritas';
-$user = null; //'veritas';
+$db = 'veritas';
+$user = 'veritas';
 $pwd = 'v45W34eD787';
 
 $sql_conn = connect($db, $user, $pwd);
@@ -125,7 +125,7 @@ function do_mysql_insert($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($conn,$db);
 	echo "ID: ".$id;
-	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, geom_point, addr_text) values ('".$id."','".$q."','".$t."',GeomFromText('".$g."'),'".$s."')";
+	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, geom_point, addr_text) values ('".$id."','".$q."','".$t."',GeomFromText('".$g."'),\"".$s."\")";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
 	  {
@@ -139,7 +139,7 @@ function do_mysql_insert($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 function do_mysql_insert_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($conn,$db);
-	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, addr_text, geom_poly) values ('".$id."','".$q."','".$t."','".$s."',GeomFromText('".$g."'))";
+	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, addr_text, geom_poly) values ('".$id."','".$q."','".$t."',\"".$s."\",GeomFromText('".$g."'))";
 	echo "INSERTING: ".$sql;
 	if (!mysqli_query($conn,$sql)) {
 	  echo('Error: ' . mysqli_error($conn));
@@ -151,7 +151,7 @@ function do_mysql_insert_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_modify_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($conn,$db);
-	$sql="update ".$tbl." set addr_text='".$s."',geom_poly=GeomFromText('".$g."') where id_part='".$id."' and num_quest='".$q."'";
+	$sql="update ".$tbl." set addr_text=\"".$s."\",geom_poly=GeomFromText('".$g."') where id_part='".$id."' and num_quest='".$q."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
 	  {
@@ -189,7 +189,7 @@ function do_mysql_home_insert_or_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 function do_mysql_home_insert($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($conn,$db);
 	$isElig = strtoupper($t);
-	$sql="insert into ".$tbl." (id_part, geom, addr_texte, eligible) values ('".$id."',GeomFromText('".$g."'),'".$s."',".$t.")";
+	$sql="insert into ".$tbl." (id_part, geom, addr_texte, eligible) values ('".$id."',GeomFromText('".$g."'),\"".$s."\",".$t.")";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
 	  {
@@ -202,7 +202,7 @@ function do_mysql_home_insert($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_home_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($conn,$db);
-	$sql="update ".$tbl." set geom=GeomFromText('".$g."'),addr_texte='".$s."',eligible=".$t." where id_part='".$id."'";
+	$sql="update ".$tbl." set geom=GeomFromText('".$g."'),addr_texte=\"".$s."\",eligible=".$t." where id_part='".$id."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
 	  {
@@ -226,7 +226,7 @@ function do_mysql_resp_lookup($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 
 function do_mysql_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	mysqli_select_db($conn,$db);
-	$sql="update ".$tbl." set type_rep='".$t."',addr_text='".$s."',geom_point=GeomFromText('".$g."') where id_part='".$id."' and num_quest='".$q."'";
+	$sql="update ".$tbl." set type_rep='".$t."',addr_text=\"".$s."\",geom_point=GeomFromText('".$g."') where id_part='".$id."' and num_quest='".$q."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
 	  {
