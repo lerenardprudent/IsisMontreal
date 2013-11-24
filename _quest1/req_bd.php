@@ -135,10 +135,8 @@ function do_mysql_insert($conn,$tbl,$id,$q,$t,$s,$g) {
 }
 
 function do_mysql_insert_poly($conn,$tbl,$id,$q,$t,$s,$g) {
-	echo "\nInserting into ".$tbl."...\n";
-	mysqli_select_db($conn,$db);
 	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, addr_text, geom_poly) values ('".$id."','".$q."','".$t."',\"".$s."\",GeomFromText('".$g."'))";
-	echo "INSERTING: ".$sql;
+	echo "Sending ".$sql;
 	if (!mysqli_query($conn,$sql)) {
 	  echo('Error: ' . mysqli_error($conn));
 	  return false;

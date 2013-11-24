@@ -3,9 +3,7 @@
 <head>
 	
 	<meta charset="UTF-8">
-	<title>ISIS Questionnaire T2 / ISIS Survey T2</title>
-	
-	<link href = "http://fonts.googleapis.com/css?family=Open+Sans:400,300|Open+Sans+Condensed:300&subset=latin,latin-ext" rel = "stylesheet" type = "text/css" >
+	<title>ISIS Questionnaire T2 / ISIS Survey T2</title>	
 	<script type="text/javascript" src="objs/jquery-1.10.2.js"></script>
 	
 	<link rel="stylesheet" href="objs/jquery-impromptu.css" />
@@ -143,35 +141,6 @@
 		var tripiniconpath = "media/mapmark.png";
 		
 		$(document).ready( function() {
-		/*
-			$('img[id="helpicon"]').each(function() {
-					$(this).qtip({
-						content: {
-							text: function(event, api) {
-								// This time, we return the deferred object, not a 'Loading...' message.
-								return $.ajax({
-									url: 'dummy.htm'
-								})
-								.then(function(content) {
-									// Return the content instead of using .set(). If you're wanting to select
-									// specific elements, see ther above section and adapt the `api.set` call
-									// into a `return elements` statement!
-									api.set('content.title', _qtip_title);
-									return _qtip_text
-								}, function(xhr, status, error) {
-									// Errors aren't handled by the library automatically, so
-									// you'll need to call .set() upon failure, just as before.
-									api.set('content.text', status + ': ' + error);
-								});
-							}
-						},
-						style: {
-							classes: 'qtip-rounded myCustomStyle'
-						}
-					});
-			});
-			*/
-			
 			$("#address").keyup( function(event)
 			{
 				if (event.keyCode == 13) {

@@ -1395,7 +1395,6 @@ function confirmeraddress()
 		}
 		else {
 			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
-			ok = true;
 		}
 		saveHomeAddress(_mapmark, inRMM);
 	}
@@ -1410,10 +1409,6 @@ function confirmeraddress()
 				pointList.push( { 'lat' : path[i].lat(), 'lon' : path[i].lng() } );
 			}
 			savePolyToDB(pointList);
-			//_drawnPolygon.setVisible(false);
-			_drawnPolygon.setOptions({fillColor: "#009933", fillOpacity: 1});
-			//_drawnPolygon.setVisible(true);
-			ok = true;
 		}
 	}
 	else {
@@ -1421,14 +1416,14 @@ function confirmeraddress()
 			warnUserBeforeAdvancing("Vous n'avez pas localisé de lieu. / You have not identified a location.");
 		}
 		else {
-			saveLocationToDB(_mapmark);
 			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
-			ok = true;
+			saveLocationToDB(_mapmark);
 		}
 	}
-	if ( ok ) {
-		retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
-	}
+	
+	// We do the database updates synchrously now so that we don't jump to another page 
+	// before we know that the update request has been sent
+	retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
 }
 
 function savePolyToDB(pointlist)
@@ -1449,6 +1444,7 @@ function savePolyResp()
 	if (_httpReqSavePoly.readyState==4 && _httpReqSavePoly.status==200) {
 		var resp = _httpReqSavePoly.responseText;
 		if ( !mysqlErrorResp( resp, 'savePolyToDB' ) ) {
+			_drawnPolygon.setOptions({fillColor: "#009933", fillOpacity: 1});
 			console.info("Résultat de l'enregistrement de polygone:\n\"" + _httpReqSavePoly.responseText + "\"");
 		}
 	}
