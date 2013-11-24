@@ -882,7 +882,7 @@ function restoreAddressText()
 }
 
 function geocodeAddress(addr)
-{	
+{
 	if ( addr.length > 0 ) {
 		_geocoder.geocode( { 'address': addr }, geocoderResponseUpdateDisplayAndCenterMap );
 	}
@@ -926,7 +926,8 @@ function geocoderResponse(results, status)
 	} 
 	else 
 	{
-		console.info("Geocoder n'a pas géocodé l'adresse" );
+		console.info("Geocoder n'a pu localiser l'adresse" );
+		$.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."));
 		clearAddressField();
 		return null;
 	}
@@ -985,7 +986,7 @@ function rechercher()
 			radialPlaceSearch();
 		}
 		else {
-			geocodeAddress();
+			geocodeAddress(getAddressText());
 		}
 	}
 }
@@ -1233,27 +1234,13 @@ function confirmeraddress()
 	var ok = false;
 	_mapmark.setVisible(false);
 	if ( _mode == MODE_DESSIN.DomicileVerification ) {
-	
-	// Will use below later
-	/*
-		var munic_csv;
-		$.ajax({
-			type : 'GET',
-			url : 'ext/RMR_muni.csv',
-			dataType : 'text',
-			async: false,
-			success: function(data) {munic_csv=data;}});
-		var parsedCsv;
-		try {
-			parsedCsv = $.csv.toArray(munic_csv, { separator : ','} );
+		if ( !_pointPlaced ) {
+			$.prompt( bilingualSubstitution( "Vous devez localiser votre lieu de domicile sur la carte avant de continuer. / You must locate your home address on the map before continuing."));
 		}
-		catch (er) {
-			console.info("CSV parsing error");
-			console.info(er);
+		else {
+			var inRMM = check_if_marker_in_rmm();
+			saveHomeAddress(_mapmark, inRMM);
 		}
-		*/
-		var inRMM = check_if_marker_in_rmm();
-		saveHomeAddress(_mapmark, inRMM);
 	}
 	else if ( _mode == MODE_DESSIN.Polygone ) {
 		if ( _drawnPolygon == null ) {
