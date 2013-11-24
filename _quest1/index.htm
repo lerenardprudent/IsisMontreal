@@ -49,7 +49,8 @@
 		
 		var DIRECTION_QUESTIONNAIRE = {
 			Suivant : { i: 0, val: "next" },
-			Précédent : { i: 1, val: "prev" }
+			Précédent : { i: 1, val: "prev" },
+			Fin : { i : 2, val: "fin" }
 		};
 
 		var CODE_ERREUR = {
@@ -136,6 +137,7 @@
 		var _domicileInfoWindow = new google.maps.InfoWindow();
 		var bilingue_tag = ' / ';
 		var _pointPlaced = false;
+		var _jumpedOffPage = false;
 
 		var _php_db_fname = "req_bd.php";
 		var tripiniconpath = "media/mapmark.png";

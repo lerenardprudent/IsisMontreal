@@ -5,8 +5,8 @@ $home_table = 'domiciles';
 $table = $resp_table;
 $host = 'localhost';
 $db = 'veritas';
-$user = 'root'; //'veritas';
-$pwd = null; //'v45W34eD787';
+$user = 'veritas';
+$pwd = 'v45W34eD787';
 
 $up = strval($_GET['up']);
 
@@ -44,6 +44,7 @@ else
 	$geo = "";
 	
 $GLOBALS['colsep'] = '$';
+$GLOBALS['inelig'] = '__PARTICIPANT_EST_INELIGIBLE__';
 
 
 if (strcmp($up,"hl") == 0)  // Home lookup
@@ -189,6 +190,11 @@ function do_mysql_home_insert($conn,$tbl,$id,$q,$t,$s,$g) {
 	  return false;
 	  }
 	echo "1 home record added";
+	
+	if (!$t) {
+		echo $GLOBALS['inelig'];
+	}
+	
 	return true;
 }
 
@@ -199,6 +205,11 @@ function do_mysql_home_modify($conn,$tbl,$id,$q,$t,$s,$g) {
 	  {
 	  die('Error: ' . mysqli_error($conn));
 	  }
+	  
+	 if (!$t) {
+		echo $GLOBALS['inelig'];
+	}
+	
 	echo "1 home record modified";
 }
 

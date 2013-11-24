@@ -1176,7 +1176,7 @@ function homeAddressLookupResp()
 			}
 		}
 		if (!ok) {
-			reportIneligible();
+			retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Fin);
 		}
 	}
 }
@@ -1216,6 +1216,7 @@ function normaliserNomFrancais(s){
 	
 function check_if_marker_in_rmm()
 {
+	console.info("Validation de l'adresse du lieu de domicile de '" + _id_participant + "' comme étant dans la région métropolitaine de Montréal."); 
 	var addr_comp = _lastGeocodedAddrComps.address_components;
 	var municipalities = [
     "Baie-D'Urfé",
@@ -1321,25 +1322,24 @@ function check_if_marker_in_rmm()
 	
 	var found_match = false;
 	var x, y;
+	var matchingMunic = null;
 	for (y=0; y < municipalities.length; y++) {
 		var munic = normaliserNomFrancais(municipalities[y]);
 		for (x=0; x < short_names.length && !found_match; x++) {
 			var sn = short_names[x];
 			if (munic == sn) {
 				found_match = true;
-				console.info("Municipalité du lieu de domicile identifiée comme dans la région de Montréal: " + municipalities[y]
-					+ "\nParticipant est éligible à remplir ce questionnaire.");
+				matchingMunic = municipalities[y];
 				break;
 			}
 		}
 	}
 
-/*		
 	if (found_match)
-		alert("YES! " + short_names[x] + " " + municipalities[y] + " " + x);
+		console.info("Participant est dans la municipalité de " + matchingMunic + ", et donc est éligible à remplir ce questionnaire.");
 	else
-		alert('NO');
-		*/
+		console.info("Participant est inéligible.");
+
 	return found_match;
 }
 
@@ -1388,12 +1388,7 @@ function confirmeraddress()
 		}
 		*/
 		var inRMM = check_if_marker_in_rmm();
-		var title, text;
-		var delay = null;
-		if (!inRMM) {
-			reportIneligible();
-		}
-		else {
+		if (inRMM) {
 			setMapPin(_mapmark.getPosition(), 'media/home2.png', false, true);
 		}
 		saveHomeAddress(_mapmark, inRMM);
@@ -1423,7 +1418,9 @@ function confirmeraddress()
 	
 	// We do the database updates synchrously now so that we don't jump to another page 
 	// before we know that the update request has been sent
-	retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
+	if ( !_jumpedOffPage ) {
+		retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
+	}
 }
 
 function savePolyToDB(pointlist)
@@ -1456,7 +1453,7 @@ function saveHomeAddress(marker, isEligible)
 	_httpReqSaveHome.onreadystatechange=saveHomeResp;
 	var addr_shown = document.getElementById('address').value;
 	var point_wkt = "point(" + marker.getPosition().lat().toFixed(_decimal_prec) + " " + marker.getPosition().lng().toFixed(_decimal_prec) + ")";
-	var php_url = _php_db_fname + "?up=dom&id=" + _id_participant + "&t=" + isEligible + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
+	var php_url = _php_db_fname + "?up=dom&id=" + _id_participant + "&t=" + Number(isEligible) + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
 	sendHTTPReq(_httpReqSaveHome,php_url,"Enregistrement de l'adresse du lieu de domicile"); 
 }
 
@@ -1466,15 +1463,26 @@ function saveHomeResp()
 		var resp = _httpReqSaveHome.responseText;
 		if ( !mysqlErrorResp( resp, 'saveHomeAddress' ) ) {
 			console.info("Résultat de l'enregistrement de l'adresse du lieu de domicile:\n\"" + _httpReqSaveHome.responseText + "\"");
+			if ( resp.indexOf( "__PARTICIPANT_EST_INELIGIBLE__" ) >= 0 ) {
+				retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Fin);
+			}
 		}
 	}
 }
 
 function retournerdanslimesurvey(dir)
 {
-	var nextUrl = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&" + dir.val + "=1";
+	var nextUrl;
+	if (dir == DIRECTION_QUESTIONNAIRE.Fin ) {
+		nextUrl = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
+		console.info("Fin de questionnaire.");
+	}
+	else {
+		nextUrl = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&" + dir.val + "=1";
+	}
 	console.info("Retour dans LimeSurvey: " + nextUrl);
-	jumpToUrl(nextUrl);
+	_jumpedOffPage = true;
+	window.location.href = nextUrl;
 }
 
 function setplacename()
@@ -1991,17 +1999,4 @@ function existingRespHandler()
 			}
 		}
 	}
-}
-
-function reportIneligible()
-{
-	console.info("Participant '" + _id_participant + "' est inéligible.");
-	var urlPourTerminer = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
-	console.info("Fin de questionnaire.\nURL: " + urlPourTerminer);
-	jumpToUrl(urlPourTerminer);
-}
-
-function jumpToUrl(url)
-{
-//	window.location.href = url;
 }
