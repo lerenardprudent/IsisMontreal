@@ -3,24 +3,24 @@
 $resp_table = 'reponses';
 $home_table = 'domiciles';
 $table = $resp_table;
+$host = 'localhost';
 $db = 'veritas';
-$user = 'veritas';
-$pwd = 'v45W34eD787';
-
-$sql_conn = connect($db, $user, $pwd);
+$user = 'root'; //'veritas';
+$pwd = null; //'v45W34eD787';
 
 $up = strval($_GET['up']);
 
+$sql_conn = connect($host, $db, $user, $pwd);
 if (strcmp($up,"su") == 0) // Setup tables
 {
-	create_home_addr_table($sql_conn, $db, $home_table);
-	create_resp_table($sql_conn, $db, $resp_table);
+	create_home_addr_table($sql_conn, $home_table);
+	create_resp_table($sql_conn, $resp_table);
 	return;
 }
 else if (strcmp($up,"dropall") == 0) // Clean up tables
 {
-	drop_table($sql_conn, $db, $home_table);
-	drop_table($sql_conn, $db, $resp_table);
+	drop_table($sql_conn, $home_table);
+	drop_table($sql_conn, $resp_table);
 	return;
 }
 
@@ -88,42 +88,40 @@ else {
 if (!function_exists($db_update_func)) {
 	die('Update function not found!' . mysqli_error($sql_conn));
 }
-$db_update_func($sql_conn,$db,$table,$id,$q,$t,$s,$geo);
+$db_update_func($sql_conn,$table,$id,$q,$t,$s,$geo);
 disconnect($sql_conn);
 
-function connect($db, $user, $pwd)
+function connect($host, $db, $user, $pwd)
 {
-	if (is_null($user))
-		$con = mysqli_connect('localhost',$db);
+	if ( is_null($pwd) ) {
+		$con = mysqli_connect($host, $user);
+	}
 	else {
-		$con = mysqli_connect('localhost',$db,$pwd,$user);
+		$con = mysqli_connect($host, $user, $pwd);
 	}
-		
-	if (!$con)
+
+	// Check connection
+	if (mysqli_connect_errno($con))
 	{
-	  die('Could not connect: ' . mysqli_error($con));
+		echo "Failed to connect to MySQL: " . mysqli_connect_error();
 	}
+	
+	$db_ok = mysqli_select_db($con,$db);
 	return $con;
 }
 
-function createNewTable($table_name)
-{
-	//CREATE TABLE `rep_spat` (`id_part` varchar(8) collate utf8_unicode_ci NOT NULL,`num_quest` varchar(3) collate utf8_unicode_ci NOT NULL,`type_rep` varchar(8) collate utf8_unicode_ci NOT NULL,`nom` varchar(80) collate utf8_unicode_ci NOT NULL, `geom_point` point default NULL,`geom_poly` polygon default NULL,PRIMARY KEY  (`id_part`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tableau pour les réponses spatiales au questionnaire ISIS'
+function do_mysql_insert_or_modify($conn,$tbl,$id,$q,$t,$s,$g) {
+	if (!do_mysql_insert($conn,$tbl,$id,$q,$t,$s,$g))
+		do_mysql_modify($conn,$tbl,$id,$q,$t,$s,$g);
 }
 
-function do_mysql_insert_or_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	if (!do_mysql_insert($conn,$db,$tbl,$id,$q,$t,$s,$g))
-		do_mysql_modify($conn,$db,$tbl,$id,$q,$t,$s,$g);
+function do_mysql_insert_or_modify_poly($conn,$tbl,$id,$q,$t,$s,$g) {
+	if (!do_mysql_insert_poly($conn,$tbl,$id,$q,$t,$s,$g))
+		do_mysql_modify_poly($conn,$tbl,$id,$q,$t,$s,$g);
 }
 
-function do_mysql_insert_or_modify_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	if (!do_mysql_insert_poly($conn,$db,$tbl,$id,$q,$t,$s,$g))
-		do_mysql_modify_poly($conn,$db,$tbl,$id,$q,$t,$s,$g);
-}
-
-function do_mysql_insert($conn,$db,$tbl,$id,$q,$t,$s,$g) {
+function do_mysql_insert($conn,$tbl,$id,$q,$t,$s,$g) {
 	echo "\nInserting into ".$tbl."...\n";
-	mysqli_select_db($conn,$db);
 	echo "ID: ".$id;
 	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, geom_point, addr_text) values ('".$id."','".$q."','".$t."',GeomFromText('".$g."'),\"".$s."\")";
 	echo "Sending ".$sql."\n";
@@ -136,7 +134,7 @@ function do_mysql_insert($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	return true;
 }
 
-function do_mysql_insert_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
+function do_mysql_insert_poly($conn,$tbl,$id,$q,$t,$s,$g) {
 	echo "\nInserting into ".$tbl."...\n";
 	mysqli_select_db($conn,$db);
 	$sql="insert into ".$tbl." (id_part, num_quest, type_rep, addr_text, geom_poly) values ('".$id."','".$q."','".$t."',\"".$s."\",GeomFromText('".$g."'))";
@@ -149,8 +147,7 @@ function do_mysql_insert_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	return true;
 }
 
-function do_mysql_modify_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	mysqli_select_db($conn,$db);
+function do_mysql_modify_poly($conn,$tbl,$id,$q,$t,$s,$g) {
 	$sql="update ".$tbl." set addr_text=\"".$s."\",geom_poly=GeomFromText('".$g."') where id_part='".$id."' and num_quest='".$q."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
@@ -160,8 +157,7 @@ function do_mysql_modify_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	echo "1 poly record modified";
 }
 
-function do_mysql_delete_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	mysqli_select_db($conn,$db);
+function do_mysql_delete_poly($conn,$tbl,$id,$q,$t,$s,$g) {
 	$sql="delete from ".$tbl." where id_part='".$id."' and num_quest='".$q."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
@@ -171,8 +167,7 @@ function do_mysql_delete_poly($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	echo "1 poly record deleted";
 }
 
-function do_mysql_home_lookup($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	mysqli_select_db($conn,$db);
+function do_mysql_home_lookup($conn,$tbl,$id,$q,$t,$s,$g) {
 	$sql="SELECT astext(geom) as geom, addr_texte, eligible FROM ".$tbl." WHERE id_part = '".$id."'";
 	$result = mysqli_query($conn,$sql);
 	while($row = mysqli_fetch_array($result))
@@ -181,13 +176,12 @@ function do_mysql_home_lookup($conn,$db,$tbl,$id,$q,$t,$s,$g) {
     }
 }
 
-function do_mysql_home_insert_or_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	if (!do_mysql_home_insert($conn,$db,$tbl,$id,$q,$t,$s,$g))
-		do_mysql_home_modify($conn,$db,$tbl,$id,$q,$t,$s,$g);
+function do_mysql_home_insert_or_modify($conn,$tbl,$id,$q,$t,$s,$g) {
+	if (!do_mysql_home_insert($conn,$tbl,$id,$q,$t,$s,$g))
+		do_mysql_home_modify($conn,$tbl,$id,$q,$t,$s,$g);
 }
 
-function do_mysql_home_insert($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	mysqli_select_db($conn,$db);
+function do_mysql_home_insert($conn,$tbl,$id,$q,$t,$s,$g) {
 	$isElig = strtoupper($t);
 	$sql="insert into ".$tbl." (id_part, geom, addr_texte, eligible) values ('".$id."',GeomFromText('".$g."'),\"".$s."\",".$t.")";
 	echo "Sending ".$sql."\n";
@@ -200,8 +194,7 @@ function do_mysql_home_insert($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	return true;
 }
 
-function do_mysql_home_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	mysqli_select_db($conn,$db);
+function do_mysql_home_modify($conn,$tbl,$id,$q,$t,$s,$g) {
 	$sql="update ".$tbl." set geom=GeomFromText('".$g."'),addr_texte=\"".$s."\",eligible=".$t." where id_part='".$id."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
@@ -211,8 +204,7 @@ function do_mysql_home_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	echo "1 home record modified";
 }
 
-function do_mysql_resp_lookup($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	mysqli_select_db($conn,$db);
+function do_mysql_resp_lookup($conn,$tbl,$id,$q,$t,$s,$g) {
 	$sql="SELECT astext(geom_point) as geom_point, astext(geom_poly) as geom_poly, addr_text FROM ".$tbl." WHERE id_part = '".$id."' and num_quest='".$q."'";
 	$result = mysqli_query($conn,$sql);
 
@@ -224,8 +216,7 @@ function do_mysql_resp_lookup($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	return "";
 }
 
-function do_mysql_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
-	mysqli_select_db($conn,$db);
+function do_mysql_modify($conn,$tbl,$id,$q,$t,$s,$g) {
 	$sql="update ".$tbl." set type_rep='".$t."',addr_text=\"".$s."\",geom_point=GeomFromText('".$g."') where id_part='".$id."' and num_quest='".$q."'";
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))
@@ -235,9 +226,8 @@ function do_mysql_modify($conn,$db,$tbl,$id,$q,$t,$s,$g) {
 	echo "1 record modified";
 }
 
-function create_home_addr_table($conn, $db, $ht)
+function create_home_addr_table($conn, $ht)
 {
-	mysqli_select_db($conn,$db);
 	$sql = "CREATE TABLE ".$ht." (".
 		"id_part varchar(20) collate utf8_unicode_ci NOT NULL,".
 		"geom point NOT NULL,".
@@ -252,9 +242,8 @@ function create_home_addr_table($conn, $db, $ht)
 	echo "Table '".$ht."' created";
 }
 
-function create_resp_table($conn, $db, $rt)
+function create_resp_table($conn, $rt)
 {
-	mysqli_select_db($conn,$db);
 	$sql = "CREATE TABLE ".$rt." (".
 			"id_part varchar(50) collate utf8_unicode_ci NOT NULL,".
 			"num_quest varchar(5) collate utf8_unicode_ci NOT NULL,".
@@ -271,9 +260,8 @@ function create_resp_table($conn, $db, $rt)
 	echo "Table '".$rt."' created";
 }
 
-function drop_table($conn, $db, $tbl)
+function drop_table($conn, $tbl)
 {
-	mysqli_select_db($conn,$db);
 	$sql = "DROP TABLE ".$tbl;
 	echo "Sending ".$sql."\n";
 	if (!mysqli_query($conn,$sql))

@@ -1128,7 +1128,7 @@ function geocodeHomeAddress(homeAddr)
 function sendHTTPReq(req, url, debug)
 {
 	console.info(debug + ".\nURL: \"" + url + "\"");
-	req.open("get",url,true);
+	req.open("get",url,false);
 	req.send();
 }
 
@@ -1447,7 +1447,10 @@ function savePolyToDB(pointlist)
 function savePolyResp()
 {
 	if (_httpReqSavePoly.readyState==4 && _httpReqSavePoly.status==200) {
-		console.info("Résultat de l'enregistrement de polygone:\n\"" + _httpReqSavePoly.responseText + "\"");
+		var resp = _httpReqSavePoly.responseText;
+		if ( !mysqlErrorResp( resp, 'savePolyToDB' ) ) {
+			console.info("Résultat de l'enregistrement de polygone:\n\"" + _httpReqSavePoly.responseText + "\"");
+		}
 	}
 }
 
@@ -1464,7 +1467,10 @@ function saveHomeAddress(marker, isEligible)
 function saveHomeResp()
 {
 	if (_httpReqSaveHome.readyState==4 && _httpReqSaveHome.status==200) {
-		console.info("Résultat de l'enregistrement de l'adresse du lieu de domicile:\n\"" + _httpReqSaveHome.responseText + "\"");
+		var resp = _httpReqSaveHome.responseText;
+		if ( !mysqlErrorResp( resp, 'saveHomeAddress' ) ) {
+			console.info("Résultat de l'enregistrement de l'adresse du lieu de domicile:\n\"" + _httpReqSaveHome.responseText + "\"");
+		}
 	}
 }
 
@@ -2001,5 +2007,5 @@ function reportIneligible()
 
 function jumpToUrl(url)
 {
-	window.location.href = url;
+//	window.location.href = url;
 }

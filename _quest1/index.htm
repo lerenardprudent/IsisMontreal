@@ -29,7 +29,10 @@
 		function locSaveResp()
 		{
 			if (_httpReqSaveLoc.readyState==4 && _httpReqSaveLoc.status==200) {
-				console.info("Résultat de l'enregistrement de point:\n\"" + _httpReqSaveLoc.responseText + "\"");
+				var resp = _httpReqSaveLoc.responseText;
+				if ( !mysqlErrorResp( resp, 'saveLocationToDB' ) ) {
+					console.info("Résultat de l'enregistrement de point:\n\"" + _httpReqSaveLoc.responseText + "\"");
+				}
 			}
 		}
 
@@ -550,6 +553,14 @@
 		function goBack()
 		{
 			retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Précédent);
+		}
+		
+		function mysqlErrorResp( resp, func_name )
+		{
+			var error_prefix = "ERROR:";
+			if ( resp.substring(0, error_prefix.length) == error_prefix ) {
+				console.error( "DB update by " + func_name + " FAILED." );
+			}
 		}
 	</script>
 	
