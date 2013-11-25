@@ -256,7 +256,7 @@ function radialSearchResponse(results, status, pagination)
 	var morebtn = document.getElementById('morefinds');
 	}
 	else {
-		alert("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer." );
+		$.prompt( bilingualSubstitution("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer. / No places matching your keywords were found. Please try again." ));
 		clearAddressField();
 	}
 	/*
@@ -380,6 +380,8 @@ function restoreAddressText()
 
 function geocodeAddress(addr)
 {
+	var regionHint = ", QC";
+	addr += regionHint;
 	if ( addr.length > 0 ) {
 		_geocoder.geocode( { 'address': addr }, geocoderResponseUpdateDisplayAndCenterMap );
 	}
@@ -388,7 +390,7 @@ function geocodeAddress(addr)
 function geocodePlaceMarker(marker)
 {
 	_geocoder.geocode( { latLng:marker.getPosition()} , function(results, status) {
-		var georesp = geocoderResponse(results, status);
+		var georesp = geocoderResponseUpdateDisplay(results, status);
 		if ( georesp != null ) {
 			updateAddressText( marker.name + ", " + georesp.addr );
 		}
@@ -778,7 +780,7 @@ function clearfavsall()
 function makeinfowindowcontent(marker)
 {
 	var cn;
-	cn = "<div id=\"iwdiv\" style=\"height:50px; width:120px; opacity:.9\">" +
+	cn = "<div id=\"iwdiv\" style=\"height:50px; width:150px; opacity:.9\">" +
 		"<br><b>" + marker.name + "</b></div>";
 	return cn;
 }
