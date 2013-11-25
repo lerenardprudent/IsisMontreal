@@ -5,8 +5,8 @@ $home_table = 'domiciles';
 $table = $resp_table;
 $host = 'localhost';
 $db = 'veritas';
-$user = 'veritas';
-$pwd = 'v45W34eD787';
+$user = 'root'; //'veritas';
+$pwd = null; //'v45W34eD787';
 
 $up = strval($_GET['up']);
 

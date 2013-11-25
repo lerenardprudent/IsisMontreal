@@ -1,26 +1,26 @@
-		function saveLocationToDB()
-		{
-			_httpReqSaveLoc = new XMLHttpRequest();
-			_httpReqSaveLoc.onreadystatechange=locSaveResp;
-			var addr_shown = document.getElementById('address').value;
-			var point_wkt = "point(" + _mapmark.getPosition().lat().toFixed(_decimal_prec) + " " + _mapmark.getPosition().lng().toFixed(_decimal_prec) + ")";
-			var php_url = _php_db_fname + "?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
-			sendHTTPReq(_httpReqSaveLoc,php_url,"Enregistrement de point pour question " + _qno); 
-		}
+function saveLocationToDB()
+{
+	_httpReqSaveLoc = new XMLHttpRequest();
+	_httpReqSaveLoc.onreadystatechange=locSaveResp;
+	var addr_shown = document.getElementById('address').value;
+	var point_wkt = "point(" + _mapmark.getPosition().lat().toFixed(_decimal_prec) + " " + _mapmark.getPosition().lng().toFixed(_decimal_prec) + ")";
+	var php_url = _php_db_fname + "?up=in&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&geo=" + encodeURIComponent(point_wkt) + "&s=" + encodeURIComponent(addr_shown);
+	sendHTTPReq(_httpReqSaveLoc,php_url,"Enregistrement de point pour question " + _qno); 
+}
 		
-		function locSaveResp()
-		{
-			if (_httpReqSaveLoc.readyState==4 && _httpReqSaveLoc.status==200) {
-				var resp = _httpReqSaveLoc.responseText;
-				if ( !mysqlErrorResp( resp, 'saveLocationToDB' ) ) {
-					setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
-					console.info("Résultat de l'enregistrement de point:\n\"" + _httpReqSaveLoc.responseText + "\"");
-					retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
-				}
-			}
+function locSaveResp()
+{
+	if (_httpReqSaveLoc.readyState==4 && _httpReqSaveLoc.status==200) {
+		var resp = _httpReqSaveLoc.responseText;
+		if ( !mysqlErrorResp( resp, 'saveLocationToDB' ) ) {
+			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
+			console.info("Résultat de l'enregistrement de point:\n\"" + _httpReqSaveLoc.responseText + "\"");
+			retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
 		}
+	}
+}
 
-		function savePolyToDB()
+function savePolyToDB()
 {
 	var pointList = [];
 	var path = _drawnPolygon.getPath().getArray();
@@ -34,7 +34,7 @@
 		polyStrForInsert += pointList[i].lat + " " + pointList[i].lon + ", ";
 	}
 	polyStrForInsert += pointList[0].lat + " " + pointList[0].lon + "))"; // Repeat the first point to make a closed polygon
-	var php_url = _php_db_fname + "?up=ip&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&s=" + encodeURI(_geocodedSpecial.addr) + "&geo=" + encodeURI(polyStrForInsert);
+	var php_url = _php_db_fname + "?up=ip&id=" + _id_participant + "&q=" + _qno + "&t=" + _mode.nom + "&s=" + encodeURIComponent(_geocodedSpecial.addr) + "&geo=" + encodeURIComponent(polyStrForInsert);
 	sendHTTPReq(_httpReqSavePoly,php_url,"Enregistrement de polygone"); 
 }
 
@@ -56,7 +56,7 @@ function saveHomeAddress(marker, isEligible)
 	_httpReqSaveHome.onreadystatechange=saveHomeResp;
 	var addr_shown = document.getElementById('address').value;
 	var point_wkt = "point(" + marker.getPosition().lat().toFixed(_decimal_prec) + " " + marker.getPosition().lng().toFixed(_decimal_prec) + ")";
-	var php_url = _php_db_fname + "?up=dom&id=" + _id_participant + "&t=" + Number(isEligible) + "&geo=" + encodeURI(point_wkt) + "&s=" + encodeURI(addr_shown);
+	var php_url = _php_db_fname + "?up=dom&id=" + _id_participant + "&t=" + Number(isEligible) + "&geo=" + encodeURIComponent(point_wkt) + "&s=" + encodeURIComponent(addr_shown);
 	sendHTTPReq(_httpReqSaveHome,php_url,"Enregistrement de l'adresse du lieu de domicile"); 
 }
 
@@ -92,3 +92,137 @@ function delPolyResp()
 		retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
 	}
 }
+
+function puthomepin()
+{
+	_httpReqHomeLookup = new XMLHttpRequest();
+	_httpReqHomeLookup.onreadystatechange=homeAddressLookupResp;
+	var php_url = _php_db_fname + "?up=hl&id=" + _id_participant;
+	sendHTTPReq(_httpReqHomeLookup, php_url, "Recherche d'adresse de lieu de domicile");
+}
+
+function homeAddressLookupResp()
+{
+	var ok = false;
+	if (_httpReqHomeLookup.readyState==4 && _httpReqHomeLookup.status==200) {
+		var resp = _httpReqHomeLookup.responseText;
+		console.info("Résultats de la recherche d'adresse de lieu de domicile:\n\"" + resp + "\"");
+		var tokens = resp.split("$");
+		if (tokens.length == 3) {
+			var point_resp = tokens[0];
+			var home_addr_text = tokens[1];
+			var isEligible = tokens[2];
+			var homepos = getLatLngFromText(point_resp);
+			if (homepos != null) {
+				if ( isEligible == '0' && _mode != MODE_DESSIN.DomicileVerification ) { // Pas éligible de remplir les autres questions!
+				// TODO: Ineligible handling
+				}
+				else {
+					ok = true;
+				}
+				if ( _mode == MODE_DESSIN.DomicileVerification ) {
+					setMapPin(homepos, null, true, true);
+					updateAddressText(home_addr_text);
+					findCurrentAddressMunicipality();
+					_map.setOptions({ draggableCursor: 'default' });
+				}
+				else {
+					_mapmark.setPosition(homepos);
+					homepin = setMapPin(homepos, 'media/home2.png', false, true);
+					_domicileInfoWindow.setContent("<div id=\"iwdiv\" style=\"text-align:center; height:80px; width:300px; opacity:.9\"><b>Lieu de domicile</b><br><br><em>" + home_addr_text + "</em></div>");
+					_domicileInfoWindow.setPosition(homepos);
+					google.maps.event.addListener(homepin, 'mouseover', function() { _domicileInfoWindow.open(_map); });
+					google.maps.event.addListener(homepin, 'mouseout', function() { _domicileInfoWindow.close(); });
+				}
+			}
+		}
+		if (!ok) {
+			retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Fin);
+		}
+	}
+}
+
+function init_map_pin_if_question_already_answered(quest_no)
+{
+	_httpReqRespLookup =new XMLHttpRequest();
+	_httpReqRespLookup.onreadystatechange=existingRespHandler;
+	var php_url = _php_db_fname + "?up=rl&id=" + _id_participant + "&q=" + quest_no;
+	sendHTTPReq(_httpReqRespLookup,php_url,"Recherche de réponse préexistante à la question " + quest_no); 
+}
+
+function existingRespHandler()
+{
+	var ok = false;
+	if (_httpReqRespLookup.readyState==4 && _httpReqRespLookup.status==200) {
+		var resp = _httpReqRespLookup.responseText;
+		if (resp.length > 0) {
+			console.info("Résultat de la recherche de réponse préexistante à la question " + _qno + ":\n\""
+			+ resp + "\"");
+			_existingRecInDB = true;
+		}
+		else
+		{
+			console.info("Aucune réponse préexistante trouvée à la question " + _qno + ".");
+		}
+		
+		var tokens = resp.split("$");
+		if (tokens.length == 3) {
+			var point_resp = tokens[0];
+			if (point_resp.length > 0) {
+				var loc_addr_text = tokens[2];
+				var locpos = getLatLngFromText(point_resp);
+				if (locpos != null) {
+					setMapPin(locpos, null, true, true);
+					updateAddressText(loc_addr_text);
+					_pointPlaced = true;
+					findCurrentAddressMunicipality();
+					_map.setOptions({ draggableCursor: 'default' });
+					ok = true;
+				}
+			}
+			else {
+				polygon_resp = tokens[1];
+				if ( polygon_resp.length > 0 ) {
+					var expected_pfx = "POLYGON((";
+					var expected_sfx = "))";
+					if ( polygon_resp.substring(0, expected_pfx.length) == expected_pfx &&
+						 polygon_resp.substring(polygon_resp.length-expected_sfx.length) == expected_sfx ) {
+						var pointliststr = polygon_resp.substring(expected_pfx.length,
+																 polygon_resp.length-expected_sfx.length);
+						var pointList = pointliststr.split(",");
+						var latLngList = [];
+						var polyBounds = new google.maps.LatLngBounds ();
+						for (var i=0; i < pointList.length; i++) {
+							var latAndLng = pointList[i].split(" ");
+							var newPoint = new google.maps.LatLng(latAndLng[0], latAndLng[1]);
+							polyBounds.extend(newPoint);
+							latLngList.push(newPoint);
+						}
+						savedZone = new google.maps.Polygon({
+							paths:latLngList,
+							fillColor: '#ff0000',
+							fillOpacity: .5,
+							strokeWeight: 1,
+							clickable: true,
+							draggable: true,
+							editable: true });
+						savedZone.setMap(_map);
+						processNewPolygonOnMap(savedZone);
+						google.maps.event.trigger(_map, 'resize');
+						_map.fitBounds(polyBounds);
+						_map.panToBounds(polyBounds);
+						stopDraw();
+					}
+				}
+			}
+		}
+	}
+}
+
+function sendHTTPReq(req, url, debug)
+{
+	console.info(debug + ".\nURL: \"" + url + "\"");
+	req.open("get",url,false);
+	req.send();
+}
+

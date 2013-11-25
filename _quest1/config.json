@@ -1,0 +1,3 @@
+var CONFIG = {
+	test_mode : 1
+};

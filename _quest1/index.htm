@@ -13,11 +13,9 @@
 	<script type="text/javascript" src="questionnaire_texte.json"></script>
 	<script type="text/javascript" src="promap.js"></script>
 	<script type="text/javascript" src="interactions_bd.js"></script>
+	<script type="text/javascript" src="config.json"></script>
 	<link rel="stylesheet" href="style_isis.css" />
 		
-	<script>	
-
-	</script>
 	<script type="text/javascript">
 	
 		var MODE_DESSIN = {
@@ -192,9 +190,9 @@
 		<div id="mapdiv"></div>
 		<div id="infopanel">
 			<div style="position:fixed; margin:2px">
-				<img id="logo" src="media/logo_isis.jpg" style="width:100px; height: 60px; background-color:#F2F2F4; vertical-align:middle" />
+				<img id="logo" src="media/logo_isis.jpg" style="width:90px; height: 50px; background-color:#F2F2F4; vertical-align:middle" />
 			</div>
-			<table id="dash" style="width:700px; margin-left:auto; margin-right:auto">
+			<table id="dash" style="width:720px; margin-left:auto; margin-right:auto">
 					<tr>
 						<td>
 						</td>
@@ -245,30 +243,7 @@
 
 	
 	<!-- PAGE LAYOUT ENDS HERE -->
-	<script type="text/javascript">
-		$(function(){
-		/*
-		  $('#drawicon').toolbar({
-			  content: '#user-options',
-			  position: 'bottom',
-			  hideOnClick: true
-		  });
-		  */
-		  $('#drawicon').on('toolbarItemClick', function(event, item){
-			// when the user clicks an icon we call this function
-			//console.dir(item);
-			$(this).trigger('click');
-				if ( item.id == 'outil1')
-					stopDraw();
-				else if ( item.id == 'outil2' )
-					clickPoly();
-				else if ( item.id == 'outil3')
-					clickEditDel();
-		  });
-		  $('#drawicon').mouseover(function() { $(this).trigger('click'); });
-		});
-	</script>
-
+	
 	<script type="text/javascript">	
 		var resizeTimer = 0;
 		function resizebody()
@@ -311,21 +286,6 @@
 			}
 		}
 		
-		function popup_info_to_user(info, delay_sec, title)
-		{
-			_qtip_text = info;
-			if ( title != null ) {
-				_qtip_title = title;
-			}
-			$("#helpicon").mouseover();
-			setTimeout("banishhelppopup();" , delay_sec*1000);
-		}
-		
-		function banishhelppopup()
-		{
-			$("#helpicon").mouseleave();
-		}
-		
 		function clearAddressField()
 		{
 			var addrField = document.getElementById("address");
@@ -341,8 +301,8 @@
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<span style=\"text-align: center; font-size:15px; padding: 1px; \"><b><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
-				"</span><p style=\"margin:4px; text-align:justify; font-size:12\"/>" + _consigne + "</b>";
+				content = "<span style=\"text-align: center; font-size:14px; padding: 1px; \"><b><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
+				"</span></b><p style=\"margin:4px; text-align:justify; font-size:12\"/>" + _consigne;
 				paramsValide = true;
 			}
 			else {

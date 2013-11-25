@@ -295,13 +295,13 @@ function makefindmarkers(places) 			//search results
 function placeHoverListener() {
 	_lastPlaceIconClicked = this;
 	_infowin.setContent(makeinfowindowcontent(this));
-	_infowin.open(_map, this);
+	_infowin.open(_map, this);	
 };
 
 function placeClickListener()
 {
 	_infowin.close();
-	geocodeMarker(this.getPosition());
+	geocodePlaceMarker(this);
 }
 
 function selectfindmarker(id)
@@ -385,6 +385,16 @@ function geocodeAddress(addr)
 	}
 }
 
+function geocodePlaceMarker(marker)
+{
+	_geocoder.geocode( { latLng:marker.getPosition()} , function(results, status) {
+		var georesp = geocoderResponse(results, status);
+		if ( georesp != null ) {
+			updateAddressText( marker.name + ", " + georesp.addr );
+		}
+	});
+}
+
 function geocodeMarker(lat_lng, centerOnMarker)
 {
 	var respHandler;
@@ -443,6 +453,7 @@ function geocoderResponseUpdateDisplay(results, status)
 	else if ( _lastGeocodedAddrComps != null ) {
 		updateAddressText( _lastGeocodedAddrComps.formatted_address );
 	}
+	return null;
 }
 
 function geocoderResponseUpdateDisplayAndCenterMap(results, status)
@@ -486,62 +497,6 @@ function rechercher()
 		}
 		else {
 			geocodeAddress(getAddressText());
-		}
-	}
-}
-
-function sendHTTPReq(req, url, debug)
-{
-	console.info(debug + ".\nURL: \"" + url + "\"");
-	req.open("get",url,false);
-	req.send();
-}
-
-function puthomepin()
-{
-	_httpReqHomeLookup = new XMLHttpRequest();
-	_httpReqHomeLookup.onreadystatechange=homeAddressLookupResp;
-	var php_url = _php_db_fname + "?up=hl&id=" + _id_participant;
-	sendHTTPReq(_httpReqHomeLookup, php_url, "Recherche d'adresse de lieu de domicile");
-}
-		
-function homeAddressLookupResp()
-{
-	var ok = false;
-	if (_httpReqHomeLookup.readyState==4 && _httpReqHomeLookup.status==200) {
-		var resp = _httpReqHomeLookup.responseText;
-		console.info("Résultats de la recherche d'adresse de lieu de domicile:\n\"" + resp + "\"");
-		var tokens = resp.split("$");
-		if (tokens.length == 3) {
-			var point_resp = tokens[0];
-			var home_addr_text = tokens[1];
-			var isEligible = tokens[2];
-			var homepos = getLatLngFromText(point_resp);
-			if (homepos != null) {
-				if ( isEligible == '0' && _mode != MODE_DESSIN.DomicileVerification ) { // Pas éligible de remplir les autres questions!
-				// TODO: Ineligible handling
-				}
-				else {
-					ok = true;
-				}
-				if ( _mode == MODE_DESSIN.DomicileVerification ) {
-					setMapPin(homepos, null, true, true);
-					updateAddressText(home_addr_text);
-					findCurrentAddressMunicipality();
-					_map.setOptions({ draggableCursor: 'default' });
-				}
-				else {
-					_mapmark.setPosition(homepos);
-					homepin = setMapPin(homepos, 'media/home2.png', false, true);
-					_domicileInfoWindow.setContent("<div id=\"iwdiv\" style=\"text-align:center; height:80px; width:300px; opacity:.9\"><b>Lieu de domicile</b><br><br><em>" + home_addr_text + "</em></div>");
-					_domicileInfoWindow.setPosition(homepos);
-					google.maps.event.addListener(homepin, 'mouseover', function() { _domicileInfoWindow.open(_map); });
-					google.maps.event.addListener(homepin, 'mouseout', function() { _domicileInfoWindow.close(); });
-				}
-			}
-		}
-		if (!ok) {
-			retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Fin);
 		}
 	}
 }
@@ -701,7 +656,7 @@ function check_if_marker_in_rmm()
 	}
 
 	if (found_match)
-		console.info("Participant est dans la municipalité de " + matchingMunic + ", et donc est éligible à remplir ce questionnaire.");
+		console.info("Participant est éligible à remplir le questionnaire.\nMunicipalité du lieu de domicile : " + matchingMunic + ".");
 	else
 		console.info("Participant est inéligible.");
 
@@ -741,7 +696,9 @@ function retournerdanslimesurvey(dir)
 	}
 	console.info("Retour dans LimeSurvey: " + nextUrl);
 	_jumpedOffPage = true;
-	window.location.href = nextUrl;
+	if ( !CONFIG.test_mode ) {
+		window.location.href = nextUrl;
+	}
 }
 
 function selectfav(id)
@@ -821,7 +778,7 @@ function clearfavsall()
 function makeinfowindowcontent(marker)
 {
 	var cn;
-	cn = "<div id=\"iwdiv\" style=\"height:70px; width:200px; opacity:.9\">" +
+	cn = "<div id=\"iwdiv\" style=\"height:50px; width:120px; opacity:.9\">" +
 		"<br><b>" + marker.name + "</b></div>";
 	return cn;
 }
@@ -875,81 +832,4 @@ function keyUpTextField(e) {
 	var search_btn = document.getElementById('search_btn');
 	search_btn.disabled = ( addr.length == 0 );
   
-}
-
-function init_map_pin_if_question_already_answered(quest_no)
-{
-	_httpReqRespLookup =new XMLHttpRequest();
-	_httpReqRespLookup.onreadystatechange=existingRespHandler;
-	var php_url = _php_db_fname + "?up=rl&id=" + _id_participant + "&q=" + quest_no;
-	sendHTTPReq(_httpReqRespLookup,php_url,"Recherche de réponse préexistante à la question " + quest_no); 
-}
-
-function existingRespHandler()
-{
-	var ok = false;
-	if (_httpReqRespLookup.readyState==4 && _httpReqRespLookup.status==200) {
-		var resp = _httpReqRespLookup.responseText;
-		if (resp.length > 0) {
-			console.info("Résultat de la recherche de réponse préexistante à la question " + _qno + ":\n\""
-			+ resp + "\"");
-			_existingRecInDB = true;
-		}
-		else
-		{
-			console.info("Aucune réponse préexistante trouvée à la question " + _qno + ".");
-		}
-		
-		var tokens = resp.split("$");
-		if (tokens.length == 3) {
-			var point_resp = tokens[0];
-			if (point_resp.length > 0) {
-				var loc_addr_text = tokens[2];
-				var locpos = getLatLngFromText(point_resp);
-				if (locpos != null) {
-					setMapPin(locpos, null, true, true);
-					updateAddressText(loc_addr_text);
-					_pointPlaced = true;
-					findCurrentAddressMunicipality();
-					_map.setOptions({ draggableCursor: 'default' });
-					ok = true;
-				}
-			}
-			else {
-				polygon_resp = tokens[1];
-				if ( polygon_resp.length > 0 ) {
-					var expected_pfx = "POLYGON((";
-					var expected_sfx = "))";
-					if ( polygon_resp.substring(0, expected_pfx.length) == expected_pfx &&
-						 polygon_resp.substring(polygon_resp.length-expected_sfx.length) == expected_sfx ) {
-						var pointliststr = polygon_resp.substring(expected_pfx.length,
-																 polygon_resp.length-expected_sfx.length);
-						var pointList = pointliststr.split(",");
-						var latLngList = [];
-						var polyBounds = new google.maps.LatLngBounds ();
-						for (var i=0; i < pointList.length; i++) {
-							var latAndLng = pointList[i].split(" ");
-							var newPoint = new google.maps.LatLng(latAndLng[0], latAndLng[1]);
-							polyBounds.extend(newPoint);
-							latLngList.push(newPoint);
-						}
-						savedZone = new google.maps.Polygon({
-							paths:latLngList,
-							fillColor: '#ff0000',
-							fillOpacity: .5,
-							strokeWeight: 1,
-							clickable: true,
-							draggable: true,
-							editable: true });
-						savedZone.setMap(_map);
-						processNewPolygonOnMap(savedZone);
-						google.maps.event.trigger(_map, 'resize');
-						_map.fitBounds(polyBounds);
-						_map.panToBounds(polyBounds);
-						stopDraw();
-					}
-				}
-			}
-		}
-	}
 }
