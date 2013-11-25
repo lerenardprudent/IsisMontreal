@@ -136,6 +136,16 @@
 				return;
 			}
 			
+			var nav = getNavigatorTypeAndVersion();
+			try {
+				var vers = Number(nav.ver);
+				if ( _qno == 'a2' && nav.nav.toLowerCase() == "msie" && vers < 10 ) {
+					$.prompt(bilingualSubstitution("Cette page connait des problèmes d'affichage dans le navigateur Internet Explorer pour les plus anciennes versions (en-dessous de 10). Veuillez télécharger gratuitement la dernière version pour éviter tout problème. / This page has experienced formatting problems for users with an Internet Explorer browser for versions less than 10. Please consider downloading the latest version of Internet Explorer." ) );
+				}
+			}
+			catch(er) {
+			}
+			
 			setRadioButtonTooltips();
 			translateTagsForLang();
 			mapinit();
@@ -202,7 +212,7 @@
 							</p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
-									<input id="address" type="text" maxlength="150" onClick="this.select();" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
+									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
 									<span id="drawbuttonsspan" style="vertical-align:bottom">
 									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
@@ -215,7 +225,7 @@
 									<form>	
 										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
 										<label  for="radio_adresse" id="radio_adresse_label" class="inline-radio">Adresse&nbsp;&nbsp; / Address&nbsp;&nbsp;</label>
-										<input type="radio" id="radio_nom" title="OH HAI!" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
+										<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
 										<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés / Keywords</label>
 										<br/>
 										<br/>
@@ -344,10 +354,10 @@
 				return CODE_ERREUR.AucunNumQuestion;
 			}
 			
-			var quest_no = getUrlParam('quest');
+			var quest_no = getUrlParam('quest').toLowerCase();
 			for ( var i = 0; i < questionnaire_texte.length; i++ ) {
 				var quest = questionnaire_texte[i];
-				if (quest.question_no.toLowerCase() == quest_no.toLowerCase()) {
+				if (quest.question_no.toLowerCase() == quest_no) {
 					if ( _langue == LANGUE.Anglais ) {
 						_question = quest.question_an;
 						_consigne = quest.consigne_an;
@@ -388,15 +398,15 @@
 		}
 		
 		function setTitleForLang(index, doubleTitle) {
-			sub = bilingualSubstitution(doubleTitle);
+			var sub = bilingualSubstitution(doubleTitle);
 			if (sub == null)
 				return doubleTitle;
 			return sub;
 		}
 			
 		function setLabelForLang() {
-			val = $(this).text();
-			sub = bilingualSubstitution(val);
+			var val = $(this).text();
+			var sub = bilingualSubstitution(val);
 			if (sub == null)
 				return;
 			
@@ -405,7 +415,7 @@
 		
 		function translateTagsForLang() {
 			$(document).attr("title", setTitleForLang );
-			$("button[title], input[title]").attr("title", setTitleForLang );
+			$("button[title], input[title], label[title]").attr("title", setTitleForLang );
 			$("button, input, label").each(setLabelForLang);
 			$("input[placeholder]").attr("placeholder", setTitleForLang );
 		}
@@ -455,7 +465,7 @@
 		function setRadioButtonTooltips()
 		{
 			var addressOptTooltip = "Option pour une recherche par adresse (complète ou partielle) / Option for a search by address (complete or partial)";
-			var keyWordOptTooltip = "Option pour une recherche à proximité (dans un rayon de " + _searchradius + "km de l'épingle) par mots-clés / Option for a nearby search (within a " + _searchradius + "km of the map marker) by keywords";
+			var keyWordOptTooltip = "Option pour une recherche à proximité (dans un rayon de " + _searchradius + "km de l'épingle) par mots-clés / Option for a nearby search (within a " + _searchradius + "km radius of the map marker) by keywords";
 			document.getElementById("radio_adresse").title = addressOptTooltip;
 			document.getElementById("radio_adresse_label").title = addressOptTooltip;
 			document.getElementById("radio_nom").title = keyWordOptTooltip;
@@ -493,6 +503,16 @@
 				}
 			}
 		}
+
+		function getNavigatorTypeAndVersion()
+		{
+			var ua= navigator.userAgent, N= navigator.appName, tem; 
+			var M = ua.match(/(opera|chrome|safari|firefox|msie|trident)\/?\s*([\d\.]+)/i) || [];
+			M = M[2]? [M[1], M[2]]:[N, navigator.appVersion, '-?'];
+			if ( M && (tem = ua.match(/version\/([\.\d]+)/i))!= null)
+				M[2]= tem[1];
+			return { nav : M[0], ver : M[1] };
+		};
 
 	</script>
 	

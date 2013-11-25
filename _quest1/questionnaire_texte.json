@@ -4,8 +4,8 @@ var questionnaire_texte = [
 		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile ?",
 		question_an : "Does the location on the map match your home address?",
 		mode_dessin : "domver", 
-		consigne_fr : "Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte? Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur le bouton 'Suivant'.",
-		consigne_an : "If yes, click 'Next'. If no, please correct your home address or locate your address by clicking on the map. When the location on the map matches your address, click 'Next'.",
+		consigne_fr : "Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte? Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "If yes, click 'Next'. If no, please correct your home address or locate your address by clicking on the map. When the location on the map matches your address, click 'Next'.  Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "6",
@@ -20,79 +20,79 @@ var questionnaire_texte = [
 		question_fr : "Localisez le lieu où vous allez habituellement lorsque vous êtes malade ou avez besoin de conseils en matière de santé.",
 		question_an : "On the map, locate the place where you usually go when you are sick or need advice about your health.",
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "67",
 		question_fr : "Localisez l’établissement que vous fréquentez pour faire vos études.",
 		question_an : "On the map, locate educational institution you attend for your studies.",
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "74",
 		question_fr : "Localisez votre lieu (principal) de travail.",
 		question_an : "On the map, locate your main workplace." ,
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "80",
 		question_fr : "Localisez votre deuxième lieu de travail",
 		question_an : "On the map, locate your second workplace." ,
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "84",
 		question_fr : "Localisez le lieu où vous faites vos achats alimentaires le plus souvent.",
 		question_an : "On the map, locate the place where you do your grocery shopping most often.",
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "88",
 		question_fr : "Localisez le deuxième lieu où vous faites vos achats alimentaires régulièrement.",
 		question_an : "On the map, locate the second place where you do your grocery shopping.",
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "93",
 		question_fr : "Localisez le lieu où vous faites des activités physiques ou des sports.",
 		question_an : "On the map, locate the place where you usually engage in physical activity or sports." ,
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "98",
 		question_fr : "Localisez le lieu où vous faites des activités de loisirs.",
 		question_an : "On the map, locate the place where you usually engage in leisure activities." ,
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "102",
 		question_fr : "Localisez sur la carte le lieu où vous passez régulièrement du temps.",
 		question_an : "On the map, locate the place where you regularly spend time." ,
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
-		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'. Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
 		question_no : "107",
 		question_fr : "Localisez sur la carte l'autre lieu où vous passez régulièrement du temps.",
 		question_an : "On the map, locate another place where you regularly spend time." ,
 		mode_dessin : "point",
-		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'.",
+		consigne_fr : "Tapez l’adresse, faites une recherche par mots-clés, ou cliquez directement sur la carte. Une fois que le lieu est bien localisé, appuyez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
 		consigne_an : "Type the address, search by keyword or click directly on the map. Once the place is accurately located, click 'Next'."
 	}
 ];

@@ -447,6 +447,7 @@ function geocoderResponseUpdateDisplay(results, status)
 	var geoResp = geocoderResponse(results, status);
 	if ( geoResp != null ) {
 		setMapPin(geoResp.coords, null, true);
+		_map.setZoom(15);
 		updateAddressText( geoResp.addr );
 		document.getElementById('radio_adresse').checked = "checked";
 		_pointPlaced = true;
