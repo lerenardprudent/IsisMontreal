@@ -11,7 +11,7 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4qnbkOe5X7pll7qyIFtkeLzjzkbPnAGo&amp;libraries=places,drawing,geometry,panoramio,weather&region=ca&sensor=false"></script>
 
 	<script type="text/javascript" src="questionnaire_texte.json"></script>
-	<script type="text/javascript" src="promap.js"></script>
+	<script type="text/javascript" src="traitement_carto.js"></script>
 	<script type="text/javascript" src="interactions_bd.js"></script>
 	<script type="text/javascript" src="config.json"></script>
 	<link rel="stylesheet" href="style_isis.css" />
@@ -465,6 +465,7 @@
 		{
 			var ok = false;
 			_mapmark.setVisible(false);
+			clearAllSearchResults();
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
 				if ( !_pointPlaced ) {
 					$.prompt( bilingualSubstitution( "Vous devez localiser votre lieu de domicile sur la carte avant de continuer. / You must locate your home address on the map before continuing."));
