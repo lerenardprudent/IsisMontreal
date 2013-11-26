@@ -137,14 +137,16 @@
 			}
 			
 			var nav = getNavigatorTypeAndVersion();
+			//alert( nav.nav.toLowerCase());
 			try {
 				var vers = Number(nav.ver);
-				if ( _qno == 'a2' && nav.nav.toLowerCase() == "msie" && vers < 10 ) {
+				if ( _qno == 'a2' && ( nav.nav.toLowerCase() == "msie" || nav.nav.toLowerCase() == "trident") ) {
 					$.prompt(bilingualSubstitution("Cette page connait des problèmes d'affichage dans le navigateur Internet Explorer pour les plus anciennes versions (en-dessous de 10). Veuillez télécharger gratuitement la dernière version pour éviter tout problème. / This page has experienced formatting problems for users with an Internet Explorer browser for versions less than 10. Please consider downloading the latest version of Internet Explorer." ) );
 				}
 			}
 			catch(er) {
 			}
+			
 			
 			setRadioButtonTooltips();
 			translateTagsForLang();
@@ -156,10 +158,10 @@
 			{
 				setDrawTools();
 			}
-			else {
+			//else {
 				var drawbtns = document.getElementById("drawbuttonsspan");
 				drawbtns.innerHTML = ""; // Hide draw buttons
-			}
+			//}
 				
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
 				var home_addr_encoded = getUrlParam('addr');
@@ -214,6 +216,7 @@
 								<span id="searchspan" style="width:100%">
 									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
+									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/info.png); " type="button" title="Faire un tour du site / Take a tour of the site" onclick="showTour()"></button>
 									<span id="drawbuttonsspan" style="vertical-align:bottom">
 									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
 										<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Outil d'édition / Edit tool"></button>
@@ -513,7 +516,212 @@
 				M[2]= tem[1];
 			return { nav : M[0], ver : M[1] };
 		};
-
+		
+		var widthConsigne = 300;
+		
+		function tourSubmitFunc(e,v,m,f)
+		{
+			if (v === -1){
+				$.prompt.prevState();
+				return false;
+			}
+			else if(v === 1){
+				$.prompt.nextState();
+				return false;
+			}
+		}
+		
+		function showTour()
+		{
+			
+			tourStates = getTourStates()[_langue.val];
+			$.prompt(tourStates);
+		}
+		
+		var positions =
+			[
+			{ container: '#logo', x: $('#logo').width() + 20, y: 0, width: 300, arrow: 'lt' },
+			{ container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 10, width: 300, arrow: 'bc' },
+			{ container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne / 2), y: 50, width: 300, arrow: 'lb' },
+			{ container: '#mapdiv', x: 40, y: 10, width: widthConsigne, arrow: 'lt' },
+			{ container: '#radio_adresse', x: 30, y: 30, width: widthConsigne, arrow: 'tl' },
+			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
+			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
+			{ container: '#search_btn',  x: 15-widthConsigne, y: 40, width: widthConsigne, arrow: 'tr' },
+			{ container: '#mapdiv',  x: $('#mapdiv').width()/2, y: 35, width: widthConsigne, arrow: 'lb' },
+			{ container: '#forwbtn',  x: $("#forwbtn").width() + 25, y: 2, width: widthConsigne, arrow: 'lt' }
+			];
+			
+		function getTourStates()
+		{
+			return { 'fr' : 
+				[
+				{ //0
+					title: "Bienvenue",
+					html: "Ce tour vous expliquer les fonctionnalités du site afin que vous puissiez répondre à la question.",
+					buttons: { Commencer : 1 },
+					focus: 0,
+					position: positions[0],
+					submit: tourSubmitFunc
+				},
+				{ //1
+					title: 'Localiser un lieu',
+					html: 'Localisez un lieu en le retrouvant sur la carte. Vous pouvez déplacer la carte en toute diréction en appuyant sur le bouton de votre souris et en glissant le curseur.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[1],
+					submit: tourSubmitFunc
+				},
+				{ //2
+					title: 'Positionner le marqueur',
+					html: 'Placez le marqueur en cliquant sur la carte. Déplacez-le en cliquant dessus et en glissant votre curseur de souris.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[2],
+					submit: tourSubmitFunc
+				},
+				{ //3
+					title: 'Zoomer',
+					html: 'Vous pouvez également effectuer des zooms avant ou arrière en ajustant le contrôle de zoom.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[3],
+					submit: tourSubmitFunc
+				},
+				{ //4
+					title: 'Rechercher un lieu',
+					html: "Il y a deux modes de recherche : par <i>adresse</i> et par <i>mots-clés</i>. Choisissez celui qui vous convient.",
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+				{ //5
+					title: 'Rechercher par adresse',
+					html: "Si vous connaissez l'adresse du lieu, entrez-la dans le champ de text.",
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[5],
+					submit: tourSubmitFunc
+				},
+				{ //6
+					title: 'Rechercher par mots-clés',
+					html: "Alternativement, si vous connaissez le nom du lieu ou tout descripteur associé (e.g. <i>restaurant</i>), entrez des mots-clés.",
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[6],
+					submit: tourSubmitFunc
+				},
+				{ //7
+					title: 'Amorcer la recherche',
+					html: "Ensuite, lancez la recherche en appuyant sur la touche 'Enter' ou en cliquant sur la loup. ",
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[7],
+					submit: tourSubmitFunc
+				},
+				{ //8
+					title: 'Afficher le(s) résultat(s)',
+					html: "Dépendemment du mode de recherche employé, le marqueur sera déplacé vers l'adresse entrée, ou alors les endroits correspondant aux mots-clés seront affichés à titre d'icônes sur la carte.",
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[8],
+					submit: tourSubmitFunc
+				},
+				{ //9
+					title: 'Confirmer votre localisation',
+					html: "Une fois que le marqueur de carte bien situé, confirmez la localisation et passez à la question suivante en cliquant sur 'Suivant'.",
+					buttons: { Fin: 2 },
+					focus: 0,
+					position: positions[9],
+					submit: tourSubmitFunc
+				}
+				],
+			'en' :
+				[
+				{ //0
+					title: "Welcome",
+					html: "This tour will show you the features of the site so that you know how to go about answering the question shown.",
+					buttons: { Start : 1 },
+					focus: 0,
+					position: positions[0],
+					submit: tourSubmitFunc
+				},
+				{ //1
+					title: 'Locating a place',
+					html: 'Locate a place by finding it on the map. You can move the focus of the map in any direction holding down the mouse button then dragging the cursor.',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[1],
+					submit: tourSubmitFunc
+				},
+				{ //2
+					title: 'Putting down a marker',
+					html: 'Place a marker by clicking on the map. Once the marker is down, it can be repositioned by clicking elsewhere, or by clicking on the marker, holding down the mouse button, then dragging the marker to another position.',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[2],
+					submit: tourSubmitFunc
+				},
+				{ //3
+					title: 'Zooming',
+					html: 'You can control the zoom level by sliding the control up or down.',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[3],
+					submit: tourSubmitFunc
+				},
+				{ //4
+					title: 'Searching for a place',
+					html: "There are two search modes available. Choose one depending on the type of search you would like to initate.",
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+				{ //5
+					title: 'Searching by address',
+					html: "If you know the address of the place, type it into the text box.",
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[5],
+					submit: tourSubmitFunc
+				},
+				{ //6
+					title: 'Searching by keywords',
+					html: "Alternatively, if you know the name of the place or if you know terms that describe the place (e.g. <i>restaurant</i>), type those terms into the text box.",
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[6],
+					submit: tourSubmitFunc
+				},
+				{ //7
+					title: 'Completing the search',
+					html: "Run the search by pressing 'Enter' or by clicking on the magnifying glass.",
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[7],
+					submit: tourSubmitFunc
+				},
+				{ //8
+					title: 'Displaying the search results',
+					html: "Depending on the type of search you ran, the map marker will be moved to the new address, or all the places matching the keywords will be shown on the map as icons.",
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[8],
+					submit: tourSubmitFunc
+				},
+				{ //9
+					title: 'Finalizing your decision',
+					html: "Once you have positioned the marker in the correct position on the map, click on 'Next'.",
+					buttons: { Done: 2 },
+					focus: 0,
+					position: positions[9],
+					submit: tourSubmitFunc
+				}
+				]
+			};
+		}
 	</script>
 	
 </body>

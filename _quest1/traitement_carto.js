@@ -39,11 +39,13 @@ function onwindowsize()
 	_winw = $(window).width();
 	//vw =  parseInt(document.getElementById('maindiv').style.width);
 	//vh = parseInt(document.getElementById('maindiv').style.height);
-	var num_buttons = 1;
+	var num_buttons = 2;
 	var iph = $("#infopanel").height();
+	/*
 	if ( _mode == MODE_DESSIN.Polygone ) {
 		num_buttons = 4;
 	}
+	*/
 	var ipb = $("#infopanel").position().top + iph + 15;
 	var mdt = ipb+25;
 	document.getElementById('mapdiv').style.top = mdt + "px" ;

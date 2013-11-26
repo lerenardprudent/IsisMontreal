@@ -4,7 +4,7 @@ var questionnaire_texte = [
 		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile ?",
 		question_an : "Does the location on the map match your home address?",
 		mode_dessin : "domver", 
-		consigne_fr : "Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte? Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur le bouton 'Suivant'. À noter que le code postal affiché est parfois inexact.",
+		consigne_fr : "Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte? Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur 'Suivant'. À noter que le code postal affiché est parfois inexact.",
 		consigne_an : "If yes, click 'Next'. If no, please correct your home address or locate your address by clicking on the map. When the location on the map matches your address, click 'Next'.  Please note that the postal code shown may be slightly imprecise."
 	},
 	{ 
@@ -12,7 +12,7 @@ var questionnaire_texte = [
 		question_fr : "À l'aide de la souris, dessinez la zone qui correspond à votre quartier tel que vous la percevez.",
 		question_an : "Using the mouse, trace the area that represents your neighbourhood as you perceive it.",
 		mode_dessin : "polygone",
-		consigne_fr : "Cliquez sur la carte pour tracer la zone et double-cliquez pour la fermer. Pour modifier le tracé, cliquez sur les points avec l’outil <img src=\"media/cursor2.png\" width=\"15\" height=\"15\"/>. Pour effacer la zone, cliquez sur la zone avec  l’outil <img src=\"media/erase2.png\" width=\"15\" height=\"15\"/>. Lorsque vous êtes satisfait(e) de la zone dessinée, cliquez sur le bouton 'Suivant'.",
+		consigne_fr : "Cliquez sur la carte pour tracer la zone et double-cliquez pour la fermer. Pour modifier le tracé, cliquez sur les points avec l’outil <img src=\"media/cursor2.png\" width=\"15\" height=\"15\"/>. Pour effacer la zone, cliquez sur la zone avec  l’outil <img src=\"media/erase2.png\" width=\"15\" height=\"15\"/>. Lorsque vous êtes satisfait(e) de la zone dessinée, cliquez sur 'Suivant'.",
 		consigne_an : "Click on the map to trace the area and double-click to close it. To modify the tracing, click on the dots with the “Modify” tool. To erase the area, click on the area with the “Erase” tool. When you are satisfied with the traced area, click 'Next'."
 	},
 	{ 
