@@ -21,13 +21,22 @@ function mapinit()
 	_mapmark.setMap(_map);
 	_mapmark.setIcon(tripiniconpath);
 	_mapmark.setVisible(false);
-	_infowin = new google.maps.InfoWindow( { content:"Window" } );
+	_infowin = new google.maps.InfoWindow( { content:"Window", pixelOffset: new google.maps.Size(-10, 3), } );
 	google.maps.event.addListener(_infowin, 'closeclick', function(){ deselectfavs(); });
+	
 	
 	google.maps.event.addListener(_map, 'click', mapclickhandler);
 	google.maps.event.addListener(_mapmark, 'dragend', dragmarkerhandler);
-	
+	google.maps.event.addListener(_map, 'bounds_changed', function(event) {
+		var zoomLevel = _map.getZoom();
+		if ( _zoomSnapTo && zoomLevel > _closeUpZoomLevel ) {
+			_zoomSnapTo = false;
+			_map.setZoom(_closeUpZoomLevel);
+		}
+  });
+
 	_serv = new google.maps.places.PlacesService(_map);
+	_geocoder = new google.maps.Geocoder();
 }
 
 //---------------------------------------------------------------------
@@ -255,7 +264,7 @@ function radialPlaceSearch()
 	if(kwds.length > 0)
 	{
 		clearAllSearchResults();
-		_serv.nearbySearch({ location:_mapmark.getPosition(), radius:_searchradius*1000, keyword:kwds }, radialSearchResponse);
+		_serv.nearbySearch({ location:_map.getCenter(), radius:_searchradius*1000, keyword:kwds }, radialSearchResponse);
 	}
 }
 
@@ -299,6 +308,7 @@ function makefindmarkers(places) 			//search results
 		google.maps.event.addListener(mark, 'click', placeClickListener );
 		placesList.innerHTML += "<li id='lsm" + mark.ID + "'>" + "<a style='color:#404040; width:186px;' href='javascript:selectfindmarker(" + mark.ID + ")'>" + (mark.ID+1) + ". " + place.name + "</a></li>";
 		_bnds.extend(place.geometry.location);
+		_zoomSnapTo = true;
 	}
 	_map.fitBounds(_bnds);
 }
@@ -461,7 +471,12 @@ function geocoderResponse(results, status)
 				var dist = getDistanceFromLatLonInKm(co1.lat(), co1.lng(), co2.lat(), co2.lng());
 				if ( dist < 0.15 ) {
 					formatted_addr = _lastGeocodedAddrComps.formatted_address;
-					formatted_addr = formatted_addr.replace(_postCodeRE, _origPostCode.toUpperCase());
+					var correctedPostCode = _origPostCode.toUpperCase();
+					if ( correctedPostCode.length == 6 ) {
+						//Insert a space in the middle
+						correctedPostCode = correctedPostCode.substring(0,3) + ' ' + correctedPostCode.substring(3);
+					}
+					formatted_addr = formatted_addr.replace(_postCodeRE, correctedPostCode);
 					console.info("Mismatch between two nearby post codes " + _origPostCode.toUpperCase() + " and " + _returnedPostCode + ".\n" +
 						"Address string converted to \"" + formatted_addr + "\"");
 					updateAddressText(formatted_addr);
@@ -503,7 +518,7 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 {
 	var geoResp = geocoderResponseUpdateDisplay(results, status);
 	if ( geoResp != null ) {
-		_map.setZoom(15);
+		_map.setZoom(_closeUpZoomLevel);
 		_map.setCenter(geoResp.coords);
 	}
 }
@@ -911,7 +926,7 @@ var TILE_SIZE = 256;
 	google.maps.event.addListener(poly, 'dragend', polygonDragged);
 	//google.maps.event.addListener(poly, 'click', polygonClicked);
 
-	 google.maps.event.addListener(poly, "mouseover", function(event) {
+	 google.maps.event.addListener(poly, "mousemove", function(event) {
 		if ( isNaN(event.vertex) && isNaN(event.edge) && isNaN(event.path) ) {		
 			var center = latLngToPixel(poly.cc);
 			var mousePos = latLngToPixel(event.latLng);

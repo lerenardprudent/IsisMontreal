@@ -176,7 +176,8 @@ function existingRespHandler()
 					updateAddressText(loc_addr_text);
 					_pointPlaced = true;
 					findCurrentAddressMunicipality();
-					_map.setOptions({ draggableCursor: 'default' });
+					_map.setOptions({ draggableCursor: 'default',
+									  zoom: _closeUpZoomLevel });
 					ok = true;
 				}
 			}

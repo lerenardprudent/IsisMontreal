@@ -102,7 +102,7 @@
 		var _consigne;
 		var _langue = LANGUE.Français;
 		var _id_participant;
-		var _searchradius = 3; // 5km
+		var _searchradius = 15 //km
 		var _decimal_prec = 8;
 		var _qno;
 		var _urlParams = {};
@@ -122,6 +122,8 @@
 		var _deletePolyMarker;
 		var _origPostCode = null, _returnedPostCode = null;
 		var _postCodeRE = /[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1}\s*\d{1}[A-Z]{1}\d{1}/gi;
+		var _zoomSnapTo = false;
+		var _closeUpZoomLevel = 15;
 
 		var _php_db_fname = "req_bd.php";
 		var tripiniconpath = "media/mapmark.png";
@@ -133,78 +135,12 @@
 					$("#search_btn").click();
 				}
 			});
-			
-			_geocoder = new google.maps.Geocoder();
-			parseUrl();
-			if ( !validerUrlParams() ) {
-				document.getElementById('therest').style.visibility = "hidden";
-				return;
-			}
-			
-			var nav = getNavigatorTypeAndVersion();
-			//alert( nav.nav.toLowerCase());
-			try {
-				var vers = Number(nav.ver);
-				if ( _qno == 'a2' && ( nav.nav.toLowerCase() == "msie" || nav.nav.toLowerCase() == "trident") ) {
-					$.prompt(bilingualSubstitution("Cette page connait des problèmes d'affichage dans le navigateur Internet Explorer pour les plus anciennes versions (en-dessous de 10). Veuillez télécharger gratuitement la dernière version pour éviter tout problème. / This page has experienced formatting problems for users with an Internet Explorer browser for versions less than 10. Please consider downloading the latest version of Internet Explorer." ) );
-				}
-			}
-			catch(er) {
-			}
-			
-			
-			setRadioButtonTooltips();
-			translateTagsForLang();
-			mapinit();
-			clearAddressField();
-			try { onwindowsize(); } catch (er) { }	
-				
-			if ( _mode == MODE_DESSIN.Polygone )
-			{
-				setDrawTools();
-			}
-//			else {
-				var drawbtns = document.getElementById("drawbuttonsspan");
-				drawbtns.innerHTML = ""; // Hide draw buttons
-			//}
-				
-			if ( _mode == MODE_DESSIN.DomicileVerification ) {
-				document.getElementById('radio_nom').disabled = true;
-				document.getElementById('radio_nom_label').style.color = "LightGrey";
-				var home_addr_encoded = getUrlParam('addr');
-				if (home_addr_encoded != null) {
-					var home_addr = decodeURI(home_addr_encoded);
-					geocodeAddress(home_addr);
-				}
-				else {
-					puthomepin();
-				}
-			}
-			else
-			{
-				puthomepin();
-				init_map_pin_if_question_already_answered(_qno);
-			}
 		});
-		
-		/*
-		$(window).load(function(){
-			 $('.container').find('img').each(function(){
-			  var imgClass = (this.width/this.height > 1) ? 'wide' : 'tall';
-			  $(this).addClass(imgClass);
-			 })
-		})
-		*/
-		
-		String.prototype.trim = function() { return this.replace(/^\s+|\s+$/g,"");}
-		String.prototype.ltrim = function() { return this.replace(/^\s+/,""); }
-		String.prototype.rtrim = function() { return this.replace(/\s+$/,""); }
-		
 	</script>
 	
 </head>
 
-<body onresize="resizebody();"  style="background-color:#999999">
+<body onload="mapinit(); initialize();" onresize="resizebody();"  style="background-color:#999999">
 	<!-- PAGE LAYOUT STARTS HERE -->
 	<div id="maindiv">
 		<div id="mapdiv"></div>
@@ -223,7 +159,7 @@
 								<span id="searchspan" style="width:100%">
 									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
-									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 22px 22px; background-repeat: no-repeat; display: inline-block; background-image:url(media/bino.png); " type="button" title="Faire un tour du site / Take a tour of the site" onclick="showTour()"></button>
+									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 22px 22px; background-repeat: no-repeat; display: inline-block; background-image:url(media/plane.jpg); " type="button" title="Faire un tour du site / Take a tour of the site" onclick="showTour()"></button>
 									<span id="drawbuttonsspan" style="vertical-align:bottom">
 									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
 										<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Outil d'édition / Edit tool"></button>
@@ -235,7 +171,7 @@
 									<form>	
 										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
 										<label  for="radio_adresse" id="radio_adresse_label" class="inline-radio">Adresse&nbsp;&nbsp; / Address&nbsp;&nbsp;</label>
-										<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="clearAddressField();" autocomplete="off"/>
+										<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="$('#address').select();" autocomplete="off"/>
 										<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés / Keywords</label>
 										<br/>
 										<br/>
@@ -454,36 +390,53 @@
 
 		function warnUserNoPoint()
 		{
-			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas localisé de lieu. / Attention: You have not identified a location."), {
-				title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to go to the next question?"),
-				buttons: { "Continuer sans localiser de lieu" : false,
-				  		   "Localiser un lieu" : true },
-				submit: function(e,resterSurPage,m,f) {
-						if ( !resterSurPage ) {
-							retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
-						}
+			submitFunc =
+				function(e,resterSurPage,m,f) {
+					if ( !resterSurPage ) {
+						retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
+					}
 				}
-			});
+				
+			var popUpOptions = {
+				'fr' : { title: "Voulez-vous passer à la question suivante ?",
+						 buttons: { "Continuer sans localiser de lieu" : false,
+								    "Localiser un lieu" : true },
+						submit: submitFunc },
+				'en' : { title: "Do you want to go to the next question?",
+						 buttons: { "Continue without locating a place" : false,
+									"Locate a place" : true },
+						 submit: submitFunc	} };
+			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas localisé de lieu. / Attention: You have not identified a location."),
+					 popUpOptions[_langue.val]);
 			$('div.jqi').css('width','530px'); // Makes the popup wider
 		}
 		
 		function warnUserNoPoly()
 		{
-			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas dessiné votre quartier. / Attention: You have not marked your neighbourhood."), {
-				title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to go to the next question?"),
-				buttons: { "Continuer sans dessiner de quartier" : false, 
-				  		   "Dessiner votre quartier" : true },
-				submit: function(e,resterSurPage,m,f) {
-						if ( !resterSurPage ) {
-							if (_existingRecInDB) {
-								sendDelPolyToDB();
-							}
-							else {
-								retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
-							}
+			submitFunc = 
+				function(e,resterSurPage,m,f) {
+					if ( !resterSurPage ) {
+						if (_existingRecInDB) {
+							sendDelPolyToDB();
 						}
-				}
-			});
+						else {
+							retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
+						}
+					}
+				};
+				
+			var popUpOptions = {
+				'fr' : { title: "Voulez-vous passer à la question suivante ?",
+						 buttons: { "Continuer sans dessiner de quartier" : false, 
+									"Dessiner votre quartier" : true },
+						submit: submitFunc },
+				'en' : { title: "Do you want to go to the next question?",
+						 buttons: { "Continue without tracing your neighbourhood" : false, 
+									"Trace your neighbourhood" : true },
+						submit: submitFunc } };
+			
+			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas dessiné votre quartier. / Attention: You have not traced your neighbourhood."), 
+					 popUpOptions[_langue.val]);
 			$('div.jqi').css('width','530px'); // Makes the popup wider
 		}
 		
@@ -584,7 +537,8 @@
 			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
 			{ container: '#search_btn',  x: 15-widthConsigne, y: 40, width: widthConsigne, arrow: 'tr' },
 			{ container: '#mapdiv',  x: $('#mapdiv').width()/2, y: 35, width: widthConsigne, arrow: 'lb' },
-			{ container: '#forwbtn',  x: $("#forwbtn").width() + 25, y: 2, width: widthConsigne, arrow: 'lt' }
+			{ container: '#forwbtn',  x: $("#forwbtn").width() /2 - 20, y: 45, width: widthConsigne, arrow: 'tl' },
+			{ container: '#help_btn', x: 5-widthConsigne/2, y: 37, width: widthConsigne, arrow: 'tc' }
 			];
 			
 		function getTourStates()
@@ -596,6 +550,7 @@
 					html: "Ce tour vous expliquer les fonctionnalités du site afin que vous puissiez répondre à la question.",
 					buttons: { Commencer : 1 },
 					focus: 0,
+					defaultButton: 0,
 					position: positions[0],
 					submit: tourSubmitFunc
 				},
@@ -666,9 +621,17 @@
 				{ //9
 					title: 'Confirmer votre localisation',
 					html: "Une fois que le marqueur de carte bien situé, confirmez la localisation et passez à la question suivante en cliquant sur 'Suivant'.",
-					buttons: { Fin: 2 },
-					focus: 0,
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
 					position: positions[9],
+					submit: tourSubmitFunc
+				},
+				{ //10
+					title: 'Répéter le tour',
+					html: "Vous pouvez prendre ce tour de nouveau en tout temp en cliquant sur l'avion.",
+					buttons: { Fin : 2 },
+					focus: 0,
+					position: positions[10],
 					submit: tourSubmitFunc
 				}
 				],
@@ -753,6 +716,14 @@
 					focus: 0,
 					position: positions[9],
 					submit: tourSubmitFunc
+				},
+				{ //10
+					title: 'Repeat the tour',
+					html: "You can repeat this tour of the site at any time by clicking on the plane.",
+					buttons: { Done : 2 },
+					focus: 0,
+					position: positions[10],
+					submit: tourSubmitFunc
 				}
 				]
 			};
@@ -768,8 +739,56 @@
 			return null;
 		}
 		
-	</script>
-	
+		function disableRadioButton(id)
+		{
+			document.getElementById(id).disabled = "disabled";
+			document.getElementById(id + '_label').style.color = "LightGrey";
+		}
+		
+		function initialize()
+		{
+			parseUrl();
+			if ( !validerUrlParams() ) {
+				document.getElementById('therest').style.visibility = "hidden";
+				return;
+			}
+			
+			setRadioButtonTooltips();
+			translateTagsForLang();
+			clearAddressField();
+			try { onwindowsize(); } catch (er) { }	
+				
+			if ( _mode == MODE_DESSIN.Polygone )
+			{
+				disableRadioButton('radio_adresse');
+				disableRadioButton('radio_nom');
+				document.getElementById('address').disabled = "disabled";
+				setDrawTools();
+				_map.setZoom(_closeUpZoomLevel);
+			}
+//			else {
+				var drawbtns = document.getElementById("drawbuttonsspan");
+				drawbtns.innerHTML = ""; // Hide draw buttons
+			//}
+				
+			if ( _mode == MODE_DESSIN.DomicileVerification ) {
+				disableRadioButton('radio_nom');
+				var home_addr_encoded = getUrlParam('addr');
+				if (home_addr_encoded != null) {
+					var home_addr = decodeURI(home_addr_encoded);
+					geocodeAddress(home_addr);
+				}
+				else {
+					puthomepin();
+				}
+				showTour();
+			}
+			else
+			{
+				puthomepin();
+				init_map_pin_if_question_already_answered(_qno);
+			}
+		}
+	</script>	
 </body>
-
 </html>
