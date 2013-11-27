@@ -154,6 +154,7 @@ function polygonDrawnHandler(e)
 		removePolygonFromMap();
 	}
 	processNewPolygonOnMap(e.overlay);
+	stopDraw();
 }
 
 function polygonDragged(e) 
@@ -226,14 +227,12 @@ function selectDrawButton(ib)
 function stopDraw()
 {
 	_drawman.setDrawingMode(google.maps.drawing.OverlayType.NULL);
-	selectDrawButton(0);
 	_map.setOptions({ draggableCursor: 'default' });
 }
 
 function clickPoly()
 {
 	_drawman.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
-	selectDrawButton(1);
 	_map.setOptions({ draggableCursor: 'crosshair' });
 }
 
@@ -457,7 +456,6 @@ function geocoderResponseUpdateDisplay(results, status)
 	var geoResp = geocoderResponse(results, status);
 	if ( geoResp != null ) {
 		setMapPin(geoResp.coords, null, true);
-		_map.setZoom(15);
 		updateAddressText( geoResp.addr );
 		document.getElementById('radio_adresse').checked = "checked";
 		_pointPlaced = true;
@@ -473,6 +471,7 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 {
 	var geoResp = geocoderResponseUpdateDisplay(results, status);
 	if ( geoResp != null ) {
+		_map.setZoom(13);
 		_map.setCenter(geoResp.coords);
 	}
 }
@@ -773,6 +772,7 @@ function removePolygonFromMap()
 	_drawnPolygon = null;
 	_infowin.close();
 	clearAddressField();
+	clickPoly();
 }
 
 function clearfavsall()
@@ -874,7 +874,8 @@ var TILE_SIZE = 256;
 	//google.maps.event.addListener(poly, 'click', polygonClicked);
 
 	 google.maps.event.addListener(poly, "mousemove", function(event) {
-	  	var center = latLngToPixel(poly.cc);
+	
+        var center = latLngToPixel(poly.cc);
 		var mousePos = latLngToPixel(event.latLng);
 		var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
 		if ( dist < 60 )
@@ -894,10 +895,6 @@ function bound(value, opt_min, opt_max) {
 
 function degreesToRadians(deg) {
   return deg * (Math.PI / 180);
-}
-
-function radiansToDegrees(rad) {
-  return rad / (Math.PI / 180);
 }
 
 /** @constructor */
