@@ -120,6 +120,8 @@
 		var _jumpedOffPage = false;
 		var _existingRecInDB = false;
 		var _deletePolyMarker;
+		var _origPostCode = null, _returnedPostCode = null;
+		var _postCodeRE = /[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1}\s*\d{1}[A-Z]{1}\d{1}/gi;
 
 		var _php_db_fname = "req_bd.php";
 		var tripiniconpath = "media/mapmark.png";
@@ -167,6 +169,8 @@
 			//}
 				
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
+				document.getElementById('radio_nom').disabled = true;
+				document.getElementById('radio_nom_label').style.color = "LightGrey";
 				var home_addr_encoded = getUrlParam('addr');
 				if (home_addr_encoded != null) {
 					var home_addr = decodeURI(home_addr_encoded);
@@ -219,7 +223,7 @@
 								<span id="searchspan" style="width:100%">
 									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
-									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/info.png); " type="button" title="Faire un tour du site / Take a tour of the site" onclick="showTour()"></button>
+									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 22px 22px; background-repeat: no-repeat; display: inline-block; background-image:url(media/bino.png); " type="button" title="Faire un tour du site / Take a tour of the site" onclick="showTour()"></button>
 									<span id="drawbuttonsspan" style="vertical-align:bottom">
 									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
 										<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Outil d'édition / Edit tool"></button>
@@ -446,13 +450,29 @@
 			var tokens = str.split(bilingue_tag);
 			return tokens[_langue.ind];
 		}
-		
-		function warnUserBeforeAdvancing(msg)
+
+
+		function warnUserNoPoint()
 		{
-			$.prompt(bilingualSubstitution(msg), {
+			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas localisé de lieu. / Attention: You have not identified a location."), {
 				title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to go to the next question?"),
-				buttons: { "Rester sur la page" : true, 
-				  		   "Continuer" : false },
+				buttons: { "Continuer sans localiser de lieu" : false,
+				  		   "Localiser un lieu" : true },
+				submit: function(e,resterSurPage,m,f) {
+						if ( !resterSurPage ) {
+							retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
+						}
+				}
+			});
+			$('div.jqi').css('width','530px'); // Makes the popup wider
+		}
+		
+		function warnUserNoPoly()
+		{
+			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas dessiné votre quartier. / Attention: You have not marked your neighbourhood."), {
+				title: bilingualSubstitution("Voulez-vous passer à la question suivante ? / Do you want to go to the next question?"),
+				buttons: { "Continuer sans dessiner de quartier" : false, 
+				  		   "Dessiner votre quartier" : true },
 				submit: function(e,resterSurPage,m,f) {
 						if ( !resterSurPage ) {
 							if (_existingRecInDB) {
@@ -506,7 +526,7 @@
 			}
 			else if ( _mode == MODE_DESSIN.Polygone ) {
 				if ( _drawnPolygon == null ) {
-					warnUserBeforeAdvancing("Vous n'avez pas dessiné votre quartier. / You have not marked out your neighbourhood." );
+					warnUserNoPoly();
 				}
 				else {
 					savePolyToDB();
@@ -514,7 +534,7 @@
 			}
 			else {
 				if ( !_pointPlaced ) {
-					warnUserBeforeAdvancing("Vous n'avez pas localisé de lieu. / You have not identified a location.");
+					warnUserNoPoint();
 				}
 				else {
 					saveLocationToDB();
@@ -605,7 +625,7 @@
 				},
 				{ //4
 					title: 'Rechercher un lieu',
-					html: "Il y a deux modes de recherche : par <i>adresse</i> et par <i>mots-clés</i>. Choisissez celui qui vous convient.",
+					html: "Pour la majorité des questions, il y a deux modes de recherche à votre disposition : par <i>adresse</i> et par <i>mots-clés</i>. Choisissez celui qui vous convient.",
 					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
 					position: positions[4],
@@ -688,7 +708,7 @@
 				},
 				{ //4
 					title: 'Searching for a place',
-					html: "There are two search modes available. Choose one depending on the type of search you would like to initate.",
+					html: "For most of the questions, there are two search modes available. Choose one depending on the type of search you would like to initate.",
 					buttons: { Previous: -1, Next: 1 },
 					focus: 1,
 					position: positions[4],
@@ -737,6 +757,17 @@
 				]
 			};
 		}
+		
+		function extractPostalCode(str)
+		{
+			if ( typeof(str) != 'undefined' && str.length > 0 ) {
+				var res = str.match(_postCodeRE);
+				if (res != null && res.length > 0)
+					return res[0];
+			}
+			return null;
+		}
+		
 	</script>
 	
 </body>

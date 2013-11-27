@@ -134,6 +134,8 @@ function setDrawTools()
 	   labelAnchor: new google.maps.Point(30, 20),
 	   icon: "http://placehold.it/1x1"
      });
+	 
+	 _deletePolyMarker.setTitle(bilingualSubstitution("Effacer ce polygone / Erase this polygon") );
 	google.maps.event.addListener(_deletePolyMarker, "click", function(event) {
 			removePolygonFromMap();
 			this.setVisible(false);
@@ -392,6 +394,7 @@ function geocodeAddress(addr)
 	var regionHint = ", QC";
 	addr += regionHint;
 	if ( addr.length > 0 ) {
+		_origPostCode = extractPostalCode(addr);
 		_geocoder.geocode( { 'address': addr }, geocoderResponseUpdateDisplayAndCenterMap );
 	}
 }
@@ -424,6 +427,11 @@ function geocodeLatLng(lat_lng)
 	_geocoder.geocode( { latLng:lat_lng}, geocoderLatLngResponse );
 }
 
+function geocodePostCode(pcode)
+{
+	_geocoder.geocode( { address:pcode}, geocoderResponse );
+}
+
 function geocoderLatLngResponse(results, status)
 {
 	geoResp = geocoderResponse(results, status);
@@ -437,9 +445,33 @@ function geocoderResponse(results, status)
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
-		geocodedCoords = results[res_index].geometry.location;
-		_lastGeocodedAddrComps = results[res_index];
 		var formatted_addr = results[res_index].formatted_address;
+		geocodedCoords = results[res_index].geometry.location;
+		
+		if ( _origPostCode != null ) {
+			if ( _returnedPostCode == null ) {
+				_returnedPostCode = extractPostalCode(formatted_addr);
+				if ( _returnedPostCode != _origPostCode ) { // Must now verify that orig post code is next door
+					geocodePostCode(_origPostCode);
+				}
+			}
+			else {
+				var co1 = _lastGeocodedAddrComps.geometry.location;
+				var co2 = geocodedCoords;
+				var dist = getDistanceFromLatLonInKm(co1.lat(), co1.lng(), co2.lat(), co2.lng());
+				if ( dist < 0.15 ) {
+					formatted_addr = _lastGeocodedAddrComps.formatted_address;
+					formatted_addr = formatted_addr.replace(_postCodeRE, _origPostCode.toUpperCase());
+					console.info("Mismatch between two nearby post codes " + _origPostCode.toUpperCase() + " and " + _returnedPostCode + ".\n" +
+						"Address string converted to \"" + formatted_addr + "\"");
+					updateAddressText(formatted_addr);
+					
+				}
+				_origPostCode = null;
+				_returnedPostCode = null;
+			}
+		}
+		_lastGeocodedAddrComps = results[res_index];
 		return { 'coords': geocodedCoords, 'addr' : formatted_addr };
 	} 
 	else 
@@ -471,7 +503,7 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 {
 	var geoResp = geocoderResponseUpdateDisplay(results, status);
 	if ( geoResp != null ) {
-		_map.setZoom(13);
+		_map.setZoom(15);
 		_map.setCenter(geoResp.coords);
 	}
 }
@@ -851,7 +883,13 @@ function keyUpTextField(e) {
 
 var TILE_SIZE = 256;
 
-		function latLngToPixel(latLng) {
+	function latLngToWorld(latLng) {
+			var projection = new MercatorProjection();	
+			var worldCoordinate = projection.fromLatLngToPoint(latLng);
+			return worldCoordinate;
+		}
+	
+	function latLngToPixel(latLng) {
 			var projection = new MercatorProjection();	
 			var numTiles = 1 << _map.getZoom();
 			var worldCoordinate = projection.fromLatLngToPoint(latLng);
@@ -873,13 +911,14 @@ var TILE_SIZE = 256;
 	google.maps.event.addListener(poly, 'dragend', polygonDragged);
 	//google.maps.event.addListener(poly, 'click', polygonClicked);
 
-	 google.maps.event.addListener(poly, "mousemove", function(event) {
-	
-        var center = latLngToPixel(poly.cc);
-		var mousePos = latLngToPixel(event.latLng);
-		var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
-		if ( dist < 60 )
-			_deletePolyMarker.setVisible(true);
+	 google.maps.event.addListener(poly, "mouseover", function(event) {
+		if ( isNaN(event.vertex) && isNaN(event.edge) && isNaN(event.path) ) {		
+			var center = latLngToPixel(poly.cc);
+			var mousePos = latLngToPixel(event.latLng);
+			var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
+			if ( dist < 60 )
+				_deletePolyMarker.setVisible(true);
+		}
       });
       google.maps.event.addListener(poly, "mouseout", function(event) {
         _deletePolyMarker.setVisible(false);
@@ -921,3 +960,21 @@ MercatorProjection.prototype.fromLatLngToPoint = function(latLng,
       -me.pixelsPerLonRadian_;
   return point;
 };
+
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
