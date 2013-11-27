@@ -146,7 +146,7 @@
 		<div id="mapdiv"></div>
 		<div id="infopanel">
 			<div style="position:fixed; margin:2px">
-				<img id="logo" src="media/logo_isis.jpg" style="width:90px; height: 50px; background-color:#F2F2F4; vertical-align:middle" />
+				<img id="logo" src="media/logo_isis.jpg" style="width:90px; height: 40px; background-color:#F2F2F4; vertical-align:middle" />
 			</div>
 			<table id="dash" style="width:720px; margin-left:auto; margin-right:auto">
 					<tr>
@@ -270,7 +270,7 @@
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<span style=\"text-align: center; font-size:14px; padding: 1px; \"><b><span style=\"color:Red\">" + _qno.toUpperCase() + ".</span> " + _question + 
+				content = "<span style=\"text-align: center; font-size:14px; padding: 1px; \"><b> " + _question + 
 				"</span></b><p style=\"margin:4px; text-align:justify; font-size:12\"/>" + _consigne;
 				paramsValide = true;
 			}
