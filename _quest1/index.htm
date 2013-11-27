@@ -15,6 +15,8 @@
 	<script type="text/javascript" src="interactions_bd.js"></script>
 	<script type="text/javascript" src="config.json"></script>
 	<link rel="stylesheet" href="style_isis.css" />
+	
+	<script type="text/javascript" src="objs/markerwithlabel_packed.js"></script>
 		
 	<script type="text/javascript">
 	
@@ -117,6 +119,7 @@
 		var _pointPlaced = false;
 		var _jumpedOffPage = false;
 		var _existingRecInDB = false;
+		var _deletePolyMarker;
 
 		var _php_db_fname = "req_bd.php";
 		var tripiniconpath = "media/mapmark.png";
@@ -158,10 +161,10 @@
 			{
 				setDrawTools();
 			}
-			//else {
+			else {
 				var drawbtns = document.getElementById("drawbuttonsspan");
 				drawbtns.innerHTML = ""; // Hide draw buttons
-			//}
+			}
 				
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
 				var home_addr_encoded = getUrlParam('addr');
@@ -255,7 +258,18 @@
 		</div>
 	</div>
 
-	
+	<style type="text/css">
+   .labels {
+     color: black;
+     font-family: "Lucida Grande", "Arial", sans-serif;
+     font-size: 10px;
+     text-align: center;
+     width: 40px;
+	 height: 40px;
+     white-space: nowrap;
+   }
+ </style>
+
 	<!-- PAGE LAYOUT ENDS HERE -->
 	
 	<script type="text/javascript">	

@@ -117,8 +117,30 @@ function setDrawTools()
 		_infowin.close();
 		_mapmark.setVisible(false);
 		_drawman.setMap(_map);
-		drawevents();
+
+	var pictureLabel = document.createElement("img");
+    pictureLabel.src = "media/icon-close.svg";
+
+	_deletePolyMarker = new MarkerWithLabel({
+		position: new google.maps.LatLng(0,0),
+       map: _map,
+       draggable: false,
+       raiseOnDrag: false,
+       labelContent: pictureLabel,
+       labelAnchor: new google.maps.Point(50, 0),
+       labelClass: "labels", // the CSS class for the label
+       labelStyle: {opacity: 1},
+	   visible: false,
+	   labelAnchor: new google.maps.Point(30, 20),
+	   icon: "http://placehold.it/1x1"
+     });
+	google.maps.event.addListener(_deletePolyMarker, "click", function(event) {
+			removePolygonFromMap();
+			this.setVisible(false);
+	});
+	drawevents();
 	clickPoly();
+	
 }
 
 function drawevents()
@@ -150,21 +172,6 @@ function polygonClicked(e)
 	_mapmark.setVisible(false);
 }
 
-function processNewPolygonOnMap(poly)
-{
-	_drawnPolygon = poly;
-	var polyCenter = calcPolyCenter(poly);
-	geocodeLatLng(polyCenter);
-	_map.setCenter(polyCenter);
-	obp = { strokeWeight:1 };
-	poly.setOptions(obp);
-				
-	google.maps.event.addListener(poly, 'dragend', polygonDragged);
-	google.maps.event.addListener(poly, 'click', polygonClicked);
-}
-
-
-
 function calcPolyCenter(poly)
 {
 	var a = [];
@@ -172,6 +179,7 @@ function calcPolyCenter(poly)
 	for (i = 0; i < path.length; i++){ a[i]=[path[i].lat(), path[i].lng()]; }
 	var cc = polygoncentroid(a);
 	var center = _loca =  new google.maps.LatLng(cc[0], cc[1]);
+	poly.cc = center;
 	return center;
 }
 
@@ -758,7 +766,9 @@ function clearfavsmarker(id)
 
 function removePolygonFromMap()
 {
-	google.maps.event.clearListeners(_drawnPolygon, 'click');
+	google.maps.event.clearListeners(_drawnPolygon, 'dragend');
+	google.maps.event.clearListeners(_drawnPolygon, 'mousemove');
+	google.maps.event.clearListeners(_drawnPolygon, 'mouseout');
 	_drawnPolygon.setMap(null);
 	_drawnPolygon = null;
 	_infowin.close();
@@ -838,3 +848,79 @@ function keyUpTextField(e) {
 	search_btn.disabled = ( addr.length == 0 );
   
 }
+
+var TILE_SIZE = 256;
+
+		function latLngToPixel(latLng) {
+			var projection = new MercatorProjection();	
+			var numTiles = 1 << _map.getZoom();
+			var worldCoordinate = projection.fromLatLngToPoint(latLng);
+			var pixelCoordinate = new google.maps.Point(
+				worldCoordinate.x * numTiles,
+				worldCoordinate.y * numTiles);
+			return pixelCoordinate;
+		}
+
+	function processNewPolygonOnMap(poly)
+	{
+	_drawnPolygon = poly;
+	var polyCenter = calcPolyCenter(poly);
+	geocodeLatLng(polyCenter);
+	_map.setCenter(polyCenter);
+	obp = { strokeWeight:1 };
+	poly.setOptions(obp);
+				
+	google.maps.event.addListener(poly, 'dragend', polygonDragged);
+	//google.maps.event.addListener(poly, 'click', polygonClicked);
+
+	 google.maps.event.addListener(poly, "mousemove", function(event) {
+	  	var center = latLngToPixel(poly.cc);
+		var mousePos = latLngToPixel(event.latLng);
+		var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
+		if ( dist < 60 )
+			_deletePolyMarker.setVisible(true);
+      });
+      google.maps.event.addListener(poly, "mouseout", function(event) {
+        _deletePolyMarker.setVisible(false);
+      });
+	  _deletePolyMarker.setPosition(poly.cc);
+	}
+
+function bound(value, opt_min, opt_max) {
+  if (opt_min != null) value = Math.max(value, opt_min);
+  if (opt_max != null) value = Math.min(value, opt_max);
+  return value;
+}
+
+function degreesToRadians(deg) {
+  return deg * (Math.PI / 180);
+}
+
+function radiansToDegrees(rad) {
+  return rad / (Math.PI / 180);
+}
+
+/** @constructor */
+function MercatorProjection() {
+  this.pixelOrigin_ = new google.maps.Point(TILE_SIZE / 2,
+      TILE_SIZE / 2);
+  this.pixelsPerLonDegree_ = TILE_SIZE / 360;
+  this.pixelsPerLonRadian_ = TILE_SIZE / (2 * Math.PI);
+}
+
+MercatorProjection.prototype.fromLatLngToPoint = function(latLng,
+    opt_point) {
+  var me = this;
+  var point = opt_point || new google.maps.Point(0, 0);
+  var origin = me.pixelOrigin_;
+
+  point.x = origin.x + latLng.lng() * me.pixelsPerLonDegree_;
+
+  // Truncating to 0.9999 effectively limits latitude to 89.189. This is
+  // about a third of a tile past the edge of the world tile.
+  var siny = bound(Math.sin(degreesToRadians(latLng.lat())), -0.9999,
+      0.9999);
+  point.y = origin.y + 0.5 * Math.log((1 + siny) / (1 - siny)) *
+      -me.pixelsPerLonRadian_;
+  return point;
+};
