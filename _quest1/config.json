@@ -1,3 +1,14 @@
-var CONFIG = {
-	test_mode : 1
-};
+{
+	"mode_test" 			: 1,
+	"bd_login" 				: { 
+								"host" 	: "localhost",
+								"user" 	: "root",
+								"pwd" 	: null,
+								"bd" 	: "veritas" 
+							  },
+	"bd_tableaux" 			: { 
+								"tbl_domiciles" : "domiciles",
+								"tbl_reponses" 	: "reponses"
+							  },
+	"db_update_url_token" 	: "up"
+}

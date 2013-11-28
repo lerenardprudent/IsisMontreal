@@ -1,16 +1,40 @@
 <?php
 
-$resp_table = 'reponses';
-$home_table = 'domiciles';
-$table = $resp_table;
-$host = 'localhost';
-$db = 'veritas';
-$user = 'root'; //'veritas';
-$pwd = null; //'v45W34eD787';
+$fichierConfig = 'config.json';
+$bdloginAttr = 'bd_login';
+$bdTblxAttr = 'bd_tableaux';
+$hostAttr = 'host';
+$userAttr = 'user';
+$pwdAttr = 'pwd';
+$bdAttr = 'bd';
+$dbUpdateUrlField = 'db_update_url_token';
+$tblDomicileAttr = 'tbl_domiciles';
+$tblReponsesAttr = 'tbl_reponses';
 
-$up = strval($_GET['up']);
+try {
+	$jsonData = file_get_contents($fichierConfig);
+}
+catch (Exception $e) {
+	die ("Fichier de configuration '".$fichierConfig."' n'existe pas!");
+}
+
+$config = json_decode($jsonData);
+
+getAttrValOrDie($config, $bdloginAttr);
+$host = getAttrValOrDie($config->$bdloginAttr, $hostAttr);
+$user = getAttrValOrDie($config->$bdloginAttr, $userAttr);
+$pwd = getAttrValOrDie($config->$bdloginAttr, $pwdAttr);
+$db = getAttrValOrDie($config->$bdloginAttr, $bdAttr);
+$db_update_url_token = getAttrValOrDie($config, $dbUpdateUrlField);
 
 $sql_conn = connect($host, $db, $user, $pwd);
+
+getAttrValOrDie($config, $bdTblxAttr);
+$home_table = getAttrValOrDie($config->$bdTblxAttr, $tblDomicileAttr);
+$resp_table = getAttrValOrDie($config->$bdTblxAttr, $tblReponsesAttr);
+$table = $resp_table;
+
+$up = strval($_GET[$db_update_url_token]);
 if (strcmp($up,"su") == 0) // Setup tables
 {
 	create_home_addr_table($sql_conn, $home_table);
@@ -283,5 +307,15 @@ function drop_table($conn, $tbl)
 function disconnect($conn)
 {
 	mysqli_close($conn);
+}
+
+function getAttrValOrDie($config,$attrName)
+{
+	try {
+		return $config->$attrName;
+	}
+	catch (Exception $e) {
+		die("Element de configuration obligatoire manquant: '".$attrName."'");
+	}
 }
 ?>

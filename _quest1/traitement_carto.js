@@ -452,6 +452,7 @@ function geocoderLatLngResponse(results, status)
 		
 function geocoderResponse(results, status)
 {
+	var returnVal;
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
@@ -487,15 +488,27 @@ function geocoderResponse(results, status)
 			}
 		}
 		_lastGeocodedAddrComps = results[res_index];
-		return { 'coords': geocodedCoords, 'addr' : formatted_addr };
+		returnVal = { 'coords': geocodedCoords, 'addr' : formatted_addr };
 	} 
 	else 
 	{
 		console.info("Geocoder n'a pu localiser l'adresse" );
-		$.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."));
-		clearAddressField();
-		return null;
+		$.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."), {
+			title: bilingualSubstitution("Erreur géocodeur / Geocoder error"),
+	buttons: { "OK": true },
+	submit: function(e,v,m,f){
+		setTimeout(showTour, 1000*3);
 	}
+});
+		clearAddressField();
+		returnVal = null;
+	}
+	
+	if ( _mode == MODE_DESSIN.DomicileVerification && _firstGeocode && returnVal != null ) {
+		showTour();
+	}
+	_firstGeocode = false;
+	return returnVal;
 }
 
 function geocoderResponseUpdateDisplay(results, status)
@@ -755,7 +768,8 @@ function retournerdanslimesurvey(dir)
 	}
 	console.info("Retour dans LimeSurvey: " + nextUrl);
 	_jumpedOffPage = true;
-	if ( !CONFIG.test_mode ) {
+	var test_mode = get_config('mode_test', false );
+	if ( !test_mode ) {
 		window.location.href = nextUrl;
 	}
 }
