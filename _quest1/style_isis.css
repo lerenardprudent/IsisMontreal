@@ -22,7 +22,7 @@
 		.ui-resizable-helper { border:1px dotted gray; }
 		#mapdiv { border: 2px solid green; background-color: #999999; position:absolute; top:300px; left:0px; width:1200px; height:690px; overflow:hidden;}
 		#strviewdiv { position:absolute; top:175px; left:510px; width:500px; height:500px; overflow:hidden; visibility:hidden; border-width: 2px; border-style: outset; border-color: orange;  }
-		#findspanel, #favspanel { position:absolute; left:900px; top:210px; width: 200px; height:320px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
+		#findspanel, #favspanel { position:absolute; left:900px; top:210px; width: 200px; height:340px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
 		#places, #objects { position:absolute; left:0px; top:20px; width:195px; height: 320px; border-style:solid; border-width:0px 1px 0px 1px; border-color:#999; padding-left:4px; overflow-x:hidden; overflow-y:scroll;}
 		#panheadfinds, #panheadfavs { top:0px; width:199px; height:20px; margin:0px; padding:2px 0px 0px 0px; border-style:solid; border-width:1px 1px 0px 1px; border-color:#999; font-weight:bold; }
 		#morefinds { position:absolute; top:340px; width:201px; height:20px; margin:0px; border-style:solid; border-width:1px; border-color:Grey; color:#dd0000; font-size: 11px}

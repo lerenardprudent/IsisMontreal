@@ -290,7 +290,7 @@ function radialSearchResponse(results, status, pagination)
 	else
 	{
 		morebtn.disabled = true;
-		morebtn.style.cssText = "backgroundColor:Lightgrey; color:Grey; cursor:default";
+		morebtn.style.cssText = "background-color:Lightgrey; color:Grey; cursor:default";
 	}
 	$("#places").animate({scrollTop: 100000}); // Big number so it always scrolls to the bottom
 	$("#morefinds").focus();
