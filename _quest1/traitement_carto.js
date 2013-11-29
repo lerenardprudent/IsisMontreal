@@ -279,17 +279,20 @@ function radialSearchResponse(results, status, pagination)
 		$.prompt( bilingualSubstitution("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer. / No places matching your keywords were found. Please try again." ));
 		clearAddressField();
 	}
-	/*
+	
 	if (pagination.hasNextPage) 
 	{
-		morebtn.disabled = false;
 		google.maps.event.addDomListenerOnce(morebtn, 'click', function() { pagination.nextPage(); });
+		morebtn.disabled = false;
 	}
 	else
 	{
 		morebtn.disabled = true;
+		morebtn.style.backgroundColor = "Lightgrey";
+		morebtn.style.color = "Grey";
+		morebtn.style.cursor = "default";
 	}
-	*/
+
 }
 
 function makefindmarkers(places) 			//search results
@@ -768,8 +771,7 @@ function retournerdanslimesurvey(dir)
 	}
 	console.info("Retour dans LimeSurvey: " + nextUrl);
 	_jumpedOffPage = true;
-	var test_mode = get_config('mode_test', false );
-	if ( !test_mode ) {
+	if ( !_in_test_mode ) {
 		window.location.href = nextUrl;
 	}
 }
@@ -854,7 +856,7 @@ function clearfavsall()
 function makeinfowindowcontent(marker)
 {
 	var cn;
-	cn = "<div id=\"iwdiv\" style=\"height:50px; width:150px; opacity:.9\">" +
+	cn = "<div id=\"iwdiv\" style=\"height:50px; width:180px; opacity:.9\">" +
 		"<br><b>" + marker.name + "</b></div>";
 	return cn;
 }

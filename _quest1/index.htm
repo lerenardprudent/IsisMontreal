@@ -196,7 +196,7 @@
 			<div id="panheadfinds">&nbsp;&nbsp;Résultats de la recherche...
 				<img id="findsclose" title="Effacer les résultats de la recherche" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="clearAllSearchResults();" />
 			</div>
-			<button id="morefinds" style="visibility:hidden" type="button">Plus de résultats...</button>
+			<button id="morefinds" type="button">Plus de résultats...</button>
 		</div>
 	</div>
 
@@ -523,8 +523,10 @@
 		
 		function showTour()
 		{
-			tourStates = getTourStates()[_langue.val];
-			$.prompt(tourStates);
+			if ( !_in_test_mode ) {
+				tourStates = getTourStates()[_langue.val];
+				$.prompt(tourStates);
+			}
 		}
 		
 		var positions =
@@ -766,6 +768,7 @@
 				console.error("Config file '" + file_config + "' not found. Aborting");
 				return;
 			}
+			_in_test_mode = get_config('mode_test', false );
 			
 			setRadioButtonTooltips();
 			translateTagsForLang();
