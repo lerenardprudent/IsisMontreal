@@ -137,6 +137,13 @@
 					$("#search_btn").click();
 				}
 			});
+			
+			$("#morefinds").keyup( function(event)
+			{
+				if (event.keyCode == 13) {
+					$("#morefinds").click();
+				}
+			});
 		});
 	</script>
 	
@@ -196,7 +203,7 @@
 			<div id="panheadfinds">&nbsp;&nbsp;Résultats de la recherche...
 				<img id="findsclose" title="Effacer les résultats de la recherche" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="clearAllSearchResults();" />
 			</div>
-			<button id="morefinds" type="button">Plus de résultats...</button>
+			<button id="morefinds" style="color:#FFFFFF; background-color:#C71F2D;" type="button">Plus de résultats...</button>
 		</div>
 	</div>
 
@@ -246,15 +253,6 @@
 			if ( typeof(_urlParams[key]) === 'undefined' )
 				return null;
 			return _urlParams[key];
-		}
-		
-		function submitaddresshandler(e)
-		{
-			if (!e) e = window.event;
-			var keyCode = e.keyCode || e.which;
-			if (keyCode == '13'){
-				rechercher();
-			}
 		}
 		
 		function clearAddressField()

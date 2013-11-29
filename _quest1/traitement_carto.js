@@ -260,6 +260,9 @@ function clickEditDel()
 
 function radialPlaceSearch()
 {
+	var morebtn = document.getElementById('morefinds');
+	morebtn.style.cssText = "color:#FFFFFF; background-color:#C71F2D; cursor: pointer";
+	
 	var kwds = getAddressText().split(' ');
 	if(kwds.length > 0)
 	{
@@ -270,16 +273,15 @@ function radialPlaceSearch()
 
 function radialSearchResponse(results, status, pagination) 
 {
-	if (status == google.maps.places.PlacesServiceStatus.OK) {
+	if (status != google.maps.places.PlacesServiceStatus.OK) {
+		$.prompt( bilingualSubstitution("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer. / No places matching your keywords were found. Please try again." ));
+		clearAddressField();
+		return;
+	}
+	
 	document.getElementById('findspanel').style.visibility = "visible";
 	makefindmarkers(results);
 	var morebtn = document.getElementById('morefinds');
-	}
-	else {
-		$.prompt( bilingualSubstitution("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer. / No places matching your keywords were found. Please try again." ));
-		clearAddressField();
-	}
-	
 	if (pagination.hasNextPage) 
 	{
 		google.maps.event.addDomListenerOnce(morebtn, 'click', function() { pagination.nextPage(); });
@@ -288,11 +290,10 @@ function radialSearchResponse(results, status, pagination)
 	else
 	{
 		morebtn.disabled = true;
-		morebtn.style.backgroundColor = "Lightgrey";
-		morebtn.style.color = "Grey";
-		morebtn.style.cursor = "default";
+		morebtn.style.cssText = "backgroundColor:Lightgrey; color:Grey; cursor:default";
 	}
-
+	$("#places").animate({scrollTop: 100000}); // Big number so it always scrolls to the bottom
+	$("#morefinds").focus();
 }
 
 function makefindmarkers(places) 			//search results

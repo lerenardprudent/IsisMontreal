@@ -25,7 +25,7 @@
 		#findspanel, #favspanel { position:absolute; left:900px; top:210px; width: 200px; height:320px; padding:0px; border-style: none; background:#efefef; opacity:.9; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
 		#places, #objects { position:absolute; left:0px; top:20px; width:195px; height: 320px; border-style:solid; border-width:0px 1px 0px 1px; border-color:#999; padding-left:4px; overflow-x:hidden; overflow-y:scroll;}
 		#panheadfinds, #panheadfavs { top:0px; width:199px; height:20px; margin:0px; padding:2px 0px 0px 0px; border-style:solid; border-width:1px 1px 0px 1px; border-color:#999; font-weight:bold; }
-		#morefinds { position:absolute; top:340px; width:201px; height:20px; margin:0px; border-style:solid; border-width:1px; border-color:Grey; color:#dd0000; cursor: hand; cursor: pointer; font-size: 11px}
+		#morefinds { position:absolute; top:340px; width:201px; height:20px; margin:0px; border-style:solid; border-width:1px; border-color:Grey; color:#dd0000; font-size: 11px}
 		#favsmode { position:absolute; top:255px; width:194px; height:20px; margin:0px; border-style:solid; border-width:0px 1px 1px 1px; border-color:#999; padding:4px 0px 0px 6px;}
 		#viewpanel { position:absolute; left:105px; top:115px; width:85px; height:220px; padding:15px; opacity:.9; border:1px solid #999; background:#efefef; font-family:Arial, Helvetica, sans-serif; font-size:11px; visibility:hidden; }
 		#view1, #view2, #view3, #view4, #view5, #view6 { font-size:12px; font-weight:bold; } 
