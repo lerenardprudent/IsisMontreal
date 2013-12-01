@@ -457,6 +457,7 @@ function geocoderLatLngResponse(results, status)
 function geocoderResponse(results, status)
 {
 	var returnVal;
+	_geocodeCounter++;
 	if (status == google.maps.GeocoderStatus.OK)
 	{
 		var res_index = find_local_match(results, GMAPS_ADDR_COMP_TYPE_LOCALITY, "Montreal");
@@ -508,10 +509,9 @@ function geocoderResponse(results, status)
 		returnVal = null;
 	}
 	
-	if ( _mode == MODE_DESSIN.DomicileVerification && _firstGeocode && returnVal != null ) {
+	if ( _mode == MODE_DESSIN.DomicileVerification && _geocodeCounter == 1 && returnVal != null ) {
 		showTour();
 	}
-	_firstGeocode = false;
 	return returnVal;
 }
 
@@ -537,6 +537,11 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 	if ( geoResp != null ) {
 		_map.setZoom(_closeUpZoomLevel);
 		_map.setCenter(geoResp.coords);
+	}
+	
+	// Let's read in the list of municipalities in the background
+	if ( _geocodeCounter == 1 && _mode == MODE_DESSIN.DomicileVerification ) {
+		getMunicipalities();
 	}
 }
 
@@ -614,97 +619,6 @@ function check_if_marker_in_rmm()
 {
 	console.info("Validation de l'adresse du lieu de domicile de '" + _id_participant + "' comme étant dans la région métropolitaine de Montréal."); 
 	var addr_comp = _lastGeocodedAddrComps.address_components;
-	var municipalities = [
-    "Baie-D'Urfé",
-    "Beaconsfield",
-    "Beauharnois",
-    "Beloeil",
-    "Blainville",
-    "Bois-des-Filion",
-    "Boisbriand",
-    "Boucherville",
-    "Brossard",
-    "Candiac",
-    "Carignan",
-    "Chambly",
-    "Charlemagne",
-    "Châteauguay",
-    "Coteau-du-Lac",
-    "Côte-Saint-Luc",
-    "Delson",
-    "Deux-Montagnes",
-    "Dollard-Des Ormeaux",
-    "Dorval",
-    "Gore",
-    "Hampstead",
-    "Hudson",
-    "Kahnawake",
-    "Kanesatake",
-    "Kirkland",
-    "L'Assomption",
-    "L'Epiphanie",
-    "L'Île-Cadieux",
-    "L'Île-Dorval",
-    "L'Île-Perrot",
-    "La Prairie",
-    "Laval",
-    "Lavaltrie",
-    "Les Coteaux",
-    "Les Cèdres",
-    "Longueuil",
-    "Lorraine",
-    "Léry",
-    "Mascouche",
-    "McMasterville",
-    "Mercier",
-    "Mirabel",
-    "Mont-Royal",
-    "Mont-Saint-Hilaire",
-    "Montréal",
-    "Montréal-Est",
-    "Montréal-Ouest",
-    "Notre-Dame-de-l'Île-Perrot",
-    "Oka",
-    "Otterburn Park",
-    "Pincourt",
-    "Pointe-Calumet",
-    "Pointe-Claire",
-    "Pointe-des-Cascades",
-    "Repentigny",
-    "Richelieu",
-    "Rosemère",
-    "Saint-Amable",
-    "Saint-Basile-le-Grand",
-    "Saint-Bruno-de-Montarville",
-    "Saint-Colomban",
-    "Saint-Constant",
-    "Saint-Eustache",
-    "Saint-Isidore",
-    "Saint-Joseph-du-Lac",
-    "Saint-Jérôme",
-    "Saint-Lambert",
-    "Saint-Lazare",
-    "Saint-Mathias-sur-Richelieu",
-    "Saint-Mathieu",
-    "Saint-Mathieu-de-Beloeil",
-    "Saint-Philippe",
-    "Saint-Placide",
-    "Saint-Sulpice",
-    "Saint-Zotique",
-    "Sainte-Anne-de-Bellevue",
-    "Sainte-Anne-des-Plaines",
-    "Sainte-Catherine",
-    "Sainte-Julie",
-    "Sainte-Marthe-sur-le-Lac",
-    "Sainte-Thérèse",
-    "Senneville",
-    "Terrasse-Vaudreuil",
-    "Terrebonne",
-    "Varennes",
-    "Vaudreuil-Dorion",
-    "Vaudreuil-sur-le-Lac",
-    "Verchères",
-    "Westmount"];
 
 	var types="";
 	var short_names = [];
@@ -719,13 +633,13 @@ function check_if_marker_in_rmm()
 	var found_match = false;
 	var x, y;
 	var matchingMunic = null;
-	for (y=0; y < municipalities.length; y++) {
-		var munic = normaliserNomFrancais(municipalities[y]);
+	for (y=0; y < _municipalities.length; y++) {
+		var munic = normaliserNomFrancais(_municipalities[y]);
 		for (x=0; x < short_names.length && !found_match; x++) {
 			var sn = short_names[x];
 			if (munic == sn) {
 				found_match = true;
-				matchingMunic = municipalities[y];
+				matchingMunic = _municipalities[y];
 				break;
 			}
 		}

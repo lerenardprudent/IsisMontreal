@@ -16,6 +16,8 @@
 	<link rel="stylesheet" href="style_isis.css" />
 	
 	<script type="text/javascript" src="objs/markerwithlabel_packed.js"></script>
+	
+	<script type="text/javascript" src="objs/jquery.csv-0.71.js"></script>
 		
 	<script type="text/javascript">
 	
@@ -123,12 +125,13 @@
 		var _postCodeRE = /[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1}\s*\d{1}[A-Z]{1}\d{1}/gi;
 		var _zoomSnapTo = false;
 		var _closeUpZoomLevel = 15;
-		var _firstGeocode = true;
+		var _geocodeCounter = 0;
 		var _CONFIG = null;
 
 		var _php_db_fname = "req_bd.php";
 		var tripiniconpath = "media/mapmark.png";
 		var file_config = 'config.json';
+		var _municipalities = [];
 		
 		$(document).ready( function() {
 			$("#address").keyup( function(event)
@@ -763,7 +766,7 @@
 			
 			if ( _CONFIG == null ) {
 				$.prompt("ERREUR SURVENUE :(");
-				console.error("Config file '" + file_config + "' not found. Aborting");
+				console.error("Config file '" + file_config + "' not found or badly formatted. Aborting");
 				return;
 			}
 			_in_test_mode = get_config('mode_test', false );
@@ -817,6 +820,28 @@
 				}
 			}
 			return config_val;
+		}
+		
+		function getMunicipalities()
+		{
+			var csvData;
+			var csvDetails = get_config('csv_municipalites', null);
+			if ( csvDetails != null ) {
+				$.ajax({
+					type: 'GET',
+					async: false,
+					url:  csvDetails.nom,
+					success: function(data) {csvData = data;}
+				});
+				var arr = $.csv.toObjects(csvData);
+				for (var i=0; i < arr.length; i++) {
+					_municipalities.push(arr[i][csvDetails.col_munic]);
+				}
+				console.info(_municipalities.length + " municipalités lues du fichier '" + csvDetails.nom + "'");
+			}
+			else {
+				console.error("Municipalities CSV file config not found!!");
+			}
 		}
 	</script>	
 </body>
