@@ -162,10 +162,8 @@
 			</div>
 			<table id="dash" style="width:720px; margin-left:auto; margin-right:auto">
 					<tr>
-						<td>
-						</td>
-						<td style="width:100%">
-							<p id="questionpanel" style=\"line-height: 1.2; font-size: 14px; max-width: 100px; float:left; padding:2px">
+							<td style="width:100%">
+							<p id="questionpanel" style=\"line-height: 1.2; font-size: 14px; max-width: 100px; float:left; padding-left:2px">
 							</p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
@@ -404,10 +402,12 @@
 				'fr' : { title: "Voulez-vous passer à la question suivante ?",
 						 buttons: { "Continuer sans localiser de lieu" : false,
 								    "Localiser un lieu" : true },
+                        focus: 1,
 						submit: submitFunc },
 				'en' : { title: "Do you want to go to the next question?",
 						 buttons: { "Continue without locating a place" : false,
 									"Locate a place" : true },
+                         focus: 1,
 						 submit: submitFunc	} };
 			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas localisé de lieu. / Attention: You have not identified a location."),
 					 popUpOptions[_langue.val]);
@@ -432,10 +432,12 @@
 				'fr' : { title: "Voulez-vous passer à la question suivante ?",
 						 buttons: { "Continuer sans dessiner de quartier" : false, 
 									"Dessiner votre quartier" : true },
+                         focus: 1,
 						submit: submitFunc },
 				'en' : { title: "Do you want to go to the next question?",
 						 buttons: { "Continue without tracing your neighbourhood" : false, 
 									"Trace your neighbourhood" : true },
+                         focus: 1,
 						submit: submitFunc } };
 			
 			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas dessiné votre quartier. / Attention: You have not traced your neighbourhood."), 
