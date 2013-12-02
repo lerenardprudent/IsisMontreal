@@ -163,8 +163,8 @@
 			<table id="dash" style="width:720px; margin-left:auto; margin-right:auto">
 					<tr>
 							<td style="width:100%">
-							<p id="questionpanel" style=\"line-height: 1.2; font-size: 14px; max-width: 100px; float:left; padding-left:2px">
-							</p>
+							<p id="question" style="margin:3px; font-weight:bold; font-size:14px;"></p>
+                            <p id="consigne" style="margin-top:3px; margin-bottom:5px;"></p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
 									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
@@ -273,12 +273,13 @@
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
 				content = "<span style=\"text-align: center; font-size:14px; padding: 1px; \"><b> " + _question + 
 				"</span></b><p style=\"margin:4px; text-align:justify; font-size:12\"/>" + _consigne;
+                $("#question").html(_question);
+                $("#consigne").html(_consigne);
 				paramsValide = true;
 			}
 			else {
-				content = "<b><em>ERREUR:</em> " + returnErrorMsg(errCode) + "</b>";
+				$("#question").html("<em>ERREUR:</em> " + returnErrorMsg(errCode));
 			}
-			questionpanel.innerHTML = content;
 			return paramsValide;
 		}
 		
