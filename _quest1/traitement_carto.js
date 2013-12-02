@@ -170,7 +170,7 @@ function polygonDrawnHandler(e)
 
 function polygonDragged(e) 
 {
-	geocodeLatLng(e.overlay);
+	geocodeLatLng(e.latLng);
 }
 		
 function polygonClicked(e)
@@ -858,7 +858,7 @@ var TILE_SIZE = 256;
 	//google.maps.event.addListener(poly, 'click', polygonClicked);
 
 	 google.maps.event.addListener(poly, "mousemove", function(event) {
-		if ( isNaN(event.vertex) && isNaN(event.edge) && isNaN(event.path) ) {		
+        if ( isNaN(event.vertex) && isNaN(event.edge) && isNaN(event.path) ) {		
 			var center = latLngToPixel(poly.cc);
 			var mousePos = latLngToPixel(event.latLng);
 			var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
