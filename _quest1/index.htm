@@ -132,7 +132,7 @@
 		var tripiniconpath = "media/mapmark.png";
 		var file_config = 'config.json';
 		var _municipalities = [];
-		
+        		
 		$(document).ready( function() {
 			$("#address").keyup( function(event)
 			{
@@ -158,28 +158,22 @@
 		<div id="mapdiv"></div>
 		<div id="infopanel">
 			<div style="position:fixed; margin:2px">
-				<img id="logo" src="media/logo_isis.jpg" style="width:90px; height: 40px; background-color:#F2F2F4; vertical-align:middle" />
+				<img id="logo" src="media/logo_isis.jpg" style="position:absolute; top:0px; width:90px; height: 40px; background-color:#F2F2F4" />
 			</div>
 			<table id="dash" style="width:720px; margin-left:auto; margin-right:auto">
 					<tr>
 							<td style="width:100%">
-							<p id="question" style="margin:3px; font-weight:bold; font-size:14px;"></p>
-                            <p id="consigne" style="margin-top:3px; margin-bottom:5px;"></p>
+							<p id="question" style="margin-top:5px; margin-bottom:1px; font-weight:bold; font-size:14px;"></p>
+                            <p id="consigne" style="font-size:11px; margin-top:1px; margin-bottom:7px;"></p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
 									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
-									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 22px 22px; background-repeat: no-repeat; display: inline-block; background-image:url(media/plane.jpg); " type="button" title="Faire un tour du site / Take a tour of the site" onclick="showTour()"></button>
-									<span id="drawbuttonsspan" style="vertical-align:bottom">
-									<!--<span id="infolab2"><b>Outils de dessin:</b></span>&nbsp;&nbsp; -->
-										<button id="btn_select_cursor" type="button" value="U"  onclick="stopDraw();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/cursor2.png); " title="Outil d'édition / Edit tool"></button>
-										<button id="btn_draw_poly" type="button" value="D"  onclick="clickPoly();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/drawpoly.png); " title="Outil de tracé / Drawing tool"></button>
-										<button id="btn_erase_poly" type="button" value="U"  onclick="clickEditDel();" style="background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/erase2.png); " title="Outil d'effacement / Eraser tool"></button>
-									</span>	
+									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 22px 22px; background-repeat: no-repeat; display: inline-block; background-image:url(media/aide.png); " type="button" title="Voir des renseignements sur ce site / Help" onclick="showTour()"></button>
 								</span>
 								<div id="below" style="margin-top:4px">
 									<form>	
-										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="restoreAddressText();" autocomplete="off"/>
+										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="var addr = $('#address'); addr.focus(); addr.val(''); addr.val(_lastAddressText);" autocomplete="off"/>
 										<label  for="radio_adresse" id="radio_adresse_label" class="inline-radio">Adresse&nbsp;&nbsp; / Address&nbsp;&nbsp;</label>
 										<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="$('#address').select();" autocomplete="off"/>
 										<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés / Keywords</label>
@@ -265,15 +259,11 @@
 		
 		function validerUrlParams()
 		{	
-			var questionpanel = document.getElementById('questionpanel');			
-			var content = null;
 			var paramsValide = false;
 			var errCode = lookForUrlErrors();
 			
 			if ( errCode == CODE_ERREUR.PasUneErreur ) {
-				content = "<span style=\"text-align: center; font-size:14px; padding: 1px; \"><b> " + _question + 
-				"</span></b><p style=\"margin:4px; text-align:justify; font-size:12\"/>" + _consigne;
-                $("#question").html(_question);
+				$("#question").html(_question);
                 $("#consigne").html(_consigne);
 				paramsValide = true;
 			}
@@ -528,211 +518,398 @@
 		function showTour()
 		{
 			if ( !_in_test_mode ) {
-				tourStates = getTourStates()[_langue.val];
+                tourStates = getTourStates()[_langue.val];
 				$.prompt(tourStates);
 			}
 		}
 		
-		var positions =
-			[
-			{ container: 'h1', x: 0, y: 0, width: 300 },
-			{ container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 10, width: 300, arrow: 'bc' },
-			{ container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne / 2), y: 50, width: 300, arrow: 'lb' },
-			{ container: '#mapdiv', x: 40, y: 10, width: widthConsigne, arrow: 'lt' },
-			{ container: '#radio_adresse', x: 30, y: 30, width: widthConsigne, arrow: 'tl' },
-			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
-			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
-			{ container: '#search_btn',  x: 15-widthConsigne, y: 40, width: widthConsigne, arrow: 'tr' },
-			{ container: '#mapdiv',  x: $('#mapdiv').width()/2, y: 35, width: widthConsigne, arrow: 'lb' },
-			{ container: '#forwbtn',  x: $("#forwbtn").width() /2 - 20, y: 45, width: widthConsigne, arrow: 'tl' },
-			{ container: '#help_btn', x: 5-widthConsigne/2, y: 37, width: widthConsigne, arrow: 'tc' }
-			];
-			
 		function getTourStates()
 		{
+            var positionsDom =
+			[
+            { container: '#help_btn', x: 5-widthConsigne/2, y: 37, width: widthConsigne, arrow: 'tc' },
+            { container: '#mapdiv', x: 40, y: 5, width: widthConsigne, arrow: 'lt' }, // Zoomer
+            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 10, width: 300, arrow: 'bc' },
+            { container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
+            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 150, width: 300, arrow: 'tc' },
+//            { container: '#mapdiv',  x: $('#mapdiv').width()/2, y: 35, width: widthConsigne, arrow: 'lb' }
+//            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne / 2), y: 50, width: 300, arrow: 'lb' }
+//            { container: '#radio_adresse', x: 30, y: 30, width: widthConsigne, arrow: 'tl' },
+//			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
+//			{ container: '#search_btn',  x: 15-widthConsigne, y: 40, width: widthConsigne, arrow: 'tr' },
+//			{ container: '#forwbtn',  x: $("#forwbtn").width() /2 - 20, y: 45, width: widthConsigne, arrow: 'tl' }
+			];
+			
+            if ( _mode == MODE_DESSIN.DomicileVerification )
 			return { 'fr' : 
 				[
 				{
-					title: 'Bienvenue',
-					html: 'Ce tour vous expliquera les fonctionnalités du site afin que vous puissiez répondre à la question.',
-					buttons: { Commencer: 1 },
+					title: 'Aide',
+					html: 'Quelques informations pour vous aider à <b>manipuler les cartes</b> du questionnaire.',
+					buttons: { Commencer: 1, Ignorer: 2 },
 					focus: 0,
-					position: positions[0],
+					position: positionsDom[0],
 					submit: tourSubmitFunc
 				},
-				{ //1
-					title: 'Localiser un lieu',
-					html: 'Localisez un lieu en le retrouvant sur la carte. Vous pouvez déplacer la carte en toute diréction en appuyant sur le bouton de votre souris et en glissant le curseur.',
+                { //1
+					title: 'Zoomer',
+					html: 'Réglez le niveau de zoom de la carte en déplaçant le curseur.',
 					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
-					position: positions[1],
+					position: positionsDom[1],
 					submit: tourSubmitFunc
 				},
 				{ //2
-					title: 'Positionner le marqueur',
-					html: 'Placez le marqueur en cliquant sur la carte. Déplacez-le en cliquant dessus et en glissant votre curseur de souris.',
+					title: 'Déplacer la carte',
+					html: 'Déplacez la carte en maintenant appuyé le bouton gauche de la souris et en bougeant la main.',
 					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
-					position: positions[2],
+					position: positionsDom[2],
 					submit: tourSubmitFunc
 				},
 				{ //3
-					title: 'Zoomer',
-					html: 'Vous pouvez également effectuer des zooms avant ou arrière en ajustant le contrôle de zoom.',
+					title: 'Situer un lieu avec une recherche par l\'adresse',
+					html: 'Écrivez l\'adresse dans le champ de texte et cliquez sur la loupe pour effectuer la recherche.',
 					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
-					position: positions[3],
+					position: positionsDom[3],
 					submit: tourSubmitFunc
 				},
 				{ //4
-					title: 'Rechercher un lieu',
-					html: "Pour la majorité des questions, il y a deux modes de recherche à votre disposition : par <i>adresse</i> et par <i>mots-clés</i>. Choisissez celui qui vous convient.",
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positions[4],
-					submit: tourSubmitFunc
-				},
-				{ //5
-					title: 'Rechercher par adresse',
-					html: "Si vous connaissez l'adresse du lieu, entrez-la dans le champ de text.",
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positions[5],
-					submit: tourSubmitFunc
-				},
-				{ //6
-					title: 'Rechercher par mots-clés',
-					html: "Alternativement, si vous connaissez le nom du lieu ou tout descripteur associé (e.g. <i>restaurant</i>), entrez des mots-clés.",
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positions[6],
-					submit: tourSubmitFunc
-				},
-				{ //7
-					title: 'Amorcer la recherche',
-					html: "Ensuite, lancez la recherche en appuyant sur la touche 'Enter' ou en cliquant sur la loup. ",
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positions[7],
-					submit: tourSubmitFunc
-				},
-				{ //8
-					title: 'Afficher le(s) résultat(s)',
-					html: "Dépendemment du mode de recherche employé, le marqueur sera déplacé vers l'adresse entrée, ou alors les endroits correspondant aux mots-clés seront affichés à titre d'icônes sur la carte.",
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positions[8],
-					submit: tourSubmitFunc
-				},
-				{ //9
-					title: 'Confirmer votre localisation',
-					html: "Une fois que le marqueur de carte bien situé, confirmez la localisation et passez à la question suivante en cliquant sur 'Suivant'.",
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positions[9],
-					submit: tourSubmitFunc
-				},
-				{ //10
-					title: 'Répéter le tour',
-					html: "Vous pouvez prendre ce tour de nouveau à tout moment temp en cliquant sur l'avion.",
+					title: 'Situer un lieu sur la carte',
+					html: "Vous pouvez aussi marquer un lieu en cliquant directement sur la carte.",
 					buttons: { Fin : 2 },
 					focus: 0,
-					position: positions[10],
+					position: positionsDom[4],
 					submit: tourSubmitFunc
 				}
 				],
 			'en' :
 				[
 				{ //0
-					title: "Welcome",
+					title: "Help",
 					html: "This tour will show you the features of the site so that you know how to go about answering the question shown.",
-					buttons: { Start : 1 },
+					buttons: { Start : 1, Skip: 2 },
+					focus: 0,
+					position: positionsDom[0],
+					submit: tourSubmitFunc
+				},
+				{ //1
+					title: 'Zooming',
+					html: '---',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positionsDom[1],
+					submit: tourSubmitFunc
+				},
+				{ //2
+					title: 'Displacing the map',
+					html: '---',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positionsDom[2],
+					submit: tourSubmitFunc
+				},
+				{ //3
+					title: '---',
+					html: '---',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positionsDom[3],
+					submit: tourSubmitFunc
+				},
+				{ //4
+					title: '---',
+					html: "---",
+					buttons: { Done: 2 },
+					focus: 0,
+					position: positionsDom[4],
+					submit: tourSubmitFunc
+				}
+				]
+			};
+            
+            var positionsPoly =
+			[
+            { container: '#help_btn', x: 5-widthConsigne/2, y: 37, width: widthConsigne, arrow: 'tc' },
+            { container: '#mapdiv', x: 40, y: 5, width: widthConsigne, arrow: 'lt' }, // Zoomer
+            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 10, width: 300, arrow: 'bc' },
+            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 10, width: 300, arrow: 'bc' },
+            { container: '#forwbtn',  x: $("#forwbtn").width() /2 - 20, y: 45, width: widthConsigne, arrow: 'tl' }
+//            { container: '#mapdiv',  x: $('#mapdiv').width()/2, y: 35, width: widthConsigne, arrow: 'lb' }
+//            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne / 2), y: 50, width: 300, arrow: 'lb' }
+//            { container: '#radio_adresse', x: 30, y: 30, width: widthConsigne, arrow: 'tl' },
+//			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
+//			{ container: '#search_btn',  x: 15-widthConsigne, y: 40, width: widthConsigne, arrow: 'tr' }
+			];
+			
+            if ( _mode == MODE_DESSIN.Polygone )
+			return { 'fr' : 
+				[
+				{
+					title: 'Aide',
+					html: 'Quelques informations pour vous aider à <b>tracer votre quartier</b> sur la carte.',
+					buttons: { Commencer: 1, Ignorer: 2 },
+					focus: 0,
+					position: positionsPoly[0],
+					submit: tourSubmitFunc
+				},
+                { //1
+					title: 'Zoomer',
+					html: 'Réglez le niveau de zoom de la carte en déplaçant le curseur.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positionsPoly[1],
+					submit: tourSubmitFunc
+				},
+				{ //2
+					title: 'Déplacer la carte',
+					html: 'Déplacez la carte en maintenant appuyé le bouton gauche de la souris et en bougeant la main.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positionsPoly[2],
+					submit: tourSubmitFunc
+				},
+				{ //3
+					title: 'Dessiner les limites de la zone',
+					html: 'Cliquez sur la carte avec la souris (bouton gauche) pour marquer les points qui délimitent la zone correspondant à votre quartier.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positionsPoly[3],
+					submit: tourSubmitFunc
+				},
+				{ //4
+					title: 'Fermer la zone',
+					html: "Fermez la zone en cliquant à nouveau sur le premier point.",
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positionsPoly[3],
+					submit: tourSubmitFunc
+				},
+                { //5
+					title: 'Effacer la zone',
+					html: "Cliquez au centre de la zone (sur X) pour l'effacer.",
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positionsPoly[3],
+					submit: tourSubmitFunc
+				},
+                { //6
+					title: 'Confirmer la zone dessinée',
+					html: "Lorsque vous êtes satisfait(e) de la zone dessinée, cliquez sur le bouton 'Suivant'.",
+					buttons: { Fin:2 },
+					focus: 0,
+					position: positionsPoly[4],
+					submit: tourSubmitFunc
+				}
+				],
+			'en' :
+				[
+				{
+					title: 'Help',
+					html: '---',
+					buttons: { Start: 1, Skip: 2 },
+					focus: 0,
+					position: positionsPoly[0],
+					submit: tourSubmitFunc
+				},
+                { //1
+					title: 'Zooming',
+					html: '---',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positionsPoly[1],
+					submit: tourSubmitFunc
+				},
+				{ //2
+					title: 'Displacing the map',
+					html: '---',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positionsPoly[2],
+					submit: tourSubmitFunc
+				},
+				{ //3
+					title: 'Tracing the boundaries of a zone',
+					html: '---',
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positionsPoly[3],
+					submit: tourSubmitFunc
+				},
+				{ //4
+					title: 'Enclosing the zone',
+					html: "---",
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positionsPoly[3],
+					submit: tourSubmitFunc
+				},
+                { //5
+					title: 'Erasing a zone',
+					html: "---",
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positionsPoly[3],
+					submit: tourSubmitFunc
+				},
+                { //6
+					title: 'Saving the zone traced',
+					html: "---",
+					buttons: { Done:2 },
+					focus: 0,
+					position: positionsPoly[4],
+					submit: tourSubmitFunc
+				}
+				]
+			};
+            
+            var positions =
+			[
+            { container: '#help_btn', x: 5-widthConsigne/2, y: 37, width: widthConsigne, arrow: 'tc' },
+            { container: '#radio_adresse', x: 45, y: 25, width: widthConsigne, arrow: 'tl' },
+            { container: '#address',  x: -10, y: 35, width: widthConsigne, arrow: 'tl' },
+            { container: '#radio_adresse', x: 65, y: 25, width: widthConsigne, arrow: 'tl' },
+            { container: '#mapdiv', x: $('#mapdiv').width() /2, y: 80, width: 300, arrow: 'lb' },
+			{ container: '#forwbtn',  x: $("#forwbtn").width() /2 - 20, y: 43, width: widthConsigne, arrow: 'tl' }
+			];
+			
+			return { 'fr' : 
+				[
+				{
+					title: 'Aide',
+					html: 'Quelques informations pour vous aider à <b>localiser un lieu</b> sur la carte.',
+					buttons: { Commencer: 1, Ignorer: 2 },
 					focus: 0,
 					position: positions[0],
 					submit: tourSubmitFunc
 				},
-				{ //1
-					title: 'Locating a place',
-					html: 'Locate a place by finding it on the map. You can move the focus of the map in any direction holding down the mouse button then dragging the cursor.',
+                { //1
+					title: 'Rechercher un lieu',
+					html: 'Il y a deux modes de recherche à votre disposition : par adresse et par mots-clés. Choisissez celui qui vous convient.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[1],
+					submit: tourSubmitFunc
+				},
+				{ //2
+					title: 'Situer un lieu avec une recherche par l\'adresse',
+					html: 'Écrivez l\'adresse dans le champ de texte et cliquez sur la loupe pour effectuer la recherche.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[2],
+					submit: tourSubmitFunc
+				},
+				{ //3
+					title: 'Situer un lieu avec une recherche par mots-clés',
+					html: 'Activer le bouton Mots-Clés et écrire le nom du lieu ou le type de lieu dans le champ de texte. Cliquez sur la loupe pour effectuer la recherche.',
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[3],
+					submit: tourSubmitFunc
+				},
+				{ //4
+					title: 'Afficher le(s) résultat(s)',
+					html: "<i>Mode adresse</i> : un marqueur correspondant à l'adresse s'affiche sur la carte.<br><i>Mode mots-clés</i> : les lieux correspondant aux mots-clés sont affichés en même temps dans une liste et sur la carte.",
+                    buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+                { //5
+					title: 'Sélectionner un résultat',
+					html: "Cliquez sur un des lieux de la liste pour le situer sur la carte. Si le lieu correspond à celui que vous recherchez, cliquez sur sa localisation pour faire apparaitre un marqueur.",
+                    buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+                { //6
+					title: 'Situer un lieu sur la carte',
+					html: "Vous pouvez aussi marquer un lieu en cliquant directement sur la carte si vous savez où il se situe.",
+                    buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+                { //7
+					title: 'Confirmer le lieu',
+					html: "Une fois que le lieu est bien localisé, appuyez sur \"Suivant\".",
+                    buttons: { Fin:2 },
+					focus: 0,
+					position: positions[5],
+					submit: tourSubmitFunc
+				},
+				],
+			'en' :
+				[
+				{
+					title: 'Help',
+					html: '---',
+					buttons: { Start: 1, Skip: 2 },
+					focus: 0,
+					position: positions[0],
+					submit: tourSubmitFunc
+				},
+                { //1
+					title: 'Find a place',
+					html: '---',
 					buttons: { Previous: -1, Next: 1 },
 					focus: 1,
 					position: positions[1],
 					submit: tourSubmitFunc
 				},
 				{ //2
-					title: 'Putting down a marker',
-					html: 'Place a marker by clicking on the map. Once the marker is down, it can be repositioned by clicking elsewhere, or by clicking on the marker, holding down the mouse button, then dragging the marker to another position.',
+					title: 'Locate a place with an address search',
+					html: '---',
 					buttons: { Previous: -1, Next: 1 },
 					focus: 1,
 					position: positions[2],
 					submit: tourSubmitFunc
 				},
 				{ //3
-					title: 'Zooming',
-					html: 'You can control the zoom level by sliding the control up or down.',
+					title: 'Locate a place with a keyword search',
+					html: '---',
 					buttons: { Previous: -1, Next: 1 },
 					focus: 1,
 					position: positions[3],
 					submit: tourSubmitFunc
 				},
 				{ //4
-					title: 'Searching for a place',
-					html: "For most of the questions, there are two search modes available. Choose one depending on the type of search you would like to initate.",
-					buttons: { Previous: -1, Next: 1 },
+					title: 'Display the result(s)',
+					html: "<i>Address mode</i>: ---<br><i>Keyword mode</i>: ---",
+                    buttons: { Previous: -1, Next: 1 },
 					focus: 1,
 					position: positions[4],
 					submit: tourSubmitFunc
 				},
-				{ //5
-					title: 'Searching by address',
-					html: "If you know the address of the place, type it into the text box.",
-					buttons: { Previous: -1, Next: 1 },
+                { //5
+					title: 'Select a result',
+					html: "---",
+                    buttons: { Previous: -1, Next: 1 },
 					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+                { //6
+					title: 'Identify a place on the map',
+					html: "---",
+                    buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+                { //7
+					title: 'Save your selection',
+					html: "---",
+                    buttons: { Done:2 },
+					focus: 0,
 					position: positions[5],
 					submit: tourSubmitFunc
 				},
-				{ //6
-					title: 'Searching by keywords',
-					html: "Alternatively, if you know the name of the place or if you know terms that describe the place (e.g. <i>restaurant</i>), type those terms into the text box.",
-					buttons: { Previous: -1, Next: 1 },
-					focus: 1,
-					position: positions[6],
-					submit: tourSubmitFunc
-				},
-				{ //7
-					title: 'Completing the search',
-					html: "Run the search by pressing 'Enter' or by clicking on the magnifying glass.",
-					buttons: { Previous: -1, Next: 1 },
-					focus: 1,
-					position: positions[7],
-					submit: tourSubmitFunc
-				},
-				{ //8
-					title: 'Displaying the search results',
-					html: "Depending on the type of search you ran, the map marker will be moved to the new address, or all the places matching the keywords will be shown on the map as icons.",
-					buttons: { Previous: -1, Next: 1 },
-					focus: 1,
-					position: positions[8],
-					submit: tourSubmitFunc
-				},
-				{ //9
-					title: 'Finalizing your decision',
-					html: "Once you have positioned the marker in the correct position on the map, click on 'Next'.",
-					buttons: { Done: 2 },
-					focus: 0,
-					position: positions[9],
-					submit: tourSubmitFunc
-				},
-				{ //10
-					title: 'Repeat the tour',
-					html: "You can repeat this tour of the site at any time by clicking on the plane.",
-					buttons: { Done : 2 },
-					focus: 0,
-					position: positions[10],
-					submit: tourSubmitFunc
-				}
 				]
 			};
+        
 		}
 		
 		function extractPostalCode(str)
@@ -765,7 +942,7 @@
 				url:  'config.json',
                 dataType: "json",
 				success: function(data) {
-					_CONFIG = data;
+					_CONFIG = data; // ???
 			}});
 			
 			if ( _CONFIG == null ) {
@@ -773,7 +950,7 @@
 				console.error("Config file '" + file_config + "' not found or badly formatted. Aborting");
 				return;
 			}
-			_in_test_mode = get_config('mode_test', false );
+			_in_test_mode = parseInt(get_config('mode_test', '0' ));
 			
 			setRadioButtonTooltips();
 			translateTagsForLang();
@@ -788,10 +965,6 @@
 				setDrawTools();
 				_map.setZoom(_closeUpZoomLevel);
 			}
-//			else {
-				var drawbtns = document.getElementById("drawbuttonsspan");
-				drawbtns.innerHTML = ""; // Hide draw buttons
-			//}
 				
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
 				disableRadioButton('radio_nom');

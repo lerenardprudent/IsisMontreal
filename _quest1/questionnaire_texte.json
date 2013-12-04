@@ -4,15 +4,15 @@ var questionnaire_texte = [
 		question_fr : "Le lieu sur la carte correspond-il bien à votre domicile ?",
 		question_an : "Does the location on the map match your home address?",
 		mode_dessin : "domver", 
-		consigne_fr : "Si non, pouvez-vous corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte? Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur 'Suivant'.",
+		consigne_fr : "- Si oui, cliquez sur \"Suivant\".<br>- Si non, veuillez corriger l’adresse de votre domicile ou localiser votre domicile en cliquant sur la carte.<br>Lorsque le lieu sur la carte correspond à votre domicile, cliquez sur \"Suivant\".",
 		consigne_an : "If yes, click 'Next'. If no, please correct your home address or locate your address by clicking on the map. When the location on the map matches your address, click 'Next'."
 	},
 	{ 
 		question_no : "6",
-		question_fr : "À l'aide de la souris, dessinez la zone qui correspond à votre quartier tel que vous la percevez.",
+		question_fr : "Lorsque vous parlez de votre quartier, à quelle zone cela correspond-il ?<br>Tracer sur la carte la zone qui correspond à votre quartier tel que vous le percevez.",
 		question_an : "Using the mouse, trace the area that represents your neighbourhood as you perceive it.",
 		mode_dessin : "polygone",
-		consigne_fr : "Cliquez sur la carte pour tracer la zone et double-cliquez pour la fermer. Pour modifier le tracé, cliquez sur les points avec l’outil <img src=\"media/cursor2.png\" width=\"15\" height=\"15\"/>. Pour effacer la zone, cliquez sur la zone avec  l’outil <img src=\"media/erase2.png\" width=\"15\" height=\"15\"/>. Lorsque vous êtes satisfait(e) de la zone dessinée, cliquez sur 'Suivant'.",
+		consigne_fr : "- N'hésitez pas à régler le niveau de zoom et à déplacer la carte pour pouvoir tracer confortablement les limites de votre quartier<br>- Cliquez sur la carte pour marquer les points qui délimitent votre quartier et fermer la zone en cliquant à nouveau sur le premier point<br>- Si vous n'êtes pas satisfait(e) de la zone dessinée, vous pouvez l'effacer en cliquant au centre de la zone<br>Une fois que vous êtes satisfait(e)de la zone dessinée, cliquez sur le bouton 'Suivant'.",
 		consigne_an : "Click on the map to trace the area and double-click to close it. To modify the tracing, click on the dots with the “Modify” tool. To erase the area, click on the area with the “Erase” tool. When you are satisfied with the traced area, click 'Next'."
 	},
 	{ 

@@ -56,7 +56,7 @@ function onwindowsize()
 	}
 	*/
 	var ipb = $("#infopanel").position().top + iph + 15;
-	var mdt = ipb+25;
+	var mdt = ipb+20;
 	document.getElementById('mapdiv').style.top = mdt + "px" ;
 	document.getElementById('mapdiv').style.height =  (_winh - mdt - 4) + "px";
 	document.getElementById('mapdiv').style.width = (_winw - 4) + "px";
@@ -136,11 +136,10 @@ function setDrawTools()
        draggable: false,
        raiseOnDrag: false,
        labelContent: pictureLabel,
-       labelAnchor: new google.maps.Point(50, 0),
+       labelAnchor: new google.maps.Point(15, 15),
        labelClass: "labels", // the CSS class for the label
        labelStyle: {opacity: 1},
 	   visible: false,
-	   labelAnchor: new google.maps.Point(30, 20),
 	   icon: "http://placehold.it/1x1"
      });
 	 
@@ -149,6 +148,7 @@ function setDrawTools()
 			removePolygonFromMap();
 			this.setVisible(false);
 	});
+        
 	drawevents();
 	clickPoly();
 	
@@ -493,6 +493,7 @@ function geocoderResponse(results, status)
 			}
 		}
 		_lastGeocodedAddrComps = results[res_index];
+        showTour();
 		returnVal = { 'coords': geocodedCoords, 'addr' : formatted_addr };
 	} 
 	else 
@@ -509,9 +510,6 @@ function geocoderResponse(results, status)
 		returnVal = null;
 	}
 	
-	if ( _mode == MODE_DESSIN.DomicileVerification && _geocodeCounter == 1 && returnVal != null ) {
-		showTour();
-	}
 	return returnVal;
 }
 
@@ -858,16 +856,18 @@ var TILE_SIZE = 256;
 	//google.maps.event.addListener(poly, 'click', polygonClicked);
 
 	 google.maps.event.addListener(poly, "mousemove", function(event) {
-        if ( isNaN(event.vertex) && isNaN(event.edge) && isNaN(event.path) ) {		
-			var center = latLngToPixel(poly.cc);
-			var mousePos = latLngToPixel(event.latLng);
-			var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
-			if ( dist < 60 )
+        if ( isNaN(event.vertex) && isNaN(event.edge) && isNaN(event.path) ) {
+		//	var center = latLngToPixel(poly.cc);
+			//var mousePos = latLngToPixel(event.latLng);
+			//var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
+			//if ( dist < 60 )
 				_deletePolyMarker.setVisible(true);
+                _drawnPolygon.setOptions({fillColor:'Red', fillOpacity:1});
 		}
       });
       google.maps.event.addListener(poly, "mouseout", function(event) {
         _deletePolyMarker.setVisible(false);
+        _drawnPolygon.setOptions({fillColor:'#ff0000',fillOpacity:0.5});
       });
 	  _deletePolyMarker.setPosition(poly.cc);
 	}
