@@ -70,7 +70,6 @@ function setDrawTools()
 	var newobj;
 	var edopt;
 	
-	_map.setOptions({ draggableCursor: 'default' });
 	_drawman = new google.maps.drawing.DrawingManager({
 		drawingMode: google.maps.drawing.OverlayType.NULL,
 		drawingControl: false,
@@ -426,7 +425,7 @@ function geocodePlaceMarker(marker)
 function geocodeMarker(lat_lng, centerOnMarker)
 {
 	var respHandler;
-	if (typeof(centerOnMarker)==='undefined') {
+	if (typeof(centerOnMarker)==='undefined' || !centerOnMarker) {
 		respHandler = geocoderResponseUpdateDisplay;
 	}
 	else {
@@ -493,8 +492,7 @@ function geocoderResponse(results, status)
 			}
 		}
 		_lastGeocodedAddrComps = results[res_index];
-        showTour();
-		returnVal = { 'coords': geocodedCoords, 'addr' : formatted_addr };
+        returnVal = { 'coords': geocodedCoords, 'addr' : formatted_addr };
 	} 
 	else 
 	{
@@ -808,8 +806,16 @@ google.maps.LatLng.prototype.kmTo = function(a){
 //------------------------------------------------------------------- external interface
 
 function mapclickhandler(e) 
-{ 
-	geocodeMarker(e.latLng);
+{
+    var pix = e.pixel;
+    var mapW = $('#mapdiv').width();
+    var mapH = $('#mapdiv').height();
+    var minEdgeDist = Math.min(pix.x,mapW-pix.x,pix.y,mapH-pix.y);
+    var needToRecenter = ( minEdgeDist < 10 );
+    if ( needToRecenter ) {
+        console.info("Map canvas click at distance of only ", minEdgeDist, "; recentering map.");
+    }
+	geocodeMarker(e.latLng, needToRecenter);
 }
 
 function dragmarkerhandler(e)
