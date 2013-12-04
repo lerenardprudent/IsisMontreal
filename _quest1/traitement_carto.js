@@ -501,7 +501,7 @@ function geocoderResponse(results, status)
 			title: bilingualSubstitution("Erreur géocodeur / Geocoder error"),
 	buttons: { "OK": true },
 	submit: function(e,v,m,f){
-		setTimeout(showTour, 1000*3);
+		showTour();
 	}
 });
 		clearAddressField();
@@ -530,13 +530,17 @@ function geocoderResponseUpdateDisplay(results, status)
 function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 {
 	var geoResp = geocoderResponseUpdateDisplay(results, status);
+    var firstQuest = 
+        ( _geocodeCounter == 1 && _mode == MODE_DESSIN.DomicileVerification );
 	if ( geoResp != null ) {
 		_map.setZoom(_closeUpZoomLevel);
 		_map.setCenter(geoResp.coords);
+        if (firstQuest) {
+            showTour();
+        }
 	}
 	
-	// Let's read in the list of municipalities in the background
-	if ( _geocodeCounter == 1 && _mode == MODE_DESSIN.DomicileVerification ) {
+	if (firstQuest) { // Let's read in the list of municipalities in the background
 		getMunicipalities();
 	}
 }

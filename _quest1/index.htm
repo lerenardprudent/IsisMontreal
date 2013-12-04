@@ -505,7 +505,7 @@
 		
 		function tourSubmitFunc(e,v,m,f)
 		{
-			if (v === -1){
+            if (v === -1){
 				$.prompt.prevState();
 				return false;
 			}
@@ -518,12 +518,17 @@
 		function showTour()
 		{
 			if ( !_in_test_mode ) {
-                tourStates = getTourStates()[_langue.val];
-				var myPrompt = $.prompt(tourStates);
-                myPrompt.on('impromptu:loaded', function(e){
-                    $('button.jqidefaultbutton[id^="jqi_0"]').focus();
-                });
-			}
+                setTimeout( startTour, 2.5*1000 ); // 2.5 sec delay for effect
+            }
+        }
+        
+        function startTour()
+        {
+            tourStates = getTourStates()[_langue.val];
+			var myPrompt = $.prompt(tourStates);
+            myPrompt.on('impromptu:loaded', function(e){
+                $('button.jqidefaultbutton[id^="jqi_0"]').focus();
+            });
 		}
 		
 		function getTourStates()
