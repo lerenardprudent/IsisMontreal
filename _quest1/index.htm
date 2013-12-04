@@ -519,7 +519,10 @@
 		{
 			if ( !_in_test_mode ) {
                 tourStates = getTourStates()[_langue.val];
-				$.prompt(tourStates);
+				var myPrompt = $.prompt(tourStates);
+                myPrompt.on('impromptu:loaded', function(e){
+                    $('button.jqidefaultbutton[id^="jqi_0"]').focus();
+                });
 			}
 		}
 		
