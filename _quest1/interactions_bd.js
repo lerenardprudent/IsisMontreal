@@ -139,9 +139,6 @@ function homeAddressLookupResp()
 		if (!ok) {
 			retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Fin);
 		}
-        else {
-            showTour();
-        }
 	}
 }
 

@@ -496,15 +496,6 @@ function geocoderResponse(results, status)
 	} 
 	else 
 	{
-		console.info("Geocoder n'a pu localiser l'adresse" );
-		$.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."), {
-			title: bilingualSubstitution("Erreur géocodeur / Geocoder error"),
-	buttons: { "OK": true },
-	submit: function(e,v,m,f){
-		showTour();
-	}
-});
-		clearAddressField();
 		returnVal = null;
 	}
 	
@@ -535,9 +526,6 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 	if ( geoResp != null ) {
 		_map.setZoom(_closeUpZoomLevel);
 		_map.setCenter(geoResp.coords);
-        if (firstQuest) {
-            showTour();
-        }
 	}
 	
 	if (firstQuest) { // Let's read in the list of municipalities in the background
