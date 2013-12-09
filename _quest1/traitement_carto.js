@@ -242,7 +242,7 @@ function selectDrawButton(ib)
 function stopDraw()
 {
 	_drawman.setDrawingMode(google.maps.drawing.OverlayType.NULL);
-	_map.setOptions({ draggableCursor: 'default' });
+	_map.setOptions({ draggableCursor: '' });
 }
 
 function clickPoly()
@@ -250,15 +250,6 @@ function clickPoly()
 	_drawman.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
 	_map.setOptions({ draggableCursor: 'crosshair' });
 }
-
-function clickEditDel() 
-{
-	stopDraw();
-	_delobjon = true;
-	selectDrawButton(2);
-	_map.setOptions({ draggableCursor: 'default' });
-}
-
 
 //---------------------------------------------------------------------
 
@@ -650,10 +641,9 @@ function setMapPin(latlng, iconPath, canDrag, centerOnPin)
 {
 	var pin;
 	if ( iconPath != null ) {
-		pin = new google.maps.Marker({ map:_map, position:latlng, draggable:canDrag });
+		pin = new google.maps.Marker({ map:_map, position:latlng, draggable:canDrag, clickable:false });
 		pin.setMap(_map);
 		pin.setIcon(iconPath);
-		pin.title = " Holy mar";
 	}
 	else {
 		pin = _mapmark;

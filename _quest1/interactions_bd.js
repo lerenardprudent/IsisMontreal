@@ -129,10 +129,10 @@ function homeAddressLookupResp()
 				else {
 					_mapmark.setPosition(homepos);
 					homepin = setMapPin(homepos, 'media/home2.png', false, true);
-					_domicileInfoWindow.setContent("<div id=\"iwdiv\" style=\"text-align:center; height:80px; width:300px; opacity:.9\"><b>" + bilingualSubstitution("Lieu de domicile / Home") + "</b><br><br><em>" + home_addr_text + "</em></div>");
-					_domicileInfoWindow.setPosition(homepos);
-					google.maps.event.addListener(homepin, 'mouseover', function() { _domicileInfoWindow.open(_map); });
-					google.maps.event.addListener(homepin, 'mouseout', function() { _domicileInfoWindow.close(); });
+					//_domicileInfoWindow.setContent("<div id=\"iwdiv\" style=\"text-align:center; height:80px; width:300px; opacity:.9\"><b>" + bilingualSubstitution("Lieu de domicile / Home") + "</b><br><br><em>" + home_addr_text + "</em></div>");
+					//_domicileInfoWindow.setPosition(homepos);
+					//google.maps.event.addListener(homepin, 'mouseover', function() { _domicileInfoWindow.open(_map); });
+					//google.maps.event.addListener(homepin, 'mouseout', function() { _domicileInfoWindow.close(); });
 				}
 			}
 		}
