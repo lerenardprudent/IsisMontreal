@@ -152,7 +152,7 @@
 	
 </head>
 
-<body onload="mapinit(); initialize();" onresize="resizebody();"  style="background-color:#999999">
+<body onload="initialize();" onresize="resizebody();"  style="background-color:#999999">
 	<!-- PAGE LAYOUT STARTS HERE -->
 	<div id="maindiv">
 		<div id="mapdiv"></div>
@@ -964,7 +964,9 @@
 			translateTagsForLang();
 			clearAddressField();
 			try { onwindowsize(); } catch (er) { }	
-				
+			
+			mapinit();
+			
 			if ( _mode == MODE_DESSIN.Polygone )
 			{
 				disableRadioButton('radio_adresse');
