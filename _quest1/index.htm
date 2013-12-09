@@ -167,17 +167,16 @@
                             <p id="consigne" style="font-size:12px; margin-top:5px; margin-bottom:7px;"></p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
-									<input id="address" type="text" maxlength="150" style="width:300px; height:22px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
-									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
-									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 25px; width:25px; background-size: 22px 22px; background-repeat: no-repeat; display: inline-block; background-image:url(media/aide.png); " type="button" title="Voir des renseignements sur ce site / Help" onclick="showTour()"></button>
+									<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="var addr = $('#address'); addr.focus(); addr.val(''); addr.val(_lastAddressText);" autocomplete="off"/>
+									<label  for="radio_adresse" id="radio_adresse_label" class="inline-radio">Adresse&nbsp; / Address&nbsp;</label>
+									<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="$('#address').select();" autocomplete="off"/>
+									<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés&nbsp; / Keywords&nbsp;</label>
+									<input id="address" type="text" maxlength="150" style="width:400px; height:20px; background-color:#F0F0F0" placeholder="-- Adresse ou mots-clés -- / -- Address or keywords --" autofocus="autofocus"/>&nbsp;
+									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
+									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 19px 19px; background-repeat: no-repeat; display: inline-block; background-image:url(media/aide.png); " type="button" title="Voir des renseignements sur ce site / Help" onclick="showTour()"></button>
 								</span>
 								<div id="below" style="margin-top:4px">
-									<form>	
-										<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="var addr = $('#address'); addr.focus(); addr.val(''); addr.val(_lastAddressText);" autocomplete="off"/>
-										<label  for="radio_adresse" id="radio_adresse_label" class="inline-radio">Adresse&nbsp;&nbsp; / Address&nbsp;&nbsp;</label>
-										<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="$('#address').select();" autocomplete="off"/>
-										<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés / Keywords</label>
-										<br/>
+									<form>
 										<br/>
 										<div id="bob" style="text-align:center; border: solid 0 Red; border-top-width:1px; padding-top:0.5ex"">
 											<span id="directions" style="display:inline-block">
@@ -449,14 +448,15 @@
 			}
 		}
 		
-		function setRadioButtonTooltips()
+		function setRadioButtonText()
 		{
 			var addressOptTooltip = "Option pour une recherche par adresse (complète ou partielle) / Option for a search by address (complete or partial)";
 			var keyWordOptTooltip = "Option pour une recherche à proximité (dans un rayon de " + _searchradius + "km de l'épingle) par mots-clés / Option for a nearby search (within a " + _searchradius + "km radius of the map marker) by keywords";
 			document.getElementById("radio_adresse").title = addressOptTooltip;
 			document.getElementById("radio_adresse_label").title = addressOptTooltip;
-			document.getElementById("radio_nom").title = keyWordOptTooltip;
+ 			document.getElementById("radio_nom").title = keyWordOptTooltip;
 			document.getElementById("radio_nom_label").title = keyWordOptTooltip;
+
 		}
 		
 		function confirmeraddress()
@@ -960,7 +960,7 @@
 			}
 			_in_test_mode = parseInt(get_config('mode_test', '0' ));
 			
-			setRadioButtonTooltips();
+			setRadioButtonText();
 			translateTagsForLang();
 			clearAddressField();
 			try { onwindowsize(); } catch (er) { }	
@@ -971,6 +971,9 @@
 			{
 				disableRadioButton('radio_adresse');
 				disableRadioButton('radio_nom');
+				var searchbtn = $('#search_btn');
+				searchbtn.attr('disabled', true);
+				searchbtn.css('background-image',"url('media/mag-glass-disabled.png')");
 				document.getElementById('address').disabled = "disabled";
 				setDrawTools();
 				_map.setZoom(_closeUpZoomLevel);

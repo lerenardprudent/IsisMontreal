@@ -62,7 +62,7 @@ function onwindowsize()
 	document.getElementById('mapdiv').style.top = mdt + "px" ;
 	document.getElementById('mapdiv').style.height =  (_winh - mdt - 4) + "px";
 	document.getElementById('mapdiv').style.width = (_winw - 4) + "px";
-	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - (36*num_buttons)) + "px";
+//	document.getElementById('address').style.width = (parseInt(document.getElementById('dash').style.width) - (36*num_buttons)) + "px";
 	try { _map.setCenter(_mapmark.getPosition()); } catch (er) {}	
 }
 
