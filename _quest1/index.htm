@@ -173,7 +173,7 @@
 									<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés&nbsp; / Keywords&nbsp;</label>
 									<input id="address" type="text" maxlength="150" style="width:400px; height:20px; background-color:#F0F0F0" placeholder="-- Saisir une adresse ou un terme à rechercher -- / -- Enter address or search keywords --" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
-									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 19px 19px; background-repeat: no-repeat; display: inline-block; background-image:url(media/aide.png); " type="button" title="Voir des renseignements sur ce site / Help" onclick="showTour()"></button>
+									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 19px 19px; background-repeat: no-repeat; display: inline-block; background-image:url(media/aide.png); " type="button" title="Voir des renseignements sur ce site / Help" onclick="showTour(true)"></button>
 								</span>
 								<div id="below" style="margin-top:4px">
 									<form>
@@ -515,11 +515,12 @@
 			}
 		}
 		
-		function showTour()
+		function showTour(override_test_mode)
 		{
-			if ( !_in_test_mode ) {
-                setTimeout( startTour, 2.5*1000 ); // 2.5 sec delay for effect
-            }
+			if (typeof(override_test_mode) === 'undefined')
+				override_test_mode = false;
+			if ( !_in_test_mode || override_test_mode )
+                startTour();
         }
         
         function startTour()
