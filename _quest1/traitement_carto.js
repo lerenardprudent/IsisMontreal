@@ -333,7 +333,7 @@ function selectfindmarker(id)
 	var markerPos = _findmarkers[id].getPosition();
 	_map.panTo(markerPos);
 	console.info(_findmarkers[id]);
-	google.maps.event.trigger(_findmarkers[id], 'mouseover');
+	google.maps.event.trigger(_findmarkers[id], 'click');
 }
 
 function clearfindmarker(id) 
@@ -473,7 +473,7 @@ function geocoderResponse(results, status)
 			else {
 				var co1 = _lastGeocodedAddrComps.geometry.location;
 				var co2 = geocodedCoords;
-				var dist = getDistanceFromLatLonInKm(co1.lat(), co1.lng(), co2.lat(), co2.lng());
+				var dist = co1.kmTo(co2);
 				if ( dist < 0.15 ) {
 					formatted_addr = _lastGeocodedAddrComps.formatted_address;
 					var correctedPostCode = _origPostCode.toUpperCase();
@@ -805,8 +805,6 @@ google.maps.LatLng.prototype.kmTo = function(a){
     return f * 6378.137; 
 } 
 
-
-
 //------------------------------------------------------------------- external interface
 
 function mapclickhandler(e) 
@@ -833,104 +831,4 @@ function keyUpTextField(e) {
 	var search_btn = document.getElementById('search_btn');
 	search_btn.disabled = ( addr.length == 0 );
   
-}
-
-var TILE_SIZE = 256;
-
-	function latLngToWorld(latLng) {
-			var projection = new MercatorProjection();	
-			var worldCoordinate = projection.fromLatLngToPoint(latLng);
-			return worldCoordinate;
-		}
-	
-	function latLngToPixel(latLng) {
-			var projection = new MercatorProjection();	
-			var numTiles = 1 << _map.getZoom();
-			var worldCoordinate = projection.fromLatLngToPoint(latLng);
-			var pixelCoordinate = new google.maps.Point(
-				worldCoordinate.x * numTiles,
-				worldCoordinate.y * numTiles);
-			return pixelCoordinate;
-		}
-
-	function processNewPolygonOnMap(poly)
-	{
-	_drawnPolygon = poly;
-	var polyCenter = calcPolyCenter(poly);
-	geocodeLatLng(polyCenter);
-	_map.setCenter(polyCenter);
-	obp = { strokeWeight:1 };
-	poly.setOptions(obp);
-				
-	google.maps.event.addListener(poly, 'dragend', polygonDragged);
-	//google.maps.event.addListener(poly, 'click', polygonClicked);
-
-	 google.maps.event.addListener(poly, "mousemove", function(event) {
-        if ( isNaN(event.vertex) && isNaN(event.edge) && isNaN(event.path) ) {
-		//	var center = latLngToPixel(poly.cc);
-			//var mousePos = latLngToPixel(event.latLng);
-			//var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
-			//if ( dist < 60 )
-				_deletePolyMarker.setVisible(true);
-                _drawnPolygon.setOptions({fillColor:'Red', fillOpacity:1});
-		}
-      });
-      google.maps.event.addListener(poly, "mouseout", function(event) {
-        _deletePolyMarker.setVisible(false);
-        _drawnPolygon.setOptions({fillColor:'#ff0000',fillOpacity:0.5});
-      });
-	  _deletePolyMarker.setPosition(poly.cc);
-	}
-
-function bound(value, opt_min, opt_max) {
-  if (opt_min != null) value = Math.max(value, opt_min);
-  if (opt_max != null) value = Math.min(value, opt_max);
-  return value;
-}
-
-function degreesToRadians(deg) {
-  return deg * (Math.PI / 180);
-}
-
-/** @constructor */
-function MercatorProjection() {
-  this.pixelOrigin_ = new google.maps.Point(TILE_SIZE / 2,
-      TILE_SIZE / 2);
-  this.pixelsPerLonDegree_ = TILE_SIZE / 360;
-  this.pixelsPerLonRadian_ = TILE_SIZE / (2 * Math.PI);
-}
-
-MercatorProjection.prototype.fromLatLngToPoint = function(latLng,
-    opt_point) {
-  var me = this;
-  var point = opt_point || new google.maps.Point(0, 0);
-  var origin = me.pixelOrigin_;
-
-  point.x = origin.x + latLng.lng() * me.pixelsPerLonDegree_;
-
-  // Truncating to 0.9999 effectively limits latitude to 89.189. This is
-  // about a third of a tile past the edge of the world tile.
-  var siny = bound(Math.sin(degreesToRadians(latLng.lat())), -0.9999,
-      0.9999);
-  point.y = origin.y + 0.5 * Math.log((1 + siny) / (1 - siny)) *
-      -me.pixelsPerLonRadian_;
-  return point;
-};
-
-function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2-lat1);  // deg2rad below
-  var dLon = deg2rad(lon2-lon1); 
-  var a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-    ; 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; // Distance in km
-  return d;
-}
-
-function deg2rad(deg) {
-  return deg * (Math.PI/180)
 }
