@@ -1,5 +1,5 @@
 {
-	"mode_test" 			: 	"1",
+	"mode_test" 			: 	"0",
 	"bd_login" 				: { 
 								"host" 			: "localhost",
 								"user" 			: "root",

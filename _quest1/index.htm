@@ -164,7 +164,7 @@
 					<tr>
 							<td style="width:100%">
 							<p id="question" style="margin-top:7px; margin-bottom:1px; font-weight:bold; font-size:15px;"></p>
-                            <p id="consigne" style="font-size:12px; margin-top:5px; margin-bottom:7px;"></p>
+                            <p id="consigne" style="font-size:12px; margin-top:5px; margin-bottom:10px;"></p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
 									<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="var addr = $('#address'); addr.focus(); addr.val(''); addr.val(_lastAddressText);" autocomplete="off"/>
@@ -501,7 +501,7 @@
 			return { nav : M[0], ver : M[1] };
 		};
 		
-		var widthConsigne = 300;
+		var widthConsigne = 330;
 		
 		function tourSubmitFunc(e,v,m,f)
 		{
@@ -534,105 +534,116 @@
 		
 		function getTourStates()
 		{
-            var positionsDom =
+            var positions =
 			[
             { container: '#help_btn', x: 5-widthConsigne/2, y: 37, width: widthConsigne, arrow: 'tc' },
-            { container: '#mapdiv', x: 40, y: 5, width: widthConsigne, arrow: 'lt' }, // Zoomer
-            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 10, width: 300, arrow: 'bc' },
-            { container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
-            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 150, width: 300, arrow: 'tc' },
-//            { container: '#mapdiv',  x: $('#mapdiv').width()/2, y: 35, width: widthConsigne, arrow: 'lb' }
-//            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne / 2), y: 50, width: 300, arrow: 'lb' }
-//            { container: '#radio_adresse', x: 30, y: 30, width: widthConsigne, arrow: 'tl' },
-//			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
-//			{ container: '#search_btn',  x: 15-widthConsigne, y: 40, width: widthConsigne, arrow: 'tr' },
-//			{ container: '#forwbtn',  x: $("#forwbtn").width() /2 - 20, y: 45, width: widthConsigne, arrow: 'tl' }
+            { container: '#mapdiv', x: 40, y: 65, width: widthConsigne, arrow: 'lt' }, // Zoomer
+            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 40, width: widthConsigne, arrow: 'bc' },            
+            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 5, width: widthConsigne, arrow: 'bc' },
+			{ container: '#radio_adresse', x: 45, y: 25, width: widthConsigne, arrow: 'tl' },
+			{ container: '#forwbtn',  x: 45 - widthConsigne, y: 45, width: widthConsigne, arrow: 'tr' }
 			];
 			
-            if ( _mode == MODE_DESSIN.DomicileVerification )
+            if ( _mode != MODE_DESSIN.Polygone )
 			return { 'fr' : 
 				[
 				{
-					title: 'Aide',
-					html: 'Quelques informations pour vous aider à <b>manipuler les cartes</b> du questionnaire.',
-					buttons: { Commencer: 1, Ignorer: 2 },
-					focus: 0,
-					position: positionsDom[0],
+					title: '<b>Aide</b>',
+					html: 'Dans ce questionnaire, nous vous demanderons parfois de localiser un lieu sur une carte. Voici quelques informations pour vous aider à le faire.<br><br>Vous pourrez accéder au tutoriel en tout temps en cliquant sur le bouton ci-dessus.',
+					buttons: { Ignorer: 2, Commencer: 1 },
+					focus: 1,
+					position: positions[0],
 					submit: tourSubmitFunc
 				},
                 { //1
-					title: 'Zoomer',
-					html: 'Réglez le niveau de zoom de la carte en déplaçant le curseur.',
+					title: '<b>Zoomer</b>',
+					html: 'Vous pouvez régler le niveau de zoom de la carte en déplaçant le curseur (ou en utilisant la roulette de votre souris si vous en avez une).',
 					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
-					position: positionsDom[1],
+					position: positions[1],
 					submit: tourSubmitFunc
 				},
 				{ //2
-					title: 'Déplacer la carte',
-					html: 'Déplacez la carte en maintenant appuyé le bouton gauche de la souris et en bougeant la main.',
+					title: '<b>Déplacer la carte</b>',
+					html: 'Vous pouvez déplacer la carte en maintenant appuyé le bouton gauche de la souris et en bougeant la main.',
 					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
-					position: positionsDom[2],
+					position: positions[2],
 					submit: tourSubmitFunc
 				},
 				{ //3
-					title: 'Situer un lieu avec une recherche par l\'adresse',
-					html: 'Écrivez l\'adresse dans le champ de texte et cliquez sur la loupe pour effectuer la recherche.',
+					title: '<b>Situer un lieu sur la carte</b>',
+					html: "Vous pouvez localiser un lieu en cliquant directement sur la carte. Un marqueur<img src='media/mapmark.png' style='width:20px; height:20px'>apparaîtra.",
 					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
-					position: positionsDom[3],
+					position: positions[3],
 					submit: tourSubmitFunc
 				},
 				{ //4
-					title: 'Situer un lieu sur la carte',
-					html: "Vous pouvez aussi marquer un lieu en cliquant directement sur la carte.",
+					title: '<b>Rechercher un lieu</b>',
+					html: "Vous pouvez aussi rechercher un lieu en indiquant son <b>adresse</b> ou en utilisant des <b>mots-clés</b>.<br><br>Cliquez sur la loupe pour afficher les résultat(s) qui apparaîtront sur la carte ou dans une liste.<br><br>Si une liste s'affiche, sélectionnez le lieu souhaité et un marqueur<img src='media/mapmark.png' style='width:20px; height:20px'>apparaitra sur la carte.",
+					buttons: { Précédent: -1, Suivant: 1 },
+					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+				{ //5
+					title: '<b>Confirmer le lieu</b>',
+					html: "Lorsque vous êtes satisfait(e) de la localisation du marqueur<img src='media/mapmark.png' style='width:20px; height:20px'>, cliquez sur <b>« Suivant »</b>.",
 					buttons: { Fin : 2 },
 					focus: 0,
-					position: positionsDom[4],
+					position: positions[5],
 					submit: tourSubmitFunc
 				}
 				],
 			'en' :
 				[
 				{ //0
-					title: "Help",
-					html: "This tour will show you the features of the site so that you know how to go about answering the question shown.",
-					buttons: { Start : 1, Skip: 2 },
-					focus: 0,
-					position: positionsDom[0],
+					title: "<b>Help</b>",
+					html: "In this questionnaire, we will sometimes ask you to locate a place on a map. The following instructions will guide you in using the maps.<br><br>You can access the tutorial at any time by clicking the button above.",
+					buttons: { Ignore : 2, Start: 1 },
+					focus: 1,
+					position: positions[0],
 					submit: tourSubmitFunc
 				},
 				{ //1
-					title: 'Zooming',
-					html: '---',
+					title: '<b>Zooming</b>',
+					html: "Adjust the map’s zoom levels by moving the slider up or down (or by moving the ball on your mouse if you have one).",
 					buttons: { Previous: -1, Next: 1 },
 					focus: 1,
-					position: positionsDom[1],
+					position: positions[1],
 					submit: tourSubmitFunc
 				},
 				{ //2
-					title: 'Displacing the map',
-					html: '---',
+					title: '<b>Moving the map</b>',
+					html: 'You can shift the map by moving the mouse while holding its left-click button.',
 					buttons: { Previous: -1, Next: 1 },
 					focus: 1,
-					position: positionsDom[2],
+					position: positions[2],
 					submit: tourSubmitFunc
 				},
 				{ //3
-					title: '---',
-					html: '---',
+					title: '<b>Locating a place on the map</b>',
+					html: "You can locate a place by clicking directly on the map. A marker like this<img src='media/mapmark.png' style='width:20px; height:20px'>will appear.",
 					buttons: { Previous: -1, Next: 1 },
 					focus: 1,
-					position: positionsDom[3],
+					position: positions[3],
 					submit: tourSubmitFunc
 				},
 				{ //4
-					title: '---',
-					html: "---",
+					title: '<b>Searching for a place</b>',
+					html: "You can also search for a place by typing its <b>address</b> or by using <b>keywords</b>.<br><br>Click on the magnifying glass button to show the results on the map or in a list.<br><br>If a list of results appears, please select the correct place and a marker<img src='media/mapmark.png' style='width:20px; height:20px'>will appear.",
+					buttons: { Previous: -1, Next: 1 },
+					focus: 1,
+					position: positions[4],
+					submit: tourSubmitFunc
+				},
+				{ //5
+					title: '<b>Confirming the location</b>',
+					html: "Once the marker<img src='media/mapmark.png' style='width:20px; height:20px'>on the map corresponds to the desired location, click <b>“Next”</b>.",
 					buttons: { Done: 2 },
 					focus: 0,
-					position: positionsDom[4],
+					position: positions[5],
 					submit: tourSubmitFunc
 				}
 				]
@@ -996,7 +1007,11 @@
 				puthomepin();
 				init_map_pin_if_question_already_answered(_qno);
 			}
-			showTour();
+			if ( _mode == MODE_DESSIN.DomicileVerification ||
+				 _mode == MODE_DESSIN.Polygone ||
+				 _qno == '45' ) {
+				showTour();
+			}
 		}
 		
 		function get_config(attr, defaut)
