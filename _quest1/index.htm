@@ -167,7 +167,7 @@
                             <p id="consigne" style="font-size:12px; margin-top:5px; margin-bottom:10px;"></p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
-									<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" checked="checked" onclick="var addr = $('#address'); addr.focus(); addr.val(''); addr.val(_lastAddressText);" autocomplete="off"/>
+									<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" onclick="var addr = $('#address'); addr.focus(); addr.val(''); addr.val(_lastAddressText);" autocomplete="off"/>
 									<label  for="radio_adresse" id="radio_adresse_label" class="inline-radio">Adresse&nbsp; / Address&nbsp;</label>
 									<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="$('#address').select();" autocomplete="off"/>
 									<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés&nbsp; / Keywords&nbsp;</label>
@@ -866,11 +866,7 @@
 			}
 			_in_test_mode = parseInt(get_config('mode_test', '0' ));
 			
-			setRadioButtonText();
-			translateTagsForLang();
-			clearAddressField();
 			try { onwindowsize(); } catch (er) { }	
-			
 			mapinit();
 			
 			if ( _mode == MODE_DESSIN.Polygone )
@@ -881,11 +877,16 @@
 				searchbtn.attr('disabled', true);
 				searchbtn.css('background-image',"url('media/mag-glass-disabled.png')");
 				document.getElementById('address').disabled = "disabled";
+				document.getElementById('address').placeholder = "";
 				setDrawTools();
 				_map.setZoom(_closeUpZoomLevel);
 			}
-				
+			else {
+				document.getElementById('radio_adresse').checked = "checked";
+			}
+			
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
+				document.getElementById('address').placeholder = "-- Saisir une adresse -- / -- Enter address --";
 				disableRadioButton('radio_nom');
 				var home_addr_encoded = getUrlParam('addr');
 				if (home_addr_encoded != null) {
@@ -906,6 +907,10 @@
 				 _qno == '45' ) {
 				showTour();
 			}
+			
+			setRadioButtonText();
+			translateTagsForLang();
+			clearAddressField();
 		}
 		
 		function get_config(attr, defaut)
