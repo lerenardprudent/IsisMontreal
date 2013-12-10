@@ -640,7 +640,7 @@
 				},
 				{ //5
 					title: '<b>Confirming the location</b>',
-					html: "Once the marker<img src='media/mapmark.png' style='width:20px; height:20px'>on the map corresponds to the desired location, click <b>“Next”</b>.",
+					html: "Once the marker<img src='media/mapmark.png' style='vertical-align:text-bottom; width:20px; height:20px'>on the map corresponds to the desired location, click <b>“Next”</b>.",
 					buttons: { Done: 2 },
 					focus: 0,
 					position: positions[5],
@@ -651,134 +651,28 @@
             
             var positionsPoly =
 			[
-            { container: '#help_btn', x: 5-widthConsigne/2, y: 37, width: widthConsigne, arrow: 'tc' },
-            { container: '#mapdiv', x: 40, y: 5, width: widthConsigne, arrow: 'lt' }, // Zoomer
-            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 10, width: 300, arrow: 'bc' },
-            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne/2), y: 10, width: 300, arrow: 'bc' },
-            { container: '#forwbtn',  x: $("#forwbtn").width() /2 - 20, y: 45, width: widthConsigne, arrow: 'tl' }
-//            { container: '#mapdiv',  x: $('#mapdiv').width()/2, y: 35, width: widthConsigne, arrow: 'lb' }
-//            { container: '#mapdiv', x: $('#mapdiv').width() /2 - (widthConsigne / 2), y: 50, width: 300, arrow: 'lb' }
-//            { container: '#radio_adresse', x: 30, y: 30, width: widthConsigne, arrow: 'tl' },
-//			{ container: '#address',  x: $('#address').width() / 2, y: 40, width: widthConsigne, arrow: 'tl' },
-//			{ container: '#search_btn',  x: 15-widthConsigne, y: 40, width: widthConsigne, arrow: 'tr' }
+            { container: '#mapdiv', x: 100, y: 20, width: widthConsigne }
 			];
 			
-            if ( _mode == MODE_DESSIN.Polygone )
-			return { 'fr' : 
+            return { 'fr' : 
 				[
 				{
-					title: 'Aide',
-					html: 'Quelques informations pour vous aider à <b>tracer votre quartier</b> sur la carte.',
-					buttons: { Commencer: 1, Ignorer: 2 },
+					title: 'Attention ! Sur cette carte, nous vous demandons de tracer une zone.',
+					html: "Cliquez sur la carte avec la souris pour marquer les points qui délimitent la zone. Pour fermer la zone, cliquez à nouveau sur le premier point.<br><br>Si vous souhaitez recommencer, effacez la zone en cliquant sur la <img src='media/icon-close.svg' style='width:20px; height:20px'> au centre de la zone...et recommencez!",
+					buttons: { OK: 2 },
 					focus: 0,
 					position: positionsPoly[0],
 					submit: tourSubmitFunc
-				},
-                { //1
-					title: 'Zoomer',
-					html: 'Réglez le niveau de zoom de la carte en déplaçant le curseur.',
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positionsPoly[1],
-					submit: tourSubmitFunc
-				},
-				{ //2
-					title: 'Déplacer la carte',
-					html: 'Déplacez la carte en maintenant appuyé le bouton gauche de la souris et en bougeant la main.',
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positionsPoly[2],
-					submit: tourSubmitFunc
-				},
-				{ //3
-					title: 'Dessiner les limites de la zone',
-					html: 'Cliquez sur la carte avec la souris (bouton gauche) pour marquer les points qui délimitent la zone correspondant à votre quartier.',
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positionsPoly[3],
-					submit: tourSubmitFunc
-				},
-				{ //4
-					title: 'Fermer la zone',
-					html: "Fermez la zone en cliquant à nouveau sur le premier point.",
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positionsPoly[3],
-					submit: tourSubmitFunc
-				},
-                { //5
-					title: 'Effacer la zone',
-					html: "Cliquez au centre de la zone (sur X) pour l'effacer.",
-					buttons: { Précédent: -1, Suivant: 1 },
-					focus: 1,
-					position: positionsPoly[3],
-					submit: tourSubmitFunc
-				},
-                { //6
-					title: 'Confirmer la zone dessinée',
-					html: "Lorsque vous êtes satisfait(e) de la zone dessinée, cliquez sur le bouton 'Suivant'.",
-					buttons: { Fin:2 },
-					focus: 0,
-					position: positionsPoly[4],
-					submit: tourSubmitFunc
 				}
-				],
+                ],
 			'en' :
 				[
 				{
-					title: 'Help',
-					html: '---',
-					buttons: { Start: 1, Skip: 2 },
+					title: 'On this map, we will ask you to draw an area.',
+					html: "Click on the map with the mouse to draw the boundary points outlining the area. To close the area, re-click on the first boundary point.<br><br>To redo the area, erase it by clicking the <img src='media/icon-close.svg' style='width:20px; height:20px'> in the middle of the area…and then restart!",
+					buttons: { OK: 2 },
 					focus: 0,
 					position: positionsPoly[0],
-					submit: tourSubmitFunc
-				},
-                { //1
-					title: 'Zooming',
-					html: '---',
-					buttons: { Previous: -1, Next: 1 },
-					focus: 1,
-					position: positionsPoly[1],
-					submit: tourSubmitFunc
-				},
-				{ //2
-					title: 'Displacing the map',
-					html: '---',
-					buttons: { Previous: -1, Next: 1 },
-					focus: 1,
-					position: positionsPoly[2],
-					submit: tourSubmitFunc
-				},
-				{ //3
-					title: 'Tracing the boundaries of a zone',
-					html: '---',
-					buttons: { Previous: -1, Next: 1 },
-					focus: 1,
-					position: positionsPoly[3],
-					submit: tourSubmitFunc
-				},
-				{ //4
-					title: 'Enclosing the zone',
-					html: "---",
-					buttons: { Previous: -1, Next: 1 },
-					focus: 1,
-					position: positionsPoly[3],
-					submit: tourSubmitFunc
-				},
-                { //5
-					title: 'Erasing a zone',
-					html: "---",
-					buttons: { Previous: -1, Next: 1 },
-					focus: 1,
-					position: positionsPoly[3],
-					submit: tourSubmitFunc
-				},
-                { //6
-					title: 'Saving the zone traced',
-					html: "---",
-					buttons: { Done:2 },
-					focus: 0,
-					position: positionsPoly[4],
 					submit: tourSubmitFunc
 				}
 				]
