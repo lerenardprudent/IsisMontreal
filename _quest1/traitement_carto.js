@@ -162,10 +162,16 @@ function drawevents()
 
 function polygonDrawnHandler(e)
 {
+	var tempPoly = e.overlay;
+	if ( tempPoly.getPath().length == 1 ) {
+		tempPoly.setMap(null);
+		return;
+	}
+		
 	if ( _drawnPolygon != null ) {
 		removePolygonFromMap();
 	}
-	processNewPolygonOnMap(e.overlay);
+	processNewPolygonOnMap(tempPoly);
 	stopDraw();
 }
 
@@ -824,7 +830,7 @@ function processNewPolygonOnMap(poly)
 	_map.setCenter(polyCenter);
 	obp = { strokeWeight:1 };
 	poly.setOptions(obp);
-				
+	
 	google.maps.event.addListener(poly, 'dragend', polygonDragged);
 	//google.maps.event.addListener(poly, 'click', polygonClicked);
 
