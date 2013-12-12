@@ -112,7 +112,7 @@ function setDrawTools()
 			fillOpacity: .5,
 			strokeWeight: 1,
 			clickable: true,
-			draggable: true,
+			draggable: false,
 			editable: true
 		},
 		polylineOptions: {
@@ -137,7 +137,7 @@ function setDrawTools()
        draggable: false,
        raiseOnDrag: false,
        labelContent: pictureLabel,
-       labelAnchor: new google.maps.Point(15, 15),
+       labelAnchor: new google.maps.Point(16, 16),
        labelClass: "labels", // the CSS class for the label
        labelStyle: {opacity: 1},
 	   visible: false,
@@ -841,7 +841,8 @@ function processNewPolygonOnMap(poly)
 			//var dist = Math.sqrt(Math.pow(center.x-mousePos.x,2) + (center.y-mousePos.y,2));
 			//if ( dist < 60 )
 				_deletePolyMarker.setVisible(true);
-                _drawnPolygon.setOptions({fillColor:'Red', fillOpacity:1});
+				_deletePolyMarker.setPosition(new google.maps.LatLng(event.latLng.nb, event.latLng.ob));
+				_drawnPolygon.setOptions({fillColor:'Red', fillOpacity:1});
 		}
       });
       google.maps.event.addListener(poly, "mouseout", function(event) {
