@@ -163,8 +163,21 @@ function drawevents()
 function polygonDrawnHandler(e)
 {
 	var tempPoly = e.overlay;
-	if ( tempPoly.getPath().length == 1 ) {
+	var tempPath = tempPoly.getPath().getArray();
+	S = google.maps.geometry.spherical;
+	var ratio = S.computeDistanceBetween(tempPath[0],tempPath[tempPath.length-1])*100/S.computeLength(tempPath);
+
+	var isPoint = function() { return tempPath.length == 1; }();
+	var isLine = function() { return ratio >= 99.5 && ratio <= 100; }();
+	
+	if ( isPoint ) {
 		tempPoly.setMap(null);
+		$.prompt(bilingualSubstitution("Un point ne constitute pas une zone valide. / A point is not a valid area."));
+		return;
+	}
+	if ( isLine ) {
+		tempPoly.setMap(null);
+		$.prompt(bilingualSubstitution("Une ligne ne constitute pas une zone valide. / A line is not a valid area."));
 		return;
 	}
 		
@@ -823,8 +836,8 @@ function keyUpTextField(e) {
 }
 
 function processNewPolygonOnMap(poly)
-{
-	_drawnPolygon = poly;
+{	
+	_drawnPolygon = poly;	
 	var polyCenter = calcPolyCenter();
 	geocodeLatLng(polyCenter);
 	_map.setCenter(polyCenter);

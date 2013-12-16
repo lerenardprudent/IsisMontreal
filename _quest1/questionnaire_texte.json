@@ -13,7 +13,7 @@ var questionnaire_texte = [
 		question_an : "When thinking of your neighbourhood, what area comes to mind?<br>Using the mouse, draw the area on the map that corresponds to your neighbourhood, as you perceive it to be.",
 		mode_dessin : "polygone",
 		consigne_fr : "N'hésitez pas à régler le niveau de zoom et à déplacer la carte pour pouvoir tracer confortablement les limites de votre quartier.",
-		consigne_an : "Feel free to adjust the zoom levels and to move the map to comfortably draw the boundaries of your neighbourhood.."
+		consigne_an : "Feel free to adjust the zoom levels and to move the map to comfortably draw the boundaries of your neighbourhood."
 	},
 	{ 
 		question_no : "45",
