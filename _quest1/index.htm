@@ -529,6 +529,7 @@
 			var myPrompt = $.prompt(tourStates);
             myPrompt.on('impromptu:loaded', function(e){
                 $('button.jqidefaultbutton[id^="jqi_0"]').focus();
+				$('.jqiclose').css('font-size','35px').css('top','-2px').css('right', '20px').css('color', 'grey');
             });
 		}
 		
