@@ -548,7 +548,13 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 		_map.setCenter(geoResp.coords);
 	}
 	else {
-		$.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."));
+		var foo = $.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."));
+		foo.on('impromptu:close', function(e){
+			if ( firstQuest ) {
+				$.prompt.close();
+				setTimeout( initiateTour, 1000 );
+			}
+		});
 	}
 	
 	if (firstQuest) { // Let's read in the list of municipalities in the background

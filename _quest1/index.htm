@@ -902,17 +902,12 @@
 			{
 				puthomepin();
 				init_map_pin_if_question_already_answered(_qno);
+				initiateTour();
 			}
 			
 			setRadioButtonText();
 			translateTagsForLang();
 			clearAddressField();
-			
-			if ( _mode == MODE_DESSIN.DomicileVerification ||
-				 _mode == MODE_DESSIN.Polygone ||
-				 _qno == '45' ) {
-				showTour();
-			}
 		}
 		
 		function get_config(attr, defaut)
@@ -949,6 +944,15 @@
 			}
 			else {
 				console.error("Municipalities CSV file config not found!!");
+			}
+		}
+		
+		function initiateTour()
+		{
+			if ( _mode == MODE_DESSIN.DomicileVerification ||
+				 _mode == MODE_DESSIN.Polygone ||
+				 _qno == '39' /* Question sur la santé */ ) {
+				showTour();
 			}
 		}
 	</script>	
