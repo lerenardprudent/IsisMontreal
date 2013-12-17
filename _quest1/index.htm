@@ -167,11 +167,13 @@
                             <p id="consigne" style="font-size:12px; margin-top:5px; margin-bottom:10px;"></p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
-									<input type="radio" id="radio_adresse" class="inline-radio" name="radioGroup" value="adresse" onclick="var addr = $('#address'); addr.focus(); addr.val(''); addr.val(_lastAddressText);" autocomplete="off"/>
-									<label  for="radio_adresse" id="radio_adresse_label" class="inline-radio">Adresse&nbsp; / Address&nbsp;</label>
-									<input type="radio" id="radio_nom" class="inline-radio" name="radioGroup" value="nom_de_commerce" onclick="$('#address').select();" autocomplete="off"/>
-									<label for="radio_nom" id="radio_nom_label" class="inline-radio" disabled="true">Mots-clés&nbsp; / Keywords&nbsp;</label>
-									<input id="address" type="text" maxlength="150" style="width:400px; height:20px; background-color:#F0F0F0" placeholder="-- Saisir une adresse ou un terme à rechercher -- / -- Enter address or search keywords --" autofocus="autofocus"/>&nbsp;
+									<label id="searchonlbl">Rechercher par / Search on</span>
+									<select id="searchmode" onchange="searchModeUpdated();">
+										<option value="addr" selected>adresse / address</option>
+										<option value="nom">nom ou autres termes / name and/or other keywords</option>
+									</select>
+									<img id="arrow" src="media/right-arrow.png" style="position: relative; top: 5px; width:20px; height: 20px;" />
+									<input id="address" type="text" maxlength="150" style="width:400px; height:18px; background-color:#F0F0F0" autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
 									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 19px 19px; background-repeat: no-repeat; display: inline-block; background-image:url(media/aide.png); " type="button" title="Voir des renseignements sur ce site / Help" onclick="showTour(true)"></button>
 								</span>
@@ -353,7 +355,7 @@
 			return sub;
 		}
 			
-		function setLabelForLang() {
+		function setTextForLang() {
 			var val = $(this).text();
 			var sub = bilingualSubstitution(val);
 			if (sub == null)
@@ -365,7 +367,7 @@
 		function translateTagsForLang() {
 			$(document).attr("title", setTitleForLang );
 			$("button[title], input[title], label[title]").attr("title", setTitleForLang );
-			$("button, input, label").each(setLabelForLang);
+			$("button, input, label, option").each(setTextForLang);
 			$("input[placeholder]").attr("placeholder", setTitleForLang );
 		}
 		
@@ -872,8 +874,9 @@
 			
 			if ( _mode == MODE_DESSIN.Polygone )
 			{
-				disableRadioButton('radio_adresse');
-				disableRadioButton('radio_nom');
+				//disableRadioButton('radio_adresse');
+				$('#searchonlbl').css('color', 'lightgrey');
+				document.getElementById('searchmode').disabled = "disabled";
 				var searchbtn = $('#search_btn');
 				searchbtn.attr('disabled', true);
 				searchbtn.css('background-image',"url('media/mag-glass-disabled.png')");
@@ -882,13 +885,9 @@
 				setDrawTools();
 				_map.setZoom(_closeUpZoomLevel);
 			}
-			else {
-				document.getElementById('radio_adresse').checked = "checked";
-			}
-			
+						
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
-				document.getElementById('address').placeholder = "-- Saisir une adresse -- / -- Enter address --";
-				disableRadioButton('radio_nom');
+				document.getElementById('searchmode').disabled = "disabled";
 				var home_addr_encoded = getUrlParam('addr');
 				if (home_addr_encoded != null) {
 					var home_addr = decodeURI(home_addr_encoded);
@@ -905,7 +904,7 @@
 				initiateTour();
 			}
 			
-			setRadioButtonText();
+			searchModeUpdated();
 			translateTagsForLang();
 			clearAddressField();
 		}
@@ -954,6 +953,22 @@
 				 _qno == '39' /* Question sur la santé */ ) {
 				showTour();
 			}
+		}
+		
+		function searchModeUpdated()
+		{
+			if ( _mode == MODE_DESSIN.Polygone )
+				return;
+
+			var mod = document.getElementById('searchmode');
+			var addrField = document.getElementById('address');
+			if ( mod.value == 'addr' ) {
+				addrField.placeholder = bilingualSubstitution('-- Saisir une adresse -- / -- Enter an address --');
+			}
+			else  {
+				addrField.placeholder = bilingualSubstitution("-- Saisir le nom du lieu ou d'autres terms associés -- / -- Enter the name of the place or other related keywords --");
+			}
+			$('#address').select();
 		}
 	</script>	
 </body>

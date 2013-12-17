@@ -528,7 +528,7 @@ function geocoderResponseUpdateDisplay(results, status)
 	if ( geoResp != null ) {
 		setMapPin(geoResp.coords, null, true);
 		updateAddressText( geoResp.addr );
-		document.getElementById('radio_adresse').checked = "checked";
+		document.getElementById('searchmode').value = "addr";
 		_pointPlaced = true;
 		return geoResp;
 	}
@@ -590,7 +590,7 @@ function geocoderMunicipalityResponse(results, status)
 function rechercher()
 {
 	if ( getAddressText().length > 0 ) {
-		if (document.getElementById("radio_nom").checked) {
+		if (document.getElementById("searchmode").value == 'nom') {
 			radialPlaceSearch();
 		}
 		else {
