@@ -470,7 +470,7 @@ function geocoderLatLngResponse(results, status)
 		
 function geocoderResponse(results, status)
 {
-	var returnVal;
+	var returnVal, addressTweaked = false;
 	_geocodeCounter++;
 	if (status == google.maps.GeocoderStatus.OK)
 	{
@@ -500,14 +500,19 @@ function geocoderResponse(results, status)
 					console.info("Mismatch between two nearby post codes " + _origPostCode.toUpperCase() + " and " + _returnedPostCode + ".\n" +
 						"Address string converted to \"" + formatted_addr + "\"");
 					updateAddressText(formatted_addr);
-					
+					addressTweaked = true;
 				}
 				_origPostCode = null;
 				_returnedPostCode = null;
 			}
 		}
-		_lastGeocodedAddrComps = results[res_index];
-        returnVal = { 'coords': geocodedCoords, 'addr' : formatted_addr };
+		if ( addressTweaked ) {
+			_lastGeocodedAddrComps.formatted_address = formatted_addr;
+		}
+		else {
+			_lastGeocodedAddrComps = results[res_index];
+		}
+		returnVal = { 'coords': geocodedCoords, 'addr' : formatted_addr };
 	} 
 	else 
 	{
@@ -541,6 +546,9 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 	if ( geoResp != null ) {
 		_map.setZoom(_closeUpZoomLevel);
 		_map.setCenter(geoResp.coords);
+	}
+	else {
+		$.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."));
 	}
 	
 	if (firstQuest) { // Let's read in the list of municipalities in the background
