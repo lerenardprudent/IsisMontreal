@@ -17,11 +17,11 @@ var questionnaire_texte = [
 	},
 	{ 
 		question_no : "64",
-		question_fr : "Lorsque vous pensez à votre quartier, à quelle zone cela correspond-il ?<br>A l’aide de la souris, tracez sur la carte la zone qui correspond à votre quartier tel que vous le percevez.",
-		question_an : "When thinking of your neighbourhood, what area comes to mind?<br>Using the mouse, draw the area on the map that corresponds to your neighbourhood, as you perceive it to be.",
+		question_fr : "Les questions précédentes concernaient votre quartier (les personnes qui y habitent et les services qui s'y trouvent).  Pour nous aider à comprendre à quelle zone vous faites référence, tracez sur la carte les limites de votre quartier telles que vous les percevez.",
+		question_an : "The previous questions were about your neighbourhood (the people who live there and the services you find there). To help us understand what geographic area you are referring to, draw the boundaries of your neighbourhood as you perceive them to be on the map.",
 		mode_dessin : "polygone",
-		consigne_fr : "N'hésitez pas à régler le niveau de zoom et à déplacer la carte pour pouvoir tracer confortablement les limites de votre quartier.",
-		consigne_an : "Feel free to adjust the zoom levels and to move the map to comfortably draw the boundaries of your neighbourhood."
+		consigne_fr : "Cliquez sur la carte avec la souris pour marquer les points qui délimitent votre quartier.<br>N'hésitez pas à régler le niveau de zoom et à déplacer la carte pour pouvoir tracer confortablement les limites de votre quartier.",
+		consigne_an : "Click on the map with the mouse to draw the boundary points outlining your neighbourhood.<br>Feel free to adjust the zoom levels and to move the map to comfortably draw the boundaries of your neighbourhood."
 	},
 	{ 
 		question_no : "67",
