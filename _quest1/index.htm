@@ -528,9 +528,8 @@
         {
             tourStates = getTourStates()[_langue.val];
 			var myPrompt = $.prompt(tourStates);
-            myPrompt.on('impromptu:loaded', function(e){
-                $('button.jqidefaultbutton[id^="jqi_0"]').focus();
-				if ( _mode == MODE_DESSIN.Polygone ) {
+			myPrompt.on('impromptu:loaded', function(e){
+                if ( _mode == MODE_DESSIN.Polygone ) {
 					$('.jqiclose').css('visibility', 'hidden');
 				}
 				else {
@@ -658,14 +657,14 @@
             
             var positionsPoly =
 			[
-            { container: '#mapdiv', x: 100, y: 20, width: widthConsigne }
+            { container: '#mapdiv', x: 100, y: 20, width: 470, arrow: 'rb' }
 			];
 			
             return { 'fr' : 
 				[
 				{
-					title: 'Attention ! Sur cette carte, nous vous demandons de tracer une zone.',
-					html: "Cliquez sur la carte avec la souris pour marquer les points qui délimitent la zone. Pour fermer la zone, cliquez à nouveau sur le premier point.<br><br>Si vous souhaitez recommencer, effacez la zone en cliquant sur la <img src='media/icon-close.svg' style='width:20px; height:20px'> au centre de la zone...et recommencez!<video width=\"320\" height=\"240\" controls><source src=\"media/DessinQuartier_Video.mp4\" type=\"video/mp4\"></video>",
+					title: 'Sur cette carte, nous vous demandons de tracer la zone correspondant à votre quartier.',
+					html: "Cliquez sur la carte avec la souris pour marquer les points qui délimitent votre quartier. Pour fermer la zone, cliquez à nouveau sur le premier point.<p/><div style=\"width:210px; margin-left:auto; margin-right:auto;\"><video width=\"210\" height=\"140\" controls><source src=\"media/DessinQuartier_Video.mp4\" type=\"video/mp4\"></video></div>Si vous souhaitez recommencer, effacez la zone en cliquant sur la <img src='media/icon-close.svg' style='position:relative; top:5px; width:20px; height:20px'> au centre de la zone...et recommencez!",
 					focus: 0,
 					position: positionsPoly[0],
 					submit: tourSubmitFunc
@@ -674,8 +673,8 @@
 			'en' :
 				[
 				{
-					title: 'On this map, we will ask you to draw an area.',
-					html: "Click on the map with the mouse to draw the boundary points outlining the area. To close the area, re-click on the first boundary point.<br><br>To redo the area, erase it by clicking the <img src='media/icon-close.svg' style='width:20px; height:20px'> in the middle of the area…and then restart!",
+					title: 'On this map we will ask you to draw the area that corresponds to your neighbourhood.',
+					html: "Click on the map with the mouse to draw the boundary points outlining the area. To close the area, re-click on the first boundary point.<p/><div style=\"width:210px; margin-left:auto; margin-right:auto;\"><video width=\"210\" height=\"140\" controls><source src=\"media/DessinQuartier_Video.mp4\" type=\"video/mp4\"></video></div>To redo the area, erase it by clicking the <img src='media/icon-close.svg' style='position:relative; top:5px; width:20px; height:20px'> on the area… and then restart!",
 					buttons: { OK: 2 },
 					focus: 0,
 					position: positionsPoly[0],
