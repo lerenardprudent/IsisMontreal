@@ -546,6 +546,9 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 	if ( geoResp != null ) {
 		_map.setZoom(_closeUpZoomLevel);
 		_map.setCenter(geoResp.coords);
+		if ( firstQuest ) {
+			initiateTour();
+		}
 	}
 	else {
 		var foo = $.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."));
