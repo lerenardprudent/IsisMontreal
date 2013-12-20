@@ -600,7 +600,7 @@
 				},
 				{ //4
 					title: '<b>Rechercher un lieu</b>',
-					html: "Vous pouvez aussi rechercher un lieu en indiquant son <b>adresse</b> ou en utilisant des <b>mots-clés</b>. Sélectionnez le mode convenable du menu déroulant.",
+					html: "Vous pouvez aussi rechercher un lieu en indiquant son <b>adresse</b> ou en utilisant des <b>mots-clés</b>. Sélectionnez le mode du menu déroulant qui vous convient.",
 					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
 					position: positions[4],
@@ -608,8 +608,8 @@
 				},
 				{ //5
 					title: '<b>Rechercher un lieu</b>',
-					html: "Saisissez les terms de votre recherche dans le champ de texte, puis appuyez sur 'Enter' or cliquer sur la loupe pour afficher les résultat(s) qui apparaîtront sur la carte ou dans une liste.<br><br>Si une liste s'affiche, sélectionnez le lieu souhaité et un marqueur<img src='media/mapmark.png' style='width:20px; height:20px'>apparaitra sur la carte.",
-					buttons: { Previous: -1, Next: 1 },
+					html: "Saisissez les termes de votre recherche dans le champ de texte, puis appuyez sur 'Enter' ou cliquez sur la loupe pour afficher les résultat(s) qui apparaîtront sur la carte ou dans une liste.",
+					buttons: { Précédent: -1, Suivant: 1 },
 					focus: 1,
 					position: positions[5],
 					submit: tourSubmitFunc
@@ -693,7 +693,7 @@
 				[
 				{
 					title: 'Sur cette carte, nous vous demandons de tracer la zone correspondant à votre quartier',
-					html: "Cliquez sur la carte avec la souris pour marquer les points qui délimitent votre quartier. Pour fermer la zone, cliquez à nouveau sur le premier point.<p/><div style='width:180px; height:120px; margin-left:auto; margin-right:auto;'><img style='height: 100%; width:100%;' src='media/DessinQuartier_Video.gif'></div>Si vous souhaitez recommencer, effacez la zone en cliquant sur la <img src='media/icon-close.svg' style='position:relative; top:5px; width:20px; height:20px'> au centre de la zone...et recommencez!",
+					html: "Cliquez sur la carte avec la souris pour marquer les points qui délimitent votre quartier. Pour fermer la zone, cliquez à nouveau sur le premier point.<p/><div style='width:180px; height:120px; margin-left:auto; margin-right:auto;'><img style='height: 100%; width:100%;' src='media/DessinQuartier_Video.gif'></div>Pour effacer la zone, cliquez dessus avec la <img src='media/icon-close.svg' style='position:relative; top:5px; width:20px; height:20px'>... et recommencez!",
 					buttons: { OK: 2 },
 					focus: 0,
 					position: positionsPoly[0],
@@ -839,8 +839,7 @@
 		function initiateTour()
 		{
 			if ( _mode == MODE_DESSIN.DomicileVerification ||
-				 _mode == MODE_DESSIN.Polygone ||
-				 _qno == '39' /* Question sur la santé */ ) {
+				 _mode == MODE_DESSIN.Polygone ) {
 				showTour();
 			}
 		}
@@ -856,7 +855,7 @@
 				addrField.placeholder = bilingualSubstitution('-- Saisir une adresse -- / -- Enter an address --');
 			}
 			else  {
-				addrField.placeholder = bilingualSubstitution("-- Saisir le nom du lieu ou d'autres terms associés -- / -- Enter the name of the place or other related keywords --");
+				addrField.placeholder = bilingualSubstitution("-- Saisir le nom du lieu ou des mots-clés associés -- / -- Enter the name of the place or other related keywords --");
 			}
 			$('#address').select();
 		}
