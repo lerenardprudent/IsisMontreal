@@ -360,7 +360,9 @@ function placeHoverListener() {
 function placeClickListener()
 {
 	_infowin.close();
-	updateAddressText(this.name + ", " + this.address ? this.address : this.vicinity);
+	var addr = this.address ? this.address : this.vicinity;
+	geocodeAddressUpdatePinOnly(addr);
+	updateAddressText(this.name + ", " + addr);
 }
 
 function selectfindmarker(id)
@@ -437,14 +439,30 @@ function restoreAddressText()
 	updateAddressText(_lastAddressText);
 }
 
-function geocodeAddress(addr)
+function geocodeAddress(addr, centerOnMarker)
 {
 	var regionHint = ", QC";
 	addr += regionHint;
 	_addr_changed = false;
+	
+	var respHandler;
+	if (typeof(centerOnMarker)==='undefined' || !centerOnMarker) {
+		respHandler = geocoderResponseUpdateDisplay;
+	}
+	else {
+		respHandler = geocoderResponseUpdateDisplayAndCenterMap;
+	}
+	
 	if ( addr.length > 0 ) {
 		_origPostCode = extractPostalCode(addr);
-		_geocoder.geocode( { 'address': addr }, geocoderResponseUpdateDisplayAndCenterMap );
+		_geocoder.geocode( { 'address': addr }, respHandler );
+	}
+}
+
+function geocodeAddressUpdatePinOnly(addr)
+{
+	if ( addr.length > 0 ) {
+		_geocoder.geocode( { 'address': addr }, geocoderResponseUpdatePinOnly );
 	}
 }
 
@@ -488,7 +506,7 @@ function geocoderLatLngResponse(results, status)
 		_geocodedSpecial = geoResp;
 	}
 }
-		
+
 function geocoderResponse(results, status)
 {
 	var returnVal, addressTweaked = false;
@@ -543,6 +561,14 @@ function geocoderResponse(results, status)
 	return returnVal;
 }
 
+function geocoderResponseUpdatePinOnly(results, status)
+{
+	var geoResp = geocoderResponse(results, status);
+	if ( geoResp != null ) {
+		setMapPin(geoResp.coords, null, true);
+	}
+}
+
 function geocoderResponseUpdateDisplay(results, status)
 {
 	var geoResp = geocoderResponse(results, status);
@@ -575,7 +601,7 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 		}
 	}
 	else {
-		var foo = $.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie. Veuillez réessayer. / Unable to locate the supplied address. Please try again."));
+		var foo = $.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie (vouliez-vous plutôt effectuer une recherche par mots-clés ?). Veuillez réessayer. / Unable to locate the supplied address (perhaps you meant to perform a keyword search?). Please try again."));
 		foo.on('impromptu:close', function(e){
 			if ( firstQuest ) {
 				$.prompt.close();
