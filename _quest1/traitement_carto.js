@@ -641,7 +641,7 @@ function normaliserNomFrancais(s){
 	
 function check_if_marker_in_rmm()
 {
-	console.info("Validation de l'adresse du lieu de domicile de '" + _id_participant + "' comme étant dans la région métropolitaine de Montréal."); 
+	console.info("Validation d'adresse du lieu de domicile de '" + _id_participant + "'."); 
 	var addr_comp = _lastGeocodedAddrComps.address_components;
 
 	var types="";
@@ -654,23 +654,33 @@ function check_if_marker_in_rmm()
         }
     }
 	
+	console.info(addr_comp);
+	console.info(short_names);
+	
+	for (x=0; x < short_names.length && !found_match; x++) {
+		short_names[x] = normaliserRegion(short_names[x]);
+	}
+	for (y=0; y < _municipalities.length; y++) {
+		_municipalities[y] = normaliserNomFrancais(_municipalities[y]);
+	}
+	
 	var found_match = false;
 	var x, y;
 	var matchingMunic = null;
-	for (y=0; y < _municipalities.length; y++) {
-		var munic = normaliserNomFrancais(_municipalities[y]);
-		for (x=0; x < short_names.length && !found_match; x++) {
-			var sn = short_names[x];
+	for (x=0; x < short_names.length && !found_match; x++) {
+		var sn = short_names[x];
+		for (y=0; y < _municipalities.length; y++) {
+			var munic = _municipalities[y];
 			if (munic == sn) {
 				found_match = true;
-				matchingMunic = _municipalities[y];
+				matchingMunic = munic;
 				break;
 			}
 		}
 	}
 
 	if (found_match)
-		console.info("Participant est éligible à remplir le questionnaire.\nMunicipalité du lieu de domicile : " + matchingMunic + ".");
+		console.info("Participant est éligible à remplir le questionnaire (municipalité : " + matchingMunic + ")");
 	else
 		console.info("Participant est inéligible.");
 
@@ -884,4 +894,14 @@ function processNewPolygonOnMap(poly)
         _drawnPolygon.setOptions({fillColor:'#ff0000',fillOpacity:0.5});
       });
 	  _deletePolyMarker.setPosition(poly.cc);
+}
+
+function normaliserRegion(region)
+{
+	region = region.toLowerCase();
+	if ( region == 'montrealwest' )
+		return 'montrealouest';
+	if ( region == 'communauteurbainedemontreal' )
+		return 'montreal';
+	return region;
 }

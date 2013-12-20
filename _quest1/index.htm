@@ -719,7 +719,7 @@
 			if ( typeof(str) != 'undefined' && str.length > 0 ) {
 				var res = str.match(_postCodeRE);
 				if (res != null && res.length > 0)
-					return res[0];
+					return res[0].toUpperCase();
 			}
 			return null;
 		}
