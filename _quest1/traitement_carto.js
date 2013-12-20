@@ -446,11 +446,11 @@ function geocodeAddress(addr, centerOnMarker)
 	_addr_changed = false;
 	
 	var respHandler;
-	if (typeof(centerOnMarker)==='undefined' || !centerOnMarker) {
-		respHandler = geocoderResponseUpdateDisplay;
+	if (typeof(centerOnMarker)==='undefined' || centerOnMarker) {
+		respHandler = geocoderResponseUpdateDisplayAndCenterMap;
 	}
 	else {
-		respHandler = geocoderResponseUpdateDisplayAndCenterMap;
+		respHandler = geocoderResponseUpdateDisplay;
 	}
 	
 	if ( addr.length > 0 ) {
