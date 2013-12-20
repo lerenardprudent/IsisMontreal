@@ -314,12 +314,12 @@ function makefindmarkers(places) 			//search results
 {
 	_bnds = new google.maps.LatLngBounds();
 	var placesList = document.getElementById('places');
+
 	for (var i = 0, place; place = places[i]; i++)
 	{
 		var image = {url:place.icon, size:new google.maps.Size(40, 40), origin:new google.maps.Point(0, 0), anchor:new google.maps.Point(10,20), scaledSize:new google.maps.Size(20, 20)};
 		var mark = new google.maps.Marker({ map:_map, icon:image, position:place.geometry.location, raiseOnDrag:false });
-		_findmarkers.push(mark);
-		mark.ID = _findmarkers.length - 1;
+		mark.ID = _findmarkers.length;
 		mark.name = place.name;
 		google.maps.event.addListener(mark, 'mouseover', placeHoverListener);
 		google.maps.event.addListener(mark, 'mouseout', function() { _infowin.close(); });
@@ -327,8 +327,28 @@ function makefindmarkers(places) 			//search results
 		placesList.innerHTML += "<li id='lsm" + mark.ID + "'>" + "<a style='color:#404040; width:186px;' href='javascript:selectfindmarker(" + mark.ID + ")'>" + (mark.ID+1) + ". " + place.name + "</a></li>";
 		_bnds.extend(place.geometry.location);
 		_zoomSnapTo = true;
+		addAddress(mark, place.reference);
+		_findmarkers.push(mark);
 	}
 	_map.fitBounds(_bnds);
+}
+
+function addAddress(mark, ref)
+{	
+	_serv.getDetails(
+		{reference:ref},
+		function(details, status) {
+			if (status == google.maps.places.PlacesServiceStatus.OK) {
+				console.info('Set', mark.name, details.name, details.formatted_address);
+				mark.address = details.formatted_address;
+				mark.vicinity = details.vicinity;
+			}
+			else if (status === google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+				setTimeout(function() {
+                addAddress(mark, ref);
+			}, 200);
+        }
+	});
 }
 
 function placeHoverListener() {
@@ -340,7 +360,7 @@ function placeHoverListener() {
 function placeClickListener()
 {
 	_infowin.close();
-	geocodePlaceMarker(this);
+	updateAddressText(this.name + ", " + this.address ? this.address : this.vicinity);
 }
 
 function selectfindmarker(id)
