@@ -421,6 +421,7 @@ function geocodeAddress(addr)
 {
 	var regionHint = ", QC";
 	addr += regionHint;
+	_addr_changed = false;
 	if ( addr.length > 0 ) {
 		_origPostCode = extractPostalCode(addr);
 		_geocoder.geocode( { 'address': addr }, geocoderResponseUpdateDisplayAndCenterMap );
@@ -548,6 +549,9 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 		_map.setCenter(geoResp.coords);
 		if ( firstQuest ) {
 			initiateTour();
+		}
+		if ( _confirm_once_geocoded ) {
+			confirmeraddress();
 		}
 	}
 	else {

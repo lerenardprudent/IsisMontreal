@@ -104,7 +104,7 @@
 		var _langue = LANGUE.Français;
 		var _id_participant;
 		var _searchradius = 15 //km
-		var _decimal_prec = 8;
+		var _decimal_prec = 10;
 		var _qno;
 		var _urlParams = {};
 		var _qtip_text = "";
@@ -127,6 +127,8 @@
 		var _closeUpZoomLevel = 15;
 		var _geocodeCounter = 0;
 		var _CONFIG = null;
+		var _addr_changed = false;
+		var _confirm_once_geocoded = false;
 
 		var _php_db_fname = "req_bd.php";
 		var tripiniconpath = "media/mapmark.png";
@@ -136,6 +138,7 @@
 		$(document).ready( function() {
 			$("#address").keyup( function(event)
 			{
+				_addr_changed = true;
 				if (event.keyCode == 13) {
 					$("#search_btn").click();
 				}
@@ -173,7 +176,7 @@
 										<option value="nom">nom ou autres mots-clés / name or other keywords</option>
 									</select>
 									<img id="arrow" src="media/right-arrow.png" style="position: relative; top: 5px; width:20px; height: 20px;" />
-									<input id="address" type="text" maxlength="150" style="width:400px; height:18px; background-color:#F8F8F8" autofocus="autofocus"/>&nbsp;
+									<input id="address" type="text" maxlength="150" style="width:400px; height:18px; background-color:#F8F8F8"; autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
 									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 19px 19px; background-repeat: no-repeat; display: inline-block; background-image:url(media/aide.png); " type="button" title="Voir des renseignements sur ce site / Help" onclick="showTour(true)"></button>
 								</span>
@@ -469,6 +472,10 @@
 				if ( !_pointPlaced ) {
 					$.prompt( bilingualSubstitution( "Vous devez localiser votre lieu de domicile sur la carte avant de continuer. / You must locate your home address on the map before continuing."));
 				}
+				else if ( _addr_changed ) {
+					_confirm_once_geocoded = true;
+					geocodeAddress(getAddressText());
+				}
 				else {
 					var inRMM = check_if_marker_in_rmm();
 					saveHomeAddress(_mapmark, inRMM);
@@ -485,6 +492,10 @@
 			else {
 				if ( !_pointPlaced ) {
 					warnUserNoPoint();
+				}
+				else if ( _addr_changed ) {
+					_confirm_once_geocoded = true;
+					geocodeAddress(getAddressText());
 				}
 				else {
 					saveLocationToDB();
