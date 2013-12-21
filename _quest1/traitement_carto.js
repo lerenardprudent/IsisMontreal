@@ -172,12 +172,12 @@ function polygonDrawnHandler(e)
 	
 	if ( isPoint ) {
 		tempPoly.setMap(null);
-		$.prompt(bilingualSubstitution("Un point ne constitute pas une zone valide. / A point is not a valid area."));
+		showDialog(bilingualSubstitution("Un point ne constitute pas une zone valide. / A point is not a valid area."));
 		return;
 	}
 	if ( isLine ) {
 		tempPoly.setMap(null);
-		$.prompt(bilingualSubstitution("Une ligne ne constitute pas une zone valide. / A line is not a valid area."));
+		showDialog(bilingualSubstitution("Une ligne ne constitute pas une zone valide. / A line is not a valid area."));
 		return;
 	}
 		
@@ -289,7 +289,7 @@ function radialPlaceSearch()
 function radialSearchResponse(results, status, pagination) 
 {
 	if (status != google.maps.places.PlacesServiceStatus.OK) {
-		$.prompt( bilingualSubstitution("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer. / No places matching your keywords were found. Please try again." ));
+		showDialog( bilingualSubstitution("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer. / No places matching your keywords were found. Please try again." ));
 		clearAddressField();
 		return;
 	}
@@ -585,7 +585,8 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 		}
 	}
 	else {
-		var foo = $.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie (vouliez-vous plutôt effectuer une recherche par mots-clés ?). Veuillez réessayer. / Unable to locate the supplied address (perhaps you meant to perform a keyword search?). Please try again."));
+		var hint = !isFirstInteraction() ? bilingualSubstitution(" (vouliez-vous plutôt effectuer une recherche par mots-clés ?) /  (perhaps you meant to perform a keyword search?)") : "";
+		var foo = showDialog(bilingualSubstitution("Impossible de localiser l'adresse fournie" + hint + ". Veuillez réessayer. / Unable to locate the supplied address" + hint + ". Please try again."));
 		foo.on('impromptu:close', function(e){
 			if ( isFirstInteraction() ) {
 				$.prompt.close();

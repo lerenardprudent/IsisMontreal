@@ -404,7 +404,7 @@
 									"Locate a place" : true },
                          focus: 1,
 						 submit: submitFunc	} };
-			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas localisé de lieu. / Attention: You have not identified a location."),
+			showDialog(bilingualSubstitution("Attention : Vous n'avez pas localisé de lieu. / Attention: You have not identified a location."),
 					 popUpOptions[_langue.val]);
 			$('div.jqi').css('width','530px'); // Makes the popup wider
 		}
@@ -435,7 +435,7 @@
                          focus: 1,
 						submit: submitFunc } };
 			
-			$.prompt(bilingualSubstitution("Attention : Vous n'avez pas dessiné votre quartier. / Attention: You have not traced your neighbourhood."), 
+			showDialog(bilingualSubstitution("Attention : Vous n'avez pas dessiné votre quartier. / Attention: You have not traced your neighbourhood."), 
 					 popUpOptions[_langue.val]);
 			$('div.jqi').css('width','530px'); // Makes the popup wider
 		}
@@ -471,7 +471,7 @@
 			clearAllSearchResults();
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
 				if ( !_pointPlaced ) {
-					$.prompt( bilingualSubstitution( "Vous devez localiser votre lieu de domicile sur la carte avant de continuer. / You must locate your home address on the map before continuing."));
+					showDialog( bilingualSubstitution( "Vous devez localiser votre lieu de domicile sur la carte avant de continuer. / You must locate your home address on the map before continuing."));
 				}
 				else if ( _addr_changed ) {
 					_confirm_once_geocoded = true;
@@ -539,7 +539,7 @@
         function startTour()
         {
             tourStates = getTourStates()[_langue.val];
-			var myPrompt = $.prompt(tourStates);
+			var myPrompt = showDialog(tourStates);
 			myPrompt.on('impromptu:loaded', function(e){
 				$('button.jqidefaultbutton[id^="jqi_0"]').focus();
                 if ( _mode == MODE_DESSIN.Polygone ) {
@@ -749,7 +749,7 @@
 			}});
 			
 			if ( _CONFIG == null ) {
-				$.prompt("ERREUR SURVENUE :(");
+				showDialog("ERREUR SURVENUE :(");
 				console.error("Config file '" + file_config + "' not found or badly formatted. Aborting");
 				return;
 			}
@@ -870,6 +870,15 @@
 			return 	_geocodeCounter == 1 &&
 					_mode == MODE_DESSIN.DomicileVerification &&
 					!_lookupPerformed;
+		}
+		
+		function showDialog(msg)
+		{
+			var prompt = $.prompt(msg);
+			prompt.on('impromptu:loaded', function(e){
+				$('div.jqi button').css('padding', '8px 15px');
+			});
+			return prompt;
 		}
 	</script>	
 </body>
