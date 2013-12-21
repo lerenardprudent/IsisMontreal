@@ -128,7 +128,7 @@ function homeAddressLookupResp()
 				}
 				else {
 					_mapmark.setPosition(homepos);
-					homepin = setMapPin(homepos, 'media/home2.png', false, true);
+					homepin = setMapPin(homepos, 'media/home2.png', false, true, bilingualSubstitution("Adresse du lieu de domicile:\n / Home address:\n") + home_addr_text);
 					//_domicileInfoWindow.setContent("<div id=\"iwdiv\" style=\"text-align:center; height:80px; width:300px; opacity:.9\"><b>" + bilingualSubstitution("Lieu de domicile / Home") + "</b><br><br><em>" + home_addr_text + "</em></div>");
 					//_domicileInfoWindow.setPosition(homepos);
 					//google.maps.event.addListener(homepin, 'mouseover', function() { _domicileInfoWindow.open(_map); });

@@ -713,13 +713,16 @@ function check_if_marker_in_rmm()
 	return found_match;
 }
 
-function setMapPin(latlng, iconPath, canDrag, centerOnPin)
+function setMapPin(latlng, iconPath, canDrag, centerOnPin, tooltip)
 {
 	var pin;
 	if ( iconPath != null ) {
-		pin = new google.maps.Marker({ map:_map, position:latlng, draggable:canDrag, clickable:false });
+		pin = new google.maps.Marker({ map:_map, position:latlng, draggable:canDrag, clickable:true, cursor:'default', title: '' });
 		pin.setMap(_map);
 		pin.setIcon(iconPath);
+		if ( typeof(tooltip) != 'undefined' ) {
+			pin.title += tooltip;
+		}
 	}
 	else {
 		pin = _mapmark;
