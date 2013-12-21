@@ -134,6 +134,7 @@
 		var tripiniconpath = "media/mapmark.png";
 		var file_config = 'config.json';
 		var _municipalities = [];
+		var _lookupPerformed = false;
         		
 		$(document).ready( function() {
 			$("#address").keyup( function(event)
@@ -176,7 +177,7 @@
 										<option id="optnom" value="nom" selected>nom ou autres mots-clés / name or other keywords</option>
 									</select>
 									<img id="arrow" src="media/right-arrow.png" style="position: relative; top: 5px; width:20px; height: 20px;" />
-									<input id="address" type="text" maxlength="150" style="width:400px; height:18px; background-color:#F8F8F8"; autofocus="autofocus"/>&nbsp;
+									<input id="address" type="text" style="width:410px; height:18px; background-color:#F8F8F8"; autofocus="autofocus"/>&nbsp;
 									<button id="search_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 20px 20px; background-repeat: no-repeat; display: inline-block; background-image:url(media/mag-glass.png); " type="button" title="Lancer une recherche / Execute a search" onclick="rechercher()"></button>
 									<button id="help_btn" style="vertical-align:bottom; background-color:#F2F2F4; height: 22px; width:22px; background-size: 19px 19px; background-repeat: no-repeat; display: inline-block; background-image:url(media/aide.png); " type="button" title="Voir des renseignements sur ce site / Help" onclick="showTour(true)"></button>
 								</span>
@@ -757,7 +758,6 @@
 			try { onwindowsize(); } catch (er) { }	
 			mapinit();
 			var smode = document.getElementById('searchmode');
-			smode.selectedIndex = 1;
 			
 			if ( _mode == MODE_DESSIN.Polygone )
 			{
@@ -775,12 +775,16 @@
 				setDrawTools();
 				_map.setZoom(_closeUpZoomLevel);
 			}
+			else {
+				smode.selectedIndex = 1;
+			}
 			
 			searchModeUpdated();
 			translateTagsForLang();
 			clearAddressField();
 			
 			if ( _mode == MODE_DESSIN.DomicileVerification ) {
+				smode.selectedIndex = 0;
 				document.getElementById('searchmode').disabled = "disabled";
 				var home_addr_encoded = getUrlParam('addr');
 				if (home_addr_encoded != null) {
@@ -790,6 +794,7 @@
 				else {
 					puthomepin();
 				}
+				getMunicipalities();
 			}
 			else
 			{
@@ -858,6 +863,13 @@
 				addrField.placeholder = bilingualSubstitution("-- Saisir le nom du lieu ou des mots-clés associés -- / -- Enter the name of the place or other related keywords --");
 			}
 			$('#address').select();
+		}
+		
+		function isFirstInteraction()
+		{
+			return 	_geocodeCounter == 1 &&
+					_mode == MODE_DESSIN.DomicileVerification &&
+					!_lookupPerformed;
 		}
 	</script>	
 </body>

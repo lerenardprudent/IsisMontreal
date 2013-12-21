@@ -281,6 +281,7 @@ function radialPlaceSearch()
 	if(kwds.length > 0)
 	{
 		clearAllSearchResults();
+		_addr_changed = false;
 		_serv.nearbySearch({ location:_map.getCenter(), radius:_searchradius*1000, keyword:kwds }, radialSearchResponse);
 	}
 }
@@ -360,9 +361,9 @@ function placeHoverListener() {
 function placeClickListener()
 {
 	_infowin.close();
-	var addr = this.address ? this.address : this.vicinity;
-	geocodeAddressUpdatePinOnly(addr);
-	updateAddressText(this.name + ", " + addr);
+	var addr = this.address ? this.address : ( this.vicinity ? this.vicinity : "" );
+	setMapPin(this.getPosition(), null, true);
+	updateAddressText(this.name + ( addr.length > 0 ? ", " + addr : ""));
 }
 
 function selectfindmarker(id)
@@ -456,13 +457,6 @@ function geocodeAddress(addr, centerOnMarker)
 	if ( addr.length > 0 ) {
 		_origPostCode = extractPostalCode(addr);
 		_geocoder.geocode( { 'address': addr }, respHandler );
-	}
-}
-
-function geocodeAddressUpdatePinOnly(addr)
-{
-	if ( addr.length > 0 ) {
-		_geocoder.geocode( { 'address': addr }, geocoderResponseUpdatePinOnly );
 	}
 }
 
@@ -561,14 +555,6 @@ function geocoderResponse(results, status)
 	return returnVal;
 }
 
-function geocoderResponseUpdatePinOnly(results, status)
-{
-	var geoResp = geocoderResponse(results, status);
-	if ( geoResp != null ) {
-		setMapPin(geoResp.coords, null, true);
-	}
-}
-
 function geocoderResponseUpdateDisplay(results, status)
 {
 	var geoResp = geocoderResponse(results, status);
@@ -588,12 +574,10 @@ function geocoderResponseUpdateDisplay(results, status)
 function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 {
 	var geoResp = geocoderResponseUpdateDisplay(results, status);
-    var firstQuest = 
-        ( _geocodeCounter == 1 && _mode == MODE_DESSIN.DomicileVerification );
 	if ( geoResp != null ) {
 		_map.setZoom(_closeUpZoomLevel);
 		_map.setCenter(geoResp.coords);
-		if ( firstQuest ) {
+		if ( isFirstInteraction() ) {
 			initiateTour();
 		}
 		if ( _confirm_once_geocoded ) {
@@ -603,15 +587,11 @@ function geocoderResponseUpdateDisplayAndCenterMap(results, status)
 	else {
 		var foo = $.prompt(bilingualSubstitution("Impossible de localiser l'adresse fournie (vouliez-vous plutôt effectuer une recherche par mots-clés ?). Veuillez réessayer. / Unable to locate the supplied address (perhaps you meant to perform a keyword search?). Please try again."));
 		foo.on('impromptu:close', function(e){
-			if ( firstQuest ) {
+			if ( isFirstInteraction() ) {
 				$.prompt.close();
 				setTimeout( initiateTour, 1000 );
 			}
 		});
-	}
-	
-	if (firstQuest) { // Let's read in the list of municipalities in the background
-		getMunicipalities();
 	}
 }
 
@@ -744,6 +724,7 @@ function setMapPin(latlng, iconPath, canDrag, centerOnPin)
 	else {
 		pin = _mapmark;
 		pin.setPosition(latlng);
+		_pointPlaced = true;
 	}
 	pin.setVisible(true);
 	if (!(typeof(centerOnPin)==='undefined')) {

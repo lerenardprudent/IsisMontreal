@@ -114,6 +114,7 @@ function homeAddressLookupResp()
 			var isEligible = tokens[2];
 			var homepos = getLatLngFromText(point_resp);
 			if (homepos != null) {
+				_lookupPerformed = true;
 				if ( isEligible == '0' && _mode != MODE_DESSIN.DomicileVerification ) { // Pas éligible de remplir les autres questions!
 				// TODO: Ineligible handling
 				}
@@ -124,7 +125,6 @@ function homeAddressLookupResp()
 					setMapPin(homepos, null, true, true);
 					updateAddressText(home_addr_text);
 					findCurrentAddressMunicipality();
-					_map.setOptions({ draggableCursor: 'default' });
 				}
 				else {
 					_mapmark.setPosition(homepos);
