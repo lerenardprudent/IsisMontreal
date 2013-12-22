@@ -135,7 +135,6 @@
 		var file_config = 'config.json';
 		var _municipalities = [];
 		var _lookupPerformed = false;
-		var toConsole = null;
         		
 		$(document).ready( function() {
 			$("#address").keyup( function(event)
@@ -721,7 +720,6 @@
 		
 		function initialize()
 		{
-			setConsole();
 			parseUrl();
 			if ( !validerUrlParams() ) {
 				document.getElementById('therest').style.visibility = "hidden";
@@ -873,15 +871,16 @@
 			return prompt;
 		}
 		
-		function setConsole()
+		function toConsole()
 		{
 			if ( typeof(window.console ) === 'undefined') {
-				toConsole = function() { return; };
+				return;
 			}
-			else {
-				toConsole = window.console.info;
+			var str = "";
+			for (var i=0; i < arguments.length;i++) {
+				str += arguments[i].toString();
 			}
-			
+			window.console.info(str);
 		}
 	</script>	
 </body>
