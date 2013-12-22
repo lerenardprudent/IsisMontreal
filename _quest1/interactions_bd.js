@@ -14,7 +14,7 @@ function locSaveResp()
 		var resp = _httpReqSaveLoc.responseText;
 		if ( !mysqlErrorResp( resp, 'saveLocationToDB' ) ) {
 			setMapPin(_mapmark.getPosition(), 'media/star-marker.png', false, true);
-			console.info("Résultat de l'enregistrement de point:\n\"" + _httpReqSaveLoc.responseText + "\"");
+			toConsole("Résultat de l'enregistrement de point:\n\"" + _httpReqSaveLoc.responseText + "\"");
 			retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
 		}
 	}
@@ -44,7 +44,7 @@ function savePolyResp()
 		var resp = _httpReqSavePoly.responseText;
 		if ( !mysqlErrorResp( resp, 'savePolyToDB' ) ) {
 			_drawnPolygon.setOptions({fillColor: "#009933", fillOpacity: 1});
-			console.info("Résultat de l'enregistrement de polygone:\n\"" + _httpReqSavePoly.responseText + "\"");
+			toConsole("Résultat de l'enregistrement de polygone:\n\"" + _httpReqSavePoly.responseText + "\"");
 			retournerdanslimesurvey( DIRECTION_QUESTIONNAIRE.Suivant );
 		}
 	}
@@ -65,7 +65,7 @@ function saveHomeResp()
 	if (_httpReqSaveHome.readyState==4 && _httpReqSaveHome.status==200) {
 		var resp = _httpReqSaveHome.responseText;
 		if ( !mysqlErrorResp( resp, 'saveHomeAddress' ) ) {
-			console.info("Résultat de l'enregistrement de l'adresse du lieu de domicile:\n\"" + _httpReqSaveHome.responseText + "\"");
+			toConsole("Résultat de l'enregistrement de l'adresse du lieu de domicile:\n\"" + _httpReqSaveHome.responseText + "\"");
 			if ( resp.indexOf( "__PARTICIPANT_EST_INELIGIBLE__" ) >= 0 ) {
 				retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Fin);
 			}
@@ -88,7 +88,7 @@ function sendDelPolyToDB()
 function delPolyResp()
 {
 	if (_httpReqDelPoly.readyState==4 && _httpReqDelPoly.status==200) {
-		console.info("Résultat de l'effacement du polygone:\n\"" + _httpReqDelPoly.responseText + "\"");
+		toConsole("Résultat de l'effacement du polygone:\n\"" + _httpReqDelPoly.responseText + "\"");
 		retournerdanslimesurvey(DIRECTION_QUESTIONNAIRE.Suivant);
 	}
 }
@@ -106,7 +106,7 @@ function homeAddressLookupResp()
 	var ok = false;
 	if (_httpReqHomeLookup.readyState==4 && _httpReqHomeLookup.status==200) {
 		var resp = _httpReqHomeLookup.responseText;
-		console.info("Résultats de la recherche d'adresse de lieu de domicile:\n\"" + resp + "\"");
+		toConsole("Résultats de la recherche d'adresse de lieu de domicile:\n\"" + resp + "\"");
 		var tokens = resp.split("$");
 		if (tokens.length == 3) {
 			var point_resp = tokens[0];
@@ -156,13 +156,13 @@ function existingRespHandler()
 	if (_httpReqRespLookup.readyState==4 && _httpReqRespLookup.status==200) {
 		var resp = _httpReqRespLookup.responseText;
 		if (resp.length > 0) {
-			console.info("Résultat de la recherche de réponse préexistante à la question " + _qno + ":\n\""
+			toConsole("Résultat de la recherche de réponse préexistante à la question " + _qno + ":\n\""
 			+ resp + "\"");
 			_existingRecInDB = true;
 		}
 		else
 		{
-			console.info("Aucune réponse préexistante trouvée à la question " + _qno + ".");
+			toConsole("Aucune réponse préexistante trouvée à la question " + _qno + ".");
 		}
 		
 		var tokens = resp.split("$");
@@ -221,7 +221,7 @@ function existingRespHandler()
 
 function sendHTTPReq(req, url, debug)
 {
-	console.info(debug + ".\nURL: \"" + url + "\"");
+	toConsole(debug + ".\nURL: \"" + url + "\"");
 	req.open("get",url,false);
 	req.send();
 }

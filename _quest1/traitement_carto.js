@@ -129,7 +129,7 @@ function setDrawTools()
 		_drawman.setMap(_map);
 
 	var pictureLabel = document.createElement("img");
-    pictureLabel.src = "media/icon-close.svg";
+    pictureLabel.src = "media/x-close2.png";
 
 	_deletePolyMarker = new MarkerWithLabel({
 		position: new google.maps.LatLng(0,0),
@@ -137,11 +137,11 @@ function setDrawTools()
        draggable: false,
        raiseOnDrag: false,
        labelContent: pictureLabel,
-       labelAnchor: new google.maps.Point(16, 16),
-       labelClass: "labels", // the CSS class for the label
+       labelAnchor: new google.maps.Point(12, 15),
+       //labelClass: "labels", // the CSS class for the label
        labelStyle: {opacity: 1},
 	   visible: false,
-	   icon: "http://placehold.it/1x1"
+	   icon: "media/1x1.gif",
      });
 	 
 	 _deletePolyMarker.setTitle(bilingualSubstitution("Effacer ce polygone / Erase this polygon") );
@@ -340,7 +340,7 @@ function addAddress(mark, ref)
 		{reference:ref},
 		function(details, status) {
 			if (status == google.maps.places.PlacesServiceStatus.OK) {
-				console.info('Set', mark.name, details.name, details.formatted_address);
+				toConsole('Set', mark.name, details.name, details.formatted_address);
 				mark.address = details.formatted_address;
 				mark.vicinity = details.vicinity;
 			}
@@ -370,7 +370,7 @@ function selectfindmarker(id)
 {
 	var markerPos = _findmarkers[id].getPosition();
 	_map.panTo(markerPos);
-	console.info(_findmarkers[id]);
+	toConsole(_findmarkers[id]);
 	google.maps.event.trigger(_findmarkers[id], 'click');
 }
 
@@ -530,7 +530,7 @@ function geocoderResponse(results, status)
 						correctedPostCode = correctedPostCode.substring(0,3) + ' ' + correctedPostCode.substring(3);
 					}
 					formatted_addr = formatted_addr.replace(_postCodeRE, correctedPostCode);
-					console.info("Mismatch between two nearby post codes " + _origPostCode.toUpperCase() + " and " + _returnedPostCode + ".\n" +
+					toConsole("Mismatch between two nearby post codes " + _origPostCode.toUpperCase() + " and " + _returnedPostCode + ".\n" +
 						"Address string converted to \"" + formatted_addr + "\"");
 					updateAddressText(formatted_addr);
 					addressTweaked = true;
@@ -668,7 +668,7 @@ function normaliserNomFrancais(s){
 	
 function check_if_marker_in_rmm()
 {
-	console.info("Validation d'adresse du lieu de domicile de '" + _id_participant + "'."); 
+	toConsole("Validation d'adresse du lieu de domicile de '" + _id_participant + "'."); 
 	var addr_comp = _lastGeocodedAddrComps.address_components;
 
 	var types="";
@@ -680,9 +680,8 @@ function check_if_marker_in_rmm()
 			}
         }
     }
-	
-	console.info(addr_comp);
-	console.info(short_names);
+	toConsole(addr_comp);
+	toConsole(short_names);
 	
 	for (x=0; x < short_names.length && !found_match; x++) {
 		short_names[x] = normaliserRegion(short_names[x]);
@@ -705,11 +704,11 @@ function check_if_marker_in_rmm()
 			}
 		}
 	}
-
+	
 	if (found_match)
-		console.info("Participant est éligible à remplir le questionnaire (municipalité : " + matchingMunic + ")");
+		toConsole("Participant est éligible à remplir le questionnaire (municipalité : " + matchingMunic + ")");
 	else
-		console.info("Participant est inéligible.");
+		toConsole("Participant est inéligible.");
 
 	return found_match;
 }
@@ -743,12 +742,12 @@ function retournerdanslimesurvey(dir)
 	var nextUrl;
 	if (dir == DIRECTION_QUESTIONNAIRE.Fin ) {
 		nextUrl = "https://www.isis-montreal.ca/questionnaire/nonEligible.php?lang=" + _langue.val;
-		console.info("Fin de questionnaire.");
+		toConsole("Fin de questionnaire.");
 	}
 	else {
 		nextUrl = "https://www.isis-montreal.ca/questionnaire/index.php?sid=48336&token=" + _id_participant + "&lang=" + _langue.val + "&" + dir.val + "=1";
 	}
-	console.info("Retour dans LimeSurvey: " + nextUrl);
+	toConsole("Retour dans LimeSurvey: " + nextUrl);
 	_jumpedOffPage = true;
 	if ( !_in_test_mode ) {
 		window.location.href = nextUrl;
@@ -858,7 +857,7 @@ google.maps.Polyline.prototype.inKm = function(n){
       dist += a.getAt(i).kmTo(a.getAt(i+1)); 
     } 
     return dist; 
-	//usage:  console.info(poly.inKm());
+	//usage:  toConsole(poly.inKm());
 }
   
 google.maps.LatLng.prototype.kmTo = function(a){ 
@@ -879,7 +878,7 @@ function mapclickhandler(e)
     var minEdgeDist = Math.min(pix.x,mapW-pix.x,pix.y,mapH-pix.y);
     var needToRecenter = ( minEdgeDist < 10 );
     if ( needToRecenter ) {
-        console.info("Map canvas click at distance of only ", minEdgeDist, "; recentering map.");
+        toConsole("Map canvas click at distance of only ", minEdgeDist, "; recentering map.");
     }
 	geocodeMarker(e.latLng, needToRecenter);
 }

@@ -135,6 +135,7 @@
 		var file_config = 'config.json';
 		var _municipalities = [];
 		var _lookupPerformed = false;
+		var toConsole = null;
         		
 		$(document).ready( function() {
 			$("#address").keyup( function(event)
@@ -171,7 +172,7 @@
                             <p id="consigne" style="font-size:12px; margin-top:5px; margin-bottom:5px;"></p>
 							<div id="therest">
 								<span id="searchspan" style="width:100%">
-									<label id="searchonlbl">Rechercher par / Search on</span>
+									<label id="searchonlbl">Rechercher par / Search on</label>
 									<select id="searchmode" onchange="searchModeUpdated();">
 										<option id="optaddr" value="addr">adresse / address</option>
 										<option id="optnom" value="nom" selected>nom ou autres mots-clés / name or other keywords</option>
@@ -205,19 +206,6 @@
 			<button id="morefinds" style="color:#FFFFFF; background-color:#C71F2D;" type="button">Plus de résultats...</button>
 		</div>
 	</div>
-
-	<style type="text/css">
-   .labels {
-     color: black;
-     font-family: "Lucida Grande", "Arial", sans-serif;
-     font-size: 10px;
-     text-align: center;
-     width: 40px;
-	 height: 40px;
-     white-space: nowrap;
-   }
-   
- </style>
 
 	<!-- PAGE LAYOUT ENDS HERE -->
 	
@@ -301,7 +289,7 @@
 				}
 			}
 			else {
-				console.info("User has no language tag. Defaulting to French");
+				toConsole("User has no language tag. Defaulting to French");
 			}
 			
 			if ( getUrlParam('quest') == null ) {
@@ -694,7 +682,7 @@
 				[
 				{
 					title: 'Sur cette carte, nous vous demandons de tracer la zone correspondant à votre quartier',
-					html: "Cliquez sur la carte avec la souris pour marquer les points qui délimitent votre quartier. Pour fermer la zone, cliquez à nouveau sur le premier point.<p/><div style='width:180px; height:120px; margin-left:auto; margin-right:auto;'><img style='height: 100%; width:100%;' src='media/DessinQuartier_Video.gif'></div>Pour effacer la zone, cliquez dessus avec la <img src='media/icon-close.svg' style='position:relative; top:5px; width:20px; height:20px'>... et recommencez!",
+					html: "Cliquez sur la carte avec la souris pour marquer les points qui délimitent votre quartier. Pour fermer la zone, cliquez à nouveau sur le premier point.<p/><div style='width:180px; height:120px; margin-left:auto; margin-right:auto;'><img style='height: 100%; width:100%;' src='media/DessinQuartier_Video.gif'></div>Pour effacer la zone, cliquez dessus avec la <img src='media/x-close2.png' style='position:relative; top:1px; width:12px; height:12px'>... et recommencez!",
 					buttons: { OK: 2 },
 					focus: 0,
 					position: positionsPoly[0],
@@ -705,7 +693,7 @@
 				[
 				{
 					title: 'On this map we will ask you to draw the area that corresponds to your neighbourhood',
-					html: "Click on the map with the mouse to draw the boundary points outlining the area. To close the area, re-click on the first boundary point.<p/><div style='width:180px; height:120px; margin-left:auto; margin-right:auto;'><img style='height: 100%; width:100%;' src='media/DessinQuartier_Video.gif'></div>To redo the area, erase it by clicking the <img src='media/icon-close.svg' style='position:relative; top:5px; width:20px; height:20px'> on the area… and then restart!",
+					html: "Click on the map with the mouse to draw the boundary points outlining the area. To close the area, re-click on the first boundary point.<p/><div style='width:180px; height:120px; margin-left:auto; margin-right:auto;'><img style='height: 100%; width:100%;' src='media/DessinQuartier_Video.gif'></div>To redo the area, erase it by clicking the <img src='media/x-close2.png' style='position:relative; top:5px; width:20px; height:20px'> on the area… and then restart!",
 					buttons: { OK: 2 },
 					focus: 0,
 					position: positionsPoly[0],
@@ -733,6 +721,7 @@
 		
 		function initialize()
 		{
+			setConsole();
 			parseUrl();
 			if ( !validerUrlParams() ) {
 				document.getElementById('therest').style.visibility = "hidden";
@@ -812,7 +801,7 @@
 					config_val = null;
 				}
 				else {
-					console.info("Config entry '" + attr + "' not found; defaulting to " + defaut);
+					toConsole("Config entry '" + attr + "' not found; defaulting to " + defaut);
 					config_val = defaut;
 				}
 			}
@@ -834,7 +823,7 @@
 				for (var i=0; i < arr.length; i++) {
 					_municipalities.push(arr[i][csvDetails.col_munic]);
 				}
-				console.info(_municipalities.length + " municipalités lues du fichier '" + csvDetails.nom + "'");
+				toConsole(_municipalities.length + " municipalités lues du fichier '" + csvDetails.nom + "'");
 			}
 			else {
 				console.error("Municipalities CSV file config not found!!");
@@ -882,6 +871,17 @@
 				$('div.jqi button').css('padding', '8px 15px');
 			});
 			return prompt;
+		}
+		
+		function setConsole()
+		{
+			if ( typeof(window.console ) === 'undefined') {
+				toConsole = function() { return; };
+			}
+			else {
+				toConsole = window.console.info;
+			}
+			
 		}
 	</script>	
 </body>
