@@ -872,9 +872,12 @@
 					!_lookupPerformed;
 		}
 		
-		function showDialog(msg)
+		function showDialog(msg, options)
 		{
-			var prompt = $.prompt(msg);
+			if ( typeof(options) === 'undefined' ) 
+				var prompt = $.prompt(msg);
+			else
+				var prompt = $.prompt(msg, options);
 			prompt.on('impromptu:loaded', function(e){
 				$('div.jqi button').css('padding', '8px 15px');
 			});
