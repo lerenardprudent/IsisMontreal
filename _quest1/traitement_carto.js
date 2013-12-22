@@ -137,7 +137,7 @@ function setDrawTools()
        draggable: false,
        raiseOnDrag: false,
        labelContent: pictureLabel,
-       labelAnchor: new google.maps.Point(12, 15),
+       labelAnchor: new google.maps.Point(11, 14),
        //labelClass: "labels", // the CSS class for the label
        labelStyle: {opacity: 1},
 	   visible: false,
