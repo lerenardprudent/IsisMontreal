@@ -326,7 +326,7 @@ function makefindmarkers(places) 			//search results
 		google.maps.event.addListener(mark, 'mouseover', placeHoverListener);
 		google.maps.event.addListener(mark, 'mouseout', function() { _infowin.close(); });
 		google.maps.event.addListener(mark, 'click', placeClickListener );
-		placesList.innerHTML += "<li id='lsm" + mark.ID + "' title='" + place.name + "'><a style='color:#404040; width:186px;' href='javascript:selectfindmarker(" + mark.ID + ")'>" + (mark.ID+1) + ". " + place.name + "</a></li>";
+		placesList.innerHTML += "<li id='lsm" + mark.ID + "' title=\"" + place.name + "\"><a style='color:#404040; width:186px;' href='javascript:selectfindmarker(" + mark.ID + ")'>" + (mark.ID+1) + ". " + place.name + "</a></li>";
 		_bnds.extend(place.geometry.location);
 		_zoomSnapTo = true;
 		addAddress(mark, place.reference);
@@ -364,6 +364,7 @@ function placeClickListener()
 	_infowin.close();
 	var addr = this.address ? this.address : ( this.vicinity ? this.vicinity : "" );
 	setMapPin(this.getPosition(), null, true);
+	document.getElementById('searchmode').selectedIndex = 0;
 	updateAddressText(this.name + ( addr.length > 0 ? ", " + addr : ""));
 }
 

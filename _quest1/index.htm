@@ -139,7 +139,9 @@
 		$(document).ready( function() {
 			$("#address").keyup( function(event)
 			{
-				_addr_changed = true;
+				if ( document.getElementById('searchmode').selectedIndex == 0) {
+					_addr_changed = true;
+				}
 				if (event.keyCode == 13) {
 					$("#search_btn").click();
 				}
@@ -462,6 +464,7 @@
 					showDialog( bilingualSubstitution( "Vous devez localiser votre lieu de domicile sur la carte avant de continuer. / You must locate your home address on the map before continuing."));
 				}
 				else if ( _addr_changed ) {
+					toConsole("Text in address box changed - regeocoding");
 					_confirm_once_geocoded = true;
 					geocodeAddress(getAddressText());
 				}
@@ -483,10 +486,15 @@
 					warnUserNoPoint();
 				}
 				else if ( _addr_changed ) {
+					toConsole("Text in address box changed - regeocoding");
 					_confirm_once_geocoded = true;
 					geocodeAddress(getAddressText());
 				}
 				else {
+					if ( document.getElementById('searchmode').selectedIndex == 1 ) {
+						document.getElementById('searchmode').selectedIndex = 0;
+						updateAddressText(_lastGeocodedAddrComps.formatted_address);
+					}
 					saveLocationToDB();
 				}
 			}
