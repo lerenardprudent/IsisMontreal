@@ -199,10 +199,11 @@
 		</div>
 		<div id="findspanel">
 			<ol id="places"></ol>
-			<div id="panheadfinds">&nbsp;&nbsp;Résultats de la recherche...
-				<img id="findsclose" title="Effacer les résultats de la recherche" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="clearAllSearchResults();" />
+			<div id="panheadfinds">
+				<label>&nbsp;&nbsp;Résultats de la recherche... / &nbsp;&nbsp;Search results...</label>
+				<img id="findsclose" title="Effacer les résultats de la recherche / Erase the search results" src="media/x-close.png" style="float:right; margin-right:2px; cursor:hand; cursor:pointer;" onclick="clearAllSearchResults();" />
 			</div>
-			<button id="morefinds" style="color:#FFFFFF; background-color:#C71F2D;" type="button">Plus de résultats...</button>
+			<button id="morefinds" style="color:#FFFFFF; background-color:#C71F2D;" type="button">Plus de résultats... / More results...</button>
 		</div>
 	</div>
 
@@ -356,7 +357,7 @@
 		
 		function translateTagsForLang() {
 			$(document).attr("title", setTitleForLang );
-			$("button[title], input[title], label[title]").attr("title", setTitleForLang );
+			$("button[title], input[title], label[title], img[title]").attr("title", setTitleForLang );
 			$("button, input, label, option").each(setTextForLang);
 			$("input[placeholder]").attr("placeholder", setTitleForLang );
 		}

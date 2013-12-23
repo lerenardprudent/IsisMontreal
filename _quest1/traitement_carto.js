@@ -289,7 +289,7 @@ function radialPlaceSearch()
 function radialSearchResponse(results, status, pagination) 
 {
 	if (status != google.maps.places.PlacesServiceStatus.OK) {
-		showDialog( bilingualSubstitution("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer. / No places matching your keywords were found. Please try again." ));
+		showDialog( bilingualSubstitution("Aucun lieu correspondant aux mots-clés n'a été trouvé. Veuillez réessayer avec d'autres mots-clés ou avec une adresse. / No places matching your keywords were found. Please try again with different keywords or with an address." ));
 		clearAddressField();
 		return;
 	}
@@ -309,6 +309,7 @@ function radialSearchResponse(results, status, pagination)
 	}
 	$("#places").animate({scrollTop: 100000}); // Big number so it always scrolls to the bottom
 	$("#morefinds").focus();
+	_map.setOptions({ draggableCursor: ''});
 }
 
 function makefindmarkers(places) 			//search results
@@ -325,7 +326,7 @@ function makefindmarkers(places) 			//search results
 		google.maps.event.addListener(mark, 'mouseover', placeHoverListener);
 		google.maps.event.addListener(mark, 'mouseout', function() { _infowin.close(); });
 		google.maps.event.addListener(mark, 'click', placeClickListener );
-		placesList.innerHTML += "<li id='lsm" + mark.ID + "'>" + "<a style='color:#404040; width:186px;' href='javascript:selectfindmarker(" + mark.ID + ")'>" + (mark.ID+1) + ". " + place.name + "</a></li>";
+		placesList.innerHTML += "<li id='lsm" + mark.ID + "' title='" + place.name + "'><a style='color:#404040; width:186px;' href='javascript:selectfindmarker(" + mark.ID + ")'>" + (mark.ID+1) + ". " + place.name + "</a></li>";
 		_bnds.extend(place.geometry.location);
 		_zoomSnapTo = true;
 		addAddress(mark, place.reference);
@@ -847,6 +848,7 @@ function clearAllSearchResults()
 	}
 	_findmarkers = [];
 	clearfindpanel();
+	_map.setOptions({ draggableCursor: 'crosshair'});
 }
 
 //------------------------------------------------------------------- special functions
