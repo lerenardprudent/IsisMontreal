@@ -14,5 +14,12 @@
 	"csv_municipalites" 	: { 
 								"nom"			: "ext/RMR_muni.csv",
 								"col_munic"		: "SDRNOM"
+							  },
+	"arronds_spatials"		: {
+                "cle"         : "valaddr",
+								"tbl"			    : "arronds",
+								"latitude"		: "lat",
+								"longitude"		: "lng",
+								"ineligible"	: "HORS_RMR"
 							  }
 }
