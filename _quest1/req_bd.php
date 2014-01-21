@@ -1,5 +1,4 @@
 <?php
-
 $fichierConfig = 'config.json';
 $bdloginAttr = 'bd_login';
 $bdTblxAttr = 'bd_tableaux';
@@ -10,6 +9,8 @@ $bdAttr = 'bd';
 $dbUpdateUrlField = 'db_update_url_token';
 $tblDomicileAttr = 'tbl_domiciles';
 $tblReponsesAttr = 'tbl_reponses';
+$bdArrondsAttr = 'arronds_spatials';
+$ineligAttr = 'ineligible';
 
 try {
 	$jsonData = file_get_contents($fichierConfig);
@@ -33,6 +34,9 @@ getAttrValOrDie($config, $bdTblxAttr);
 $home_table = getAttrValOrDie($config->$bdTblxAttr, $tblDomicileAttr);
 $resp_table = getAttrValOrDie($config->$bdTblxAttr, $tblReponsesAttr);
 $table = $resp_table;
+$keyId = "cle";
+$arron_conf = getAttrValOrDie($config, $bdArrondsAttr);
+$key = getAttrValOrDie($arron_conf, $keyId);
 
 $up = strval($_GET[$db_update_url_token]);
 if (strcmp($up,"su") == 0) // Setup tables
@@ -45,6 +49,11 @@ else if (strcmp($up,"dropall") == 0) // Clean up tables
 {
 	drop_table($sql_conn, $home_table);
 	drop_table($sql_conn, $resp_table);
+	return;
+}
+else if (strcmp($up,$key) == 0)
+{
+  validate_address($sql_conn, $arron_conf);
 	return;
 }
 
@@ -318,4 +327,87 @@ function getAttrValOrDie($config,$attrName)
 		die("Element de configuration obligatoire manquant: '".$attrName."'");
 	}
 }
+
+function getUrlArg($arg)
+{
+	if ( array_key_exists( $arg, $_GET ) )
+		return $_GET[$arg];
+	die("Param de l'URL manquant: '".$arg."'");
+}
+
+function validate_address($conn, $conf)
+{
+  $latKey = getAttrValOrDie($conf, 'latitude');
+  $lonKey = getAttrValOrDie($conf, 'longitude');
+  $table = getAttrValOrDie($conf, 'tbl');
+	$lat = getUrlArg($latKey);
+	$lon = getUrlArg($lonKey);
+  $inel = getAttrValOrDie($conf, 'ineligible');
+	include_once('polygon.php');
+	$point = new vertex($lon,$lat);
+	$sql="SELECT sdrnom as nom, GeometryType(shape) as geomtype, ASTEXT(shape) AS geomtext FROM ".$table." where MBRWithin(GeomFromText('POINT(".$lon." ".$lat.")'),shape)";
+	$result = mysqli_query($conn,$sql);
+	header('Content-Type: text/html; charset=UTF-8');
+
+	while($row = mysqli_fetch_array($result))
+	{
+		$text = $row['geomtext'];
+		if ($row['geomtype'] == 'POLYGON') {
+			$polyTexts = array($text);
+		}
+		else if ($row['geomtype'] == 'MULTIPOLYGON') {
+			$text = str_replace(")),((","))|((", substr($text, strlen("MULTIPOLYGON(")));
+			$polyTexts = explode("|", $text);
+		}
+		
+		if ( testPolyTexts($polyTexts, $point) ) {
+			echo utf8_encode($row['nom']);
+			return;
+		}
+	}
+  echo $inel;
+}
+
+function splitPolyTextIntoLinestrings($polytext)
+{
+	$openbracketspos = strpos($polytext, "((");
+	if ( $openbracketspos !== false ) {
+		$closebracketspos = strpos($polytext, "))");
+		if ( $closebracketspos !== false ) {
+			$text = substr($polytext, $openbracketspos+2, $closebracketspos-$openbracketspos-2);
+			return explode("),(", $text);
+		}
+	}
+	return false;
+}
+
+function recreatePoly($linestr)
+{
+	$points = explode(",", $linestr);
+	$poly = new polygon2();
+	foreach ($points as $point) {
+		$x_y = explode(" ", $point);
+		$x = floatval($x_y[0]);
+		$y = floatval($x_y[1]);
+		$poly->addv($x,$y);
+	}
+	return $poly;
+}
+
+function testPolyTexts($polyTexts, $pt)
+{
+	foreach ( $polyTexts as $polyText ) {		
+		$linestrs = splitPolyTextIntoLinestrings($polyText);
+		for ($j = count($linestrs)-1; $j >= 0; $j-- ) {
+			$linestr = $linestrs[$j];
+			$isExtRing = ( $j == 0 );
+			$poly = recreatePoly($linestr);
+			if ( $poly->isInside($pt) ) {
+				return $isExtRing;
+			}
+		}
+	}
+	return false;
+}
+
 ?>

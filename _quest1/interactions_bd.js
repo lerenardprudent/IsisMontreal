@@ -219,10 +219,35 @@ function existingRespHandler()
 	}
 }
 
+function validerAdresse(lat_lng)
+{
+	_httpReqValiderAddr = new XMLHttpRequest();
+	_httpReqValiderAddr.onreadystatechange=validerAddrRespHandler;
+  var arrConf = get_config('arronds_spatials');
+	var php_url = _php_db_fname + "?up=" + [arrConf.cle, arrConf.latitude + '=' + lat_lng.lat(), arrConf.longitude + '=' + lat_lng.lng()].join('&');
+	sendHTTPReq(_httpReqValiderAddr, php_url, "Validation d'adresse du lieu de domicile"); 
+}
+
+function validerAddrRespHandler()
+{
+	var ok = false;
+	if (_httpReqValiderAddr.readyState==4 && _httpReqValiderAddr.status==200) {
+		var resp = _httpReqValiderAddr.responseText;
+    var ineligibleFlag = get_config('arronds_spatials', {ineligible: "HORS_RMR"}).ineligible; 
+    var inRMR = ( resp != ineligibleFlag );
+    if ( inRMR ) {
+			toConsole("Lieu de domicile validé comme dans la RMR (municipalité: " + resp + ").");
+		}
+		else {
+			toConsole("Lieu de domicile hors de la région.");
+		}
+    saveHomeAddress(_mapmark, inRMR);
+	}
+}
+
 function sendHTTPReq(req, url, debug)
 {
 	toConsole(debug + ".\nURL: \"" + url + "\"");
 	req.open("get",url,false);
 	req.send();
 }
-
