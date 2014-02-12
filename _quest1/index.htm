@@ -109,7 +109,7 @@
 		var _urlParams = {};
 		var _qtip_text = "";
 		var _qtip_title = "Questionnaire ISIS";
-		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc, _httpReqSavePoly, _httpReqDeletePoly;
+		var _httpReqSaveHome, _httpReqRespLookup, _httpReqHomeLookup, _httpReqSaveLoc, _httpReqSavePoly, _httpReqDeletePoly, _httpReqValiderAddr;
 		var _lastGeocodedAddrComps = null;
 		var _lastAddressText = null;
 		var _lastPlaceIconClicked = null;
@@ -469,8 +469,9 @@
 					geocodeAddress(getAddressText());
 				}
 				else {
-					var inRMM = check_if_marker_in_rmm();
-					saveHomeAddress(_mapmark, inRMM);
+					var inRMR = validerAdresse(_mapmark.getPosition());
+          //var inRMM = check_if_marker_in_rmm();
+					//saveHomeAddress(_mapmark, inRMR);
 				}
 			}
 			else if ( _mode == MODE_DESSIN.Polygone ) {

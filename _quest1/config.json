@@ -17,7 +17,7 @@
 							  },
 	"arronds_spatials"		: {
                 "cle"         : "valaddr",
-								"tbl"			    : "arronds",
+								"tbl"			    : "municips4",
 								"latitude"		: "lat",
 								"longitude"		: "lng",
 								"ineligible"	: "HORS_RMR"
