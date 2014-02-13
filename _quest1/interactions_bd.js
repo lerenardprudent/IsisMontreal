@@ -234,7 +234,7 @@ function validerAddrRespHandler()
 	if (_httpReqValiderAddr.readyState==4 && _httpReqValiderAddr.status==200) {
 		var resp = _httpReqValiderAddr.responseText;
     var ineligibleFlag = get_config('arronds_spatials', {ineligible: "HORS_RMR"}).ineligible; 
-    var inRMR = !resp.contains(ineligibleFlag);
+    var inRMR = resp.indexOf(ineligibleFlag) < 0;
     if ( inRMR ) {
 			toConsole("Lieu de domicile validé comme dans la RMR (municipalité: " + resp + ").");
 		}

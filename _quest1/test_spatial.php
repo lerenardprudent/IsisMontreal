@@ -1,4 +1,4 @@
-<?php ini_set("memory_limit","512M");
+<?php ini_set("memory_limit","1024M");
 
 function validate_test($conn, $conf)
 {
@@ -7,7 +7,7 @@ function validate_test($conn, $conf)
   
   $numTestsPerBlock = 10;
   $startAt = 0;
-  $finishAt = 99;
+  $finishAt = 499;
   $numRuns = 1;
   
   $table = getAttrValOrDie($conf, 'tbl');
