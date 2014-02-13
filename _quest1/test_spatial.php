@@ -1,13 +1,13 @@
-<?php
+<?php ini_set("memory_limit","512M");
 
 function validate_test($conn, $conf)
 {
   set_time_limit(9000*60);
   $pointFile = "ext/test_rmr462.txt";
   
-  $numTestsPerBlock = 100;
+  $numTestsPerBlock = 10;
   $startAt = 0;
-  $finishAt = 9999;
+  $finishAt = 99;
   $numRuns = 1;
   
   $table = getAttrValOrDie($conf, 'tbl');
