@@ -57,6 +57,7 @@ else if (strcmp($up,$key) == 0)
 	return;
 }
 else if (strcmp($up,"test") == 0) {
+  include_once('test_spatial.php');
   validate_test($sql_conn, $arron_conf);
   return;
 }
@@ -372,9 +373,13 @@ function validate_coords($conn,$lat,$lon,$table,$inel,$echoResult = true)
 			$text = str_replace(")),((","))|((", substr($text, strlen("MULTIPOLYGON(")));
 			$polyTexts = explode("|", $text);
 		}
+    else die("Unrecognised polygon type");
 
     $debug .= "Trying ".$munic."<br>";
+    
     $testPolyRes = testPolyTexts($polyTexts, $point);
+    unset($polyTexts);
+    
     $debug .= $testPolyRes[1];
     
     if ($testPolyRes[0]) {
@@ -383,6 +388,8 @@ function validate_coords($conn,$lat,$lon,$table,$inel,$echoResult = true)
 			$foundMatch = true;
       break;
 		}
+    
+    unset($text);
 	}
   if ( $echoResult)
     echo $match;
@@ -403,16 +410,23 @@ function splitPolyTextIntoLinestrings($polytext)
 	return false;
 }
 
-function &recreatePoly($linestr)
+function recreatePoly($linestr)
 {
 	$points = explode(",", $linestr);
 	$poly = new polygon2();
+  $pointCnt = 0;
 	foreach ($points as $point) {
 		$x_y = explode(" ", $point);
 		$x = floatval($x_y[0]);
 		$y = floatval($x_y[1]);
 		$poly->addv($x,$y);
+    unset($x_y);
+    unset($x);
+    unset($y);
+    $pointCnt++;
+    
 	}
+  unset($points);
 	return $poly;
 }
 
@@ -422,97 +436,25 @@ function testPolyTexts($polyTexts, $pt)
 	for ( $k = 0; $k < count($polyTexts); $k++ ) {		
     $debug .= ">>> Interrogating polygon ".$k."<br>";
     $polyText = $polyTexts[$k];
-		$linestrs = splitPolyTextIntoLinestrings($polyText);
+    $linestrs = splitPolyTextIntoLinestrings($polyText);
 		for ($j = count($linestrs)-1; $j >= 0; $j-- ) {
 			$linestr = $linestrs[$j];
 			$isExtRing = ( $j == 0 );
-			$poly = recreatePoly($linestr);
       $debug .= "Linestring ".$j."...";
-      $inside = $poly->isInside($pt);
+			$inside = testPoly($linestr,$pt);
       if ($inside) {
-        $debug .= "Point inside! (".$wind.")<br>";
+        $debug .= "Point inside!<br>";
 				return array($isExtRing, $debug);
 			}
       else {
-        $debug .= "Point not inside (".$wind.")<br>";
+        $debug .= "Point not inside<br>";
       }
       unset($poly);
 		}
+    unset($linestrs);
+    unset($polyText);
 	}
 	return array(false, $debug);
 }
 
-function validate_test($conn, $conf)
-{
-  set_time_limit(9000*60);
-  $table = getAttrValOrDie($conf, 'tbl');
-  $inel = getAttrValOrDie($conf, 'ineligible');
-  $file = fopen("ext/test_rmr462.txt", "r");
-  $lines = array();
-  $first_line = true;
-  while (($line = fgets($file)) !== false) {
-    if (!$first_line)
-      array_push($lines, $line);
-    $first_line = false;
-  }
-  fclose($file);
-  $numRuns = 1;
-  $numTestsPerBlock = 500;
-  $finishAt = 9999;
-  $startAt = 0;
-  
-  for ( $run = 1; $run <= $numRuns; $run++ ) {
-    for ( $j = $startAt; $j < $finishAt; $j += $numTestsPerBlock) {
-      testBlock($conn,$lines,$table,$inel,$j, $numTestsPerBlock);
-    }
-  }
-}
-
-function testBlock($conn,$lines,$table,$inel,$startAt,$numTests)
-{
-  $totalMatches = 0;
-  $nonMatches = array();
-  echo "*** Testing ".$startAt."-".($startAt+$numTests-1)."... ***<br>";
-  $debug = "";
-  for ($i = $startAt; $i-$startAt < $numTests; $i++ ) {
-    $testRes = testLine($conn,$lines[$i],$table,$inel);
-    $ok = $testRes[0];
-    $debug = $testRes[4];
-    if ($ok) { 
-      ++$totalMatches;
-    }
-    else {
-      array_push($nonMatches, $i);
-      echo $debug;
-      echo $i.": ".$lines[$i]." --- SHOULD BE ".($testRes[1] ? "1 " : "0 ")."(".$testRes[2].") FUNC RETURNED ".($testRes[3] ? "1" : "0")."<br>";
-      break;
-    }
-  }
-      
-  echo "Matches: ".$totalMatches." / ".$numTests."<br>";
-  
-  foreach( $nonMatches as $x) {
-    $tokens = explode(",", $lines[$x]);
-    $lon = $tokens[1];
-    $lat = $tokens[2];
-    $inRMR = $tokens[3][0] == '1';
-    $revalidRes = validate_coords($conn,$lat,$lon,$table,$inel);
-    $isElig = $revalidRes;
-    echo $revalidRes[1];
-    die($lines[$x].($isElig ? "1 " : "0 ")."<br>");
-  }
-  echo "<br>";
-}
-
-function testLine($conn,$line,$table,$inel)
-{
-  $tokens = explode(",", $line);
-  $lon = $tokens[1];
-  $lat = $tokens[2];
-  $inRMR = ($tokens[3][0] == '1');
-  $validateRes = validate_coords($conn,$lat,$lon,$table,$inel,false);
-  $isElig = $validateRes[0];
-  $debug = $validateRes[1];
-  return array( $isElig == $inRMR, $inRMR, "'".$tokens[3][0]."'", $isElig, $debug );
-}
 ?>

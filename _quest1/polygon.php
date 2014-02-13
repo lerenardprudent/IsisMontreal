@@ -82,8 +82,8 @@ class polygon2
 	/*
 	** Construct a new shiny polygon
 	*/
-	function polygon ($first = NULL){
-		$this->first = $first;
+	function polygon2 ($first = NULL){
+    $this->first = $first;
 		$this->cnt = 0;}
 	/*
 	** Get the first vertex
