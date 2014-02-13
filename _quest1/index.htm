@@ -469,9 +469,7 @@
 					geocodeAddress(getAddressText());
 				}
 				else {
-					var inRMR = validerAdresse(_mapmark.getPosition());
-          //var inRMM = check_if_marker_in_rmm();
-					//saveHomeAddress(_mapmark, inRMR);
+					validerAdresse(_mapmark.getPosition());
 				}
 			}
 			else if ( _mode == MODE_DESSIN.Polygone ) {
@@ -791,7 +789,6 @@
 				else {
 					puthomepin();
 				}
-				//getMunicipalities();
 			}
 			else
 			{
@@ -814,28 +811,6 @@
 				}
 			}
 			return config_val;
-		}
-		
-		function getMunicipalities()
-		{
-			var csvData;
-			var csvDetails = get_config('csv_municipalites', null);
-			if ( csvDetails != null ) {
-				$.ajax({
-					type: 'GET',
-					async: false,
-					url:  csvDetails.nom,
-					success: function(data) {csvData = data;}
-				});
-				var arr = $.csv.toObjects(csvData);
-				for (var i=0; i < arr.length; i++) {
-					_municipalities.push(arr[i][csvDetails.col_munic]);
-				}
-				toConsole(_municipalities.length + " municipalités lues du fichier '" + csvDetails.nom + "'");
-			}
-			else {
-				console.error("Municipalities CSV file config not found!!");
-			}
 		}
 		
 		function initiateTour()
