@@ -376,8 +376,7 @@ function validate_coords($conn,$lat,$lon,$table,$inel,$echoResult = true)
     else die("Unrecognised polygon type");
 
     $debug .= "Trying ".$munic."<br>";
-    
-    $testPolyRes = testPolyTexts($polyTexts, $point);
+    $testPolyRes = try_point($polyTexts, $point);
     unset($polyTexts);
     
     $debug .= $testPolyRes[1];
@@ -397,7 +396,33 @@ function validate_coords($conn,$lat,$lon,$table,$inel,$echoResult = true)
   return array($foundMatch, $debug);
 }
 
-function splitPolyTextIntoLinestrings($polytext)
+function try_point($polyTexts, $pt)
+{
+  $debug = "";
+	for ( $k = 0; $k < count($polyTexts); $k++ ) {		
+    $debug .= ">>> Interrogating polygon ".$k."<br>";
+    $polyText = $polyTexts[$k];
+    $linestrs = split_poly_text_into_linestrings($polyText);
+		for ($j = count($linestrs)-1; $j >= 0; $j-- ) {
+			$linestr = $linestrs[$j];
+			$isExtRing = ( $j == 0 );
+      $debug .= "Linestring ".$j."...";
+			$inside = check_point_inside_poly($linestr,$pt);
+      if ($inside) {
+        $debug .= "Point inside!<br>";
+				return array($isExtRing, $debug);
+			}
+      else {
+        $debug .= "Point not inside<br>";
+      }
+      unset($poly);
+		}
+    unset($linestrs);
+    unset($polyText);
+	}
+	return array(false, $debug);
+}
+function split_poly_text_into_linestrings($polytext)
 {
 	$openbracketspos = strpos($polytext, "((");
 	if ( $openbracketspos !== false ) {
@@ -410,7 +435,15 @@ function splitPolyTextIntoLinestrings($polytext)
 	return false;
 }
 
-function recreatePoly($linestr)
+function check_point_inside_poly($linestr,$pt)
+{
+  $poly = recreate_poly_from_text($linestr);
+  $isInside = $poly->isInside($pt);
+  unset($poly);
+  return $isInside;
+}
+
+function recreate_poly_from_text($linestr)
 {
 	$points = explode(",", $linestr);
 	$poly = new polygon2();
@@ -428,33 +461,6 @@ function recreatePoly($linestr)
 	}
   unset($points);
 	return $poly;
-}
-
-function testPolyTexts($polyTexts, $pt)
-{
-  $debug = "";
-	for ( $k = 0; $k < count($polyTexts); $k++ ) {		
-    $debug .= ">>> Interrogating polygon ".$k."<br>";
-    $polyText = $polyTexts[$k];
-    $linestrs = splitPolyTextIntoLinestrings($polyText);
-		for ($j = count($linestrs)-1; $j >= 0; $j-- ) {
-			$linestr = $linestrs[$j];
-			$isExtRing = ( $j == 0 );
-      $debug .= "Linestring ".$j."...";
-			$inside = testPoly($linestr,$pt);
-      if ($inside) {
-        $debug .= "Point inside!<br>";
-				return array($isExtRing, $debug);
-			}
-      else {
-        $debug .= "Point not inside<br>";
-      }
-      unset($poly);
-		}
-    unset($linestrs);
-    unset($polyText);
-	}
-	return array(false, $debug);
 }
 
 ?>

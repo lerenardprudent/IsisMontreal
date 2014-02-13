@@ -78,13 +78,4 @@ function testLine($conn,$line,$table,$inel)
   $debug = $validateRes[1];
   return array( $isElig == $inRMR, $inRMR, "'".$tokens[3][0]."'", $isElig, $debug );
 }
-
-function testPoly($linestr,$pt)
-{
-  $poly = recreatePoly($linestr);
-  $isInside = $poly->isInside($pt);
-  unset($poly);
-  return $isInside;
-}
-
 ?>
