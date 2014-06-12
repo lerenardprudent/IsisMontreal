@@ -1,0 +1,10 @@
+TO GENERATE SHP FILES FROM MYSQL TABLES WITH LATITUDE AND LONGITUDE FLIPPED (FROM WINDOWS COMMAND LINE)
+-------------------------------------------------------------------------------------------------------
+ogr2ogr -s_srs "+proj=latlong +datum=WGS84 +axis=neu +wktext" -t_srs "+proj=latlong +datum=WGS84 +axis=enu +wktext" -f "ESRI Shapefile" domiciles.shp MYSQL:"veritas,host=localhost,user=veritas" -sql "select id_part, geom from doms where eligible = 1 and heure > '2014'"
+
+ogr2ogr -s_srs "+proj=latlong +datum=WGS84 +axis=neu +wktext" -t_srs "+proj=latlong +datum=WGS84 +axis=enu +wktext" -f "ESRI Shapefile" q107_reponses.shp MYSQL:"veritas,host=localhost,user=veritas" -sql "select id_part, addr_text as adresse, geom_point from reps where num_quest = '107' and heure > '2014'"
+
+TO LIST QUESTIONS RESPONDED TO IN ASCENDING ORDER AND THE TYPE OF RESPONSE IN MYSQL (IN PHPMYADMIN)
+---------------------------------------------------------------------------------------------------
+
+SELECT a.num_quest, b.type_rep from ( select distinct num_quest from reps where heure > '2014' ) a join reps b on a.num_quest = b.num_quest group by a.num_quest order by convert(a.num_quest,unsigned)
